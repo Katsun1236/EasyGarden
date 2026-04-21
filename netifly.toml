@@ -11,6 +11,11 @@
   to = "/stats.html"
   status = 200
  
+ [[redirects]]
+  from = "/blog/:slug"
+  to = "/blog/article.html?slug=:slug"
+  status = 200
+
 [[headers]]
   for = "/*"
     [headers.values]
@@ -28,3 +33,7 @@
 [[headers]]
   for = "/stats.html"
     [headers.values]
+
+[build]
+  publish = "."
+  command = "node generate-sitemap.js"

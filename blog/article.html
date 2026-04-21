@@ -162,91 +162,40 @@
 
     <script src="/js/main.js"></script>
     <script>
-        function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                const btn = document.querySelector('[aria-label="Copier le lien"]');
-                btn.innerHTML = '<i class="fa-solid fa-check text-sm text-botanic"></i>';
-                setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-link text-sm"></i>'; }, 2000);
-            });
-        }
+const params = new URLSearchParams(window.location.search);
+let slug = params.get('slug');
 
-        function estimateReadingTime(text) {
-            const words = text.trim().split(/\s+/).length;
-            const minutes = Math.ceil(words / 200);
-            return `${minutes} min de lecture`;
-        }
+if (!slug) {
+    const pathParts = window.location.pathname.split('/');
+    slug = pathParts[pathParts.length - 1];
+}
 
-        const slug = new URLSearchParams(window.location.search).get('slug');
-        if (!slug) { window.location.href = '/blog/'; }
+if (!slug || slug === 'article.html') { window.location.href = '/blog/'; }
 
-        fetch('/data/posts.json')
-            .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-            .then(data => {
-                const post = data.posts.find(p => p.slug === slug && p.published);
-                if (!post) {
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('error-state').classList.remove('hidden');
-                    return;
-                }
+fetch('/data/posts.json')
+    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    .then(data => {
+        const post = data.posts.find(p => p.slug === slug && p.published);
+        if (!post) throw new Error('Article introuvable');
 
-                document.title = `${post.title} | Blog Easy Garden`;
-                document.getElementById('page-title').textContent = `${post.title} | Blog Easy Garden`;
-                document.getElementById('page-desc').content = post.excerpt;
-                document.getElementById('page-canonical').href = `https://easy-garden.netlify.app/blog/article.html?slug=${post.slug}`;
-                document.getElementById('og-title').content = post.title;
-                document.getElementById('og-desc').content = post.excerpt;
-                document.getElementById('og-image').content = `https://easy-garden.netlify.app${post.image}`;
+        document.title = `${post.title} | Easy Garden`;
+        document.querySelector('meta[name="description"]').setAttribute("content", post.excerpt);
+        
+        const canonical = document.getElementById('page-canonical');
+        if (canonical) canonical.href = `https://easy-garden.netlify.app/blog/${post.slug}`;
 
-                const schema = {
-                    "@context": "https://schema.org",
-                    "@type": "Article",
-                    "headline": post.title,
-                    "description": post.excerpt,
-                    "image": `https://easy-garden.netlify.app${post.image}`,
-                    "author": { "@type": "Organization", "name": "Easy Garden" },
-                    "publisher": { "@type": "Organization", "name": "Easy Garden", "logo": { "@type": "ImageObject", "url": "https://easy-garden.netlify.app/images/easygarden_logo.webp" } },
-                    "datePublished": post.date,
-                    "dateModified": post.date
-                };
-                document.getElementById('article-schema').textContent = JSON.stringify(schema);
-
-                document.getElementById('hero-img').src = post.image;
-                document.getElementById('hero-img').alt = post.title;
-                document.getElementById('article-category').textContent = post.category;
-                document.getElementById('article-title').textContent = post.title;
-                document.getElementById('breadcrumb-title').textContent = post.title.substring(0, 30) + '...';
-                document.getElementById('article-date').textContent = new Date(post.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
-                document.getElementById('article-date').setAttribute('datetime', post.date);
-                document.getElementById('article-author').textContent = post.author;
-                document.getElementById('reading-time').innerHTML = `<i class="fa-regular fa-clock" aria-hidden="true"></i> ${estimateReadingTime(post.content)}`;
-                document.getElementById('article-excerpt').textContent = post.excerpt;
-                document.getElementById('article-body').innerHTML = marked.parse(post.content);
-
-                const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
-                document.getElementById('share-fb').href = fbUrl;
-
-                const related = data.posts.filter(p => p.published && p.slug !== slug).slice(0, 3);
-                document.getElementById('related-posts').innerHTML = related.map(p => `
-                    <a href="/blog/article.html?slug=${p.slug}" class="block group">
-                        <div class="flex gap-3 items-start">
-                            <div class="w-16 h-16 shrink-0 img-zoom rounded-sm overflow-hidden">
-                                <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                            <div>
-                                <p class="text-xs text-stone-400 mb-1">${p.category}</p>
-                                <p class="text-sm text-stone-700 group-hover:text-botanic-dark transition-colors font-medium leading-snug">${p.title}</p>
-                            </div>
-                        </div>
-                    </a>
-                `).join('');
-
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('article-content').classList.remove('hidden');
-            })
-            .catch(() => {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('error-state').classList.remove('hidden');
-            });
+        document.getElementById('article-title').textContent = post.title;
+        document.getElementById('article-body').innerHTML = marked.parse(post.content);
+        document.getElementById('hero-img').src = post.image;
+        document.getElementById('hero-img').alt = post.title;
+        
+        document.getElementById('loading-state').classList.add('hidden');
+        document.getElementById('article-content').classList.remove('hidden');
+    })
+    .catch(() => {
+        document.getElementById('loading-state').classList.add('hidden');
+        document.getElementById('error-state').classList.remove('hidden');
+    });
     </script>
 </body>
 </html>

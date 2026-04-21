@@ -79,23 +79,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        botanic: { light: '#e8ece5', DEFAULT: '#728a64', dark: '#3a4f2f', deep: '#1e2b17' },
-                        gold: { DEFAULT: '#D4AF37' }
-                    },
-                    fontFamily: {
-                        sans: ['Lato', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <link rel="stylesheet" href="/css/main.css">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
@@ -420,20 +403,20 @@
                 const container = document.getElementById('blog-preview');
                 const posts = data.posts.filter(p => p.published).slice(0, 2);
                 if (!posts.length) { container.innerHTML = ''; return; }
-                container.innerHTML = posts.map(p => {
-                    const date = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
-                    return `<a href="/blog/article.html?slug=${p.slug}" class="blog-card group block">
-                        <div class="img-zoom h-52">
-                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <div class="p-6">
-                            <span class="category-badge mb-3 inline-block">${p.category}</span>
-                            <h3 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors">${p.title}</h3>
-                            <p class="text-stone-500 text-sm font-light line-clamp-2 mb-4">${p.excerpt}</p>
-                            <span class="text-xs text-stone-400 uppercase tracking-widest">${date}</span>
-                        </div>
-                    </a>`;
-                }).join('');
+               container.innerHTML = posts.map(p => {
+                const date = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+                return `<a href="/blog/${p.slug}" class="blog-card group block">
+                    <div class="img-zoom h-52">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="p-6">
+                        <span class="category-badge mb-3 inline-block">${p.category}</span>
+                        <h3 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors">${p.title}</h3>
+                        <p class="text-stone-500 text-sm font-light line-clamp-2 mb-4">${p.excerpt}</p>
+                        <span class="text-xs text-stone-400 uppercase tracking-widest">${date}</span>
+                    </div>
+                </a>`;
+            }).join('');
             })
             .catch(() => { document.getElementById('blog-preview').innerHTML = ''; });
     </script>

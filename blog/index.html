@@ -139,45 +139,45 @@
         let allPosts = [];
         let activeFilter = 'all';
 
-        function renderPosts(posts) {
-            const grid = document.getElementById('posts-grid');
-            const empty = document.getElementById('posts-empty');
-            if (!posts.length) {
-                grid.classList.add('hidden');
-                empty.classList.remove('hidden');
-                return;
-            }
-            empty.classList.add('hidden');
-            grid.classList.remove('hidden');
-            grid.innerHTML = posts.map((p, i) => {
-                const date = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
-                const delay = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
-                return `<article class="blog-card reveal${delay}" data-category="${p.category}">
-                    <a href="/blog/article.html?slug=${p.slug}" class="block group">
-                        <div class="img-zoom h-56">
-                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <div class="p-7">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="category-badge">${p.category}</span>
-                                <time class="text-xs text-stone-400 uppercase tracking-widest" datetime="${p.date}">${date}</time>
-                            </div>
-                            <h2 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors leading-snug">${p.title}</h2>
-                            <p class="text-stone-500 text-sm font-light leading-relaxed mb-5">${p.excerpt.substring(0, 120)}...</p>
-                            <span class="inline-flex items-center gap-2 text-botanic-dark font-bold text-xs uppercase tracking-widest border-b border-botanic-dark pb-px">
-                                Lire l'article <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                    </a>
-                </article>`;
-            }).join('');
+  function renderPosts(posts) {
+    const grid = document.getElementById('posts-grid');
+    const empty = document.getElementById('posts-empty');
+    if (!posts.length) {
+        grid.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+    }
+    empty.classList.add('hidden');
+    grid.classList.remove('hidden');
+    grid.innerHTML = posts.map((p, i) => {
+        const date = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+        const delay = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
+        return `<article class="blog-card reveal${delay}">
+            <a href="/blog/${p.slug}" class="block group">
+                <div class="img-zoom h-56">
+                    <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="p-7">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="category-badge">${p.category}</span>
+                        <time class="text-xs text-stone-400 uppercase tracking-widest" datetime="${p.date}">${date}</time>
+                    </div>
+                    <h2 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors leading-snug">${p.title}</h2>
+                    <p class="text-stone-500 text-sm font-light leading-relaxed mb-5">${p.excerpt.substring(0, 120)}...</p>
+                    <span class="inline-flex items-center gap-2 text-botanic-dark font-bold text-xs uppercase tracking-widest border-b border-botanic-dark pb-px">
+                        Lire l'article <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                    </span>
+                </div>
+            </a>
+        </article>`;
+    }).join('');
+}
             grid.querySelectorAll('.reveal').forEach(el => {
                 const obs = new IntersectionObserver((entries, o) => {
                     entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('active'); o.unobserve(en.target); } });
                 }, { threshold: 0.1 });
                 obs.observe(el);
             });
-        }
 
         function applyFilter(filter) {
             activeFilter = filter;

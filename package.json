@@ -1,0 +1,15 @@
+{
+  "name": "easygarden-vitrine",
+  "version": "1.0.0",
+  "description": "Site vitrine Easy Garden - Expertise Paysagère",
+  "main": "index.html",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./css/input.css -o ./css/main.css --minify",
+    "build:sitemap": "node generate-sitemap.js",
+    "build": "npm run build:css && npm run build:sitemap",
+    "watch": "npx tailwindcss -i ./css/input.css -o ./css/main.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  }
+}

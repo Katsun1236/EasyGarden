@@ -23,6 +23,18 @@
       "id": "2",
       "image": "/images/EasyGarden_Tonte.webp",
       "category": "Élagage"
+    },
+    {
+      "excerpt": "tttttt",
+      "author": "Easy Garden",
+      "slug": "ttt",
+      "published": true,
+      "date": "2026-04-21",
+      "title": "ttt",
+      "content": "ttttt",
+      "id": "3",
+      "image": "/images/EasyGarden_Tonte.webp",
+      "category": "Entretien"
     }
   ]
 }

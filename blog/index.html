@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Jardinage & Paysagisme Hainaut — Easy Garden</title>
+    <meta name="description" content="Conseils de jardinage, guide d'entretien et actualités paysagères pour le Hainaut. Blog d'Easy Garden, votre artisan paysagiste.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://easy-garden.netlify.app/blog/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://easy-garden.netlify.app/"},
+        {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://easy-garden.netlify.app/blog/"}
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { botanic: { light: '#e8ece5', DEFAULT: '#728a64', dark: '#3a4f2f', deep: '#1e2b17' } },
+                    fontFamily: { sans: ['Lato', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="font-sans text-stone-800 bg-stone-50 antialiased selection:bg-botanic selection:text-white">
+
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4 nav-scrolled">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300" width="48" height="48">
+                    <div class="flex flex-col">
+                        <span class="font-serif text-xl md:text-2xl font-bold tracking-wide text-stone-900">Easy Garden</span>
+                        <span class="text-[0.6rem] uppercase tracking-[0.2em] opacity-80 text-stone-700">Artisan Paysagiste</span>
+                    </div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Accueil</a>
+                    <a href="/services.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Services</a>
+                    <a href="/realisations.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Réalisations</a>
+                    <a href="/blog/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors page-active">Blog</a>
+                    <a href="/contact.html" class="glow-btn px-6 py-3 bg-botanic-dark text-white text-sm uppercase tracking-widest font-bold hover:bg-botanic transition-all shadow-lg">Devis Gratuit</a>
+                </div>
+                <button id="mobile-menu-btn" class="burger-btn lg:hidden text-2xl text-stone-800 focus:outline-none" aria-label="Ouvrir le menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-stone-900 z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors" aria-label="Fermer le menu"><i class="fa-solid fa-times"></i></button>
+            <div class="flex flex-col items-center space-y-8 text-white">
+                <img src="/images/easygarden_logo.webp" alt="" class="h-16 w-auto brightness-0 invert mb-4" width="64" height="64">
+                <a href="/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Accueil</a>
+                <a href="/services.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Services</a>
+                <a href="/realisations.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Réalisations</a>
+                <a href="/blog/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Blog</a>
+                <a href="/contact.html" class="mobile-link px-8 py-4 bg-botanic text-white uppercase tracking-widest text-sm font-bold mt-4 hover:bg-white hover:text-stone-900 transition-colors">Devis Gratuit</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero pt-36 pb-20 px-6">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <nav class="breadcrumb mb-6" aria-label="Fil d'Ariane">
+                <a href="/">Accueil</a><span>/</span><span class="current">Blog</span>
+            </nav>
+            <span class="uppercase tracking-[0.2em] text-sm text-botanic font-bold block mb-4">Conseils & Actualités</span>
+            <h1 class="font-serif text-5xl md:text-7xl text-white leading-tight">Le Blog <br><span class="italic font-light text-botanic-light">Easy Garden</span></h1>
+            <p class="text-white/70 mt-6 text-lg font-light max-w-xl">Conseils de jardinage, guides saisonniers et actualités paysagères pour le Hainaut.</p>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-stone-50">
+        <div class="max-w-7xl mx-auto">
+
+            <div id="blog-filters" class="flex flex-wrap gap-3 mb-12 reveal">
+                <button class="filter-btn active" data-filter="all">Tous les articles</button>
+                <button class="filter-btn" data-filter="Entretien">Entretien</button>
+                <button class="filter-btn" data-filter="Création">Création</button>
+                <button class="filter-btn" data-filter="Élagage">Élagage</button>
+                <button class="filter-btn" data-filter="Conseils">Conseils</button>
+            </div>
+
+            <div id="posts-loading" class="text-center py-20">
+                <i class="fa-solid fa-spinner fa-spin text-botanic text-3xl mb-4" aria-hidden="true"></i>
+                <p class="text-stone-400 font-light">Chargement des articles...</p>
+            </div>
+
+            <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
+
+            <div id="posts-empty" class="hidden text-center py-20">
+                <i class="fa-solid fa-seedling text-botanic text-4xl mb-4 opacity-50" aria-hidden="true"></i>
+                <p class="text-stone-500 font-light text-lg">Aucun article dans cette catégorie pour le moment.</p>
+            </div>
+
+            <div id="posts-error" class="hidden text-center py-20">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-4xl mb-4" aria-hidden="true"></i>
+                <p class="text-stone-500 font-light">Impossible de charger les articles. Veuillez réessayer.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-16 bg-botanic-deep">
+        <div class="max-w-4xl mx-auto px-6 text-center reveal">
+            <h2 class="font-serif text-3xl text-white mb-4">Besoin d'un conseil personnalisé ?</h2>
+            <p class="text-botanic-light font-light mb-8">Notre équipe se déplace gratuitement dans le Hainaut pour étudier votre projet.</p>
+            <a href="/contact.html" class="glow-btn inline-block bg-white text-botanic-deep px-10 py-4 uppercase tracking-widest text-sm font-bold hover:bg-stone-200 transition-colors shadow-2xl">
+                Devis gratuit
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-stone-900 text-stone-400 pt-16 pb-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light tracking-wider uppercase gap-4 text-stone-500">
+                <p>&copy; 2026 Easy Garden. Artisan paysagiste. Tous droits réservés.</p>
+                <div class="flex gap-6">
+                    <a href="/" class="hover:text-botanic transition-colors">Accueil</a>
+                    <a href="/services.html" class="hover:text-botanic transition-colors">Services</a>
+                    <a href="/contact.html" class="hover:text-botanic transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        let allPosts = [];
+        let activeFilter = 'all';
+
+        function renderPosts(posts) {
+            const grid = document.getElementById('posts-grid');
+            const empty = document.getElementById('posts-empty');
+            if (!posts.length) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = posts.map((p, i) => {
+                const date = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+                const delay = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
+                return `<article class="blog-card reveal${delay}" data-category="${p.category}">
+                    <a href="/blog/article.html?slug=${p.slug}" class="block group">
+                        <div class="img-zoom h-56">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="p-7">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="category-badge">${p.category}</span>
+                                <time class="text-xs text-stone-400 uppercase tracking-widest" datetime="${p.date}">${date}</time>
+                            </div>
+                            <h2 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors leading-snug">${p.title}</h2>
+                            <p class="text-stone-500 text-sm font-light leading-relaxed mb-5">${p.excerpt.substring(0, 120)}...</p>
+                            <span class="inline-flex items-center gap-2 text-botanic-dark font-bold text-xs uppercase tracking-widest border-b border-botanic-dark pb-px">
+                                Lire l'article <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </a>
+                </article>`;
+            }).join('');
+            grid.querySelectorAll('.reveal').forEach(el => {
+                const obs = new IntersectionObserver((entries, o) => {
+                    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('active'); o.unobserve(en.target); } });
+                }, { threshold: 0.1 });
+                obs.observe(el);
+            });
+        }
+
+        function applyFilter(filter) {
+            activeFilter = filter;
+            const filtered = filter === 'all' ? allPosts : allPosts.filter(p => p.category === filter);
+            renderPosts(filtered);
+        }
+
+        document.querySelectorAll('#blog-filters .filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#blog-filters .filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilter(btn.dataset.filter);
+            });
+        });
+
+        fetch('/data/posts.json')
+            .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+            .then(data => {
+                document.getElementById('posts-loading').classList.add('hidden');
+                allPosts = data.posts.filter(p => p.published).sort((a, b) => new Date(b.date) - new Date(a.date));
+                renderPosts(allPosts);
+            })
+            .catch(() => {
+                document.getElementById('posts-loading').classList.add('hidden');
+                document.getElementById('posts-error').classList.remove('hidden');
+            });
+    </script>
+</body>
+</html>

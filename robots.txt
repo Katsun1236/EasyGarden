@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://www.google.com/search?q=https://easy-garden.netlify.app/sitemap.xml
+ 
+Disallow: /admin/
+Disallow: /stats.html
+ 
+Sitemap: https://easy-garden.netlify.app/sitemap.xml

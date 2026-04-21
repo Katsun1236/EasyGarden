@@ -1,0 +1,63 @@
+backend:
+  name: git-gateway
+  branch: main
+
+locale: fr
+
+media_folder: "images/blog"
+public_folder: "/images/blog"
+
+collections:
+  - name: "blog"
+    label: "Articles de Blog"
+    files:
+      - label: "Gérer tous les articles"
+        name: "posts"
+        file: "data/posts.json"
+        fields:
+          - label: "Articles"
+            name: "posts"
+            widget: "list"
+            summary: "{{fields.title}} — {{fields.date}}"
+            fields:
+              - label: "Identifiant unique"
+                name: "id"
+                widget: "string"
+                hint: "Nombre unique, ex: 3, 4, 5..."
+              - label: "Titre de l'article"
+                name: "title"
+                widget: "string"
+              - label: "Slug (URL de l'article)"
+                name: "slug"
+                widget: "string"
+                hint: "Sans espaces ni accents. Ex: entretenir-pelouse-ete"
+                pattern: ['^[a-z0-9-]+$', "Uniquement des lettres minuscules, chiffres et tirets"]
+              - label: "Date de publication"
+                name: "date"
+                widget: "datetime"
+                format: "YYYY-MM-DD"
+                time_format: false
+              - label: "Catégorie"
+                name: "category"
+                widget: "select"
+                options: ["Entretien", "Création", "Élagage", "Conseils"]
+              - label: "Image principale"
+                name: "image"
+                widget: "image"
+                required: false
+                default: "/images/EasyGarden_Tonte.webp"
+              - label: "Résumé (affiché dans la liste)"
+                name: "excerpt"
+                widget: "text"
+                hint: "2-3 phrases max"
+              - label: "Contenu de l'article"
+                name: "content"
+                widget: "markdown"
+              - label: "Publié"
+                name: "published"
+                widget: "boolean"
+                default: true
+              - label: "Auteur"
+                name: "author"
+                widget: "string"
+                default: "Easy Garden"

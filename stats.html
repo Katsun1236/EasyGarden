@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Statistiques — Easy Garden</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { botanic: { light: '#e8ece5', DEFAULT: '#728a64', dark: '#3a4f2f', deep: '#1e2b17' } },
+                    fontFamily: { sans: ['Lato', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+        body { background: #f5f5f4; }
+        .stat-num { font-size: 2.5rem; font-weight: 700; font-family: 'Playfair Display', serif; color: #1e2b17; line-height: 1; }
+        #plausible-frame { width: 100%; height: 80vh; border: none; border-radius: 0.5rem; }
+        .setup-step { counter-increment: step; }
+        .setup-step::before { content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: #728a64; color: white; font-size: 0.75rem; font-weight: 700; margin-right: 0.75rem; flex-shrink: 0; }
+        ol { counter-reset: step; }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div id="auth-loading" class="fixed inset-0 bg-stone-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <img src="/images/easygarden_logo.webp" alt="Easy Garden" class="h-16 w-auto mx-auto mb-6 brightness-0 invert" width="64" height="64">
+            <i class="fa-solid fa-spinner fa-spin text-botanic text-2xl" aria-hidden="true"></i>
+            <p class="text-stone-400 text-sm mt-3 font-light">Vérification de l'accès...</p>
+        </div>
+    </div>
+
+    <div id="auth-wall" class="hidden fixed inset-0 bg-stone-900 flex items-center justify-center z-50">
+        <div class="text-center max-w-sm px-6">
+            <img src="/images/easygarden_logo.webp" alt="Easy Garden" class="h-16 w-auto mx-auto mb-8 brightness-0 invert" width="64" height="64">
+            <h1 class="font-serif text-3xl text-white mb-3">Accès restreint</h1>
+            <p class="text-stone-400 font-light mb-8">Cette page est réservée aux administrateurs Easy Garden.</p>
+            <button id="login-btn" class="w-full bg-botanic text-white py-4 px-8 uppercase tracking-widest text-sm font-bold hover:bg-botanic-dark transition-colors">
+                Se connecter
+            </button>
+            <p class="text-stone-600 text-xs mt-6 font-light">Accès via Netlify Identity</p>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden min-h-screen">
+
+        <header class="bg-botanic-deep border-b border-botanic-dark/30 px-6 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="/" class="flex items-center gap-3">
+                        <img src="/images/easygarden_logo.webp" alt="Easy Garden" class="h-10 w-auto brightness-0 invert" width="40" height="40">
+                        <span class="font-serif text-white text-lg">Easy Garden</span>
+                    </a>
+                    <span class="text-botanic-light text-sm font-light opacity-60">/</span>
+                    <span class="text-botanic-light text-sm font-light">Statistiques</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="/admin/" class="text-botanic-light text-sm hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-xs" aria-hidden="true"></i> CMS Blog
+                    </a>
+                    <button id="logout-btn" class="text-stone-400 hover:text-white text-sm flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-right-from-bracket text-xs" aria-hidden="true"></i> Déconnexion
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-6 py-10">
+
+            <div class="mb-10">
+                <h1 class="font-serif text-3xl text-stone-900 mb-1">Tableau de bord</h1>
+                <p class="text-stone-500 font-light text-sm">Statistiques de <strong class="text-stone-700">easy-garden.netlify.app</strong></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div id="blog-stats-card" class="stat-card rounded-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs uppercase tracking-widest text-stone-400 font-bold">Articles publiés</h3>
+                        <span class="w-8 h-8 bg-botanic-light rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-newspaper text-botanic text-xs" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <p id="post-count" class="stat-num">—</p>
+                    <p class="text-stone-400 text-xs mt-2 font-light">Dans le blog</p>
+                </div>
+                <div class="stat-card rounded-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs uppercase tracking-widest text-stone-400 font-bold">Pages du site</h3>
+                        <span class="w-8 h-8 bg-botanic-light rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-globe text-botanic text-xs" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <p class="stat-num">6</p>
+                    <p class="text-stone-400 text-xs mt-2 font-light">Pages indexées</p>
+                </div>
+                <div class="stat-card rounded-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs uppercase tracking-widest text-stone-400 font-bold">Dernier article</h3>
+                        <span class="w-8 h-8 bg-botanic-light rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-calendar text-botanic text-xs" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <p id="last-post-date" class="stat-num text-2xl">—</p>
+                    <p id="last-post-title" class="text-stone-400 text-xs mt-2 font-light truncate">Aucun article</p>
+                </div>
+            </div>
+
+            <div id="plausible-section">
+                <div id="plausible-configured" class="hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="font-serif text-2xl text-stone-900">Statistiques de trafic</h2>
+                        <a id="plausible-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-botanic-dark uppercase tracking-widest border-b border-botanic-dark hover:text-botanic transition-colors">
+                            Voir sur Plausible <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-sm border border-stone-200 overflow-hidden shadow-sm">
+                        <iframe id="plausible-frame" title="Statistiques Plausible Analytics" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <div id="plausible-setup" class="bg-white border border-stone-200 rounded-sm p-8 md:p-12">
+                    <div class="max-w-2xl">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-amber-50 border border-amber-200 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-chart-line text-amber-500" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-serif text-2xl text-stone-900">Configurer Plausible Analytics</h2>
+                                <p class="text-stone-500 text-sm font-light">Respectueux RGPD — Gratuit jusqu'à 10 000 visiteurs/mois</p>
+                            </div>
+                        </div>
+
+                        <p class="text-stone-600 font-light mb-8 leading-relaxed">
+                            Plausible est la meilleure alternative à Google Analytics pour un site belge : conforme RGPD (pas de cookies), simple à utiliser et intégrable directement ici.
+                        </p>
+
+                        <ol class="space-y-4 mb-10">
+                            <li class="setup-step flex items-start text-stone-700 font-light">
+                                <div class="mt-px">
+                                    Créez un compte sur <a href="https://plausible.io" target="_blank" rel="noopener noreferrer" class="text-botanic-dark underline hover:text-botanic">plausible.io</a> (essai 30 jours gratuit)
+                                </div>
+                            </li>
+                            <li class="setup-step flex items-start text-stone-700 font-light">
+                                <div class="mt-px">Ajoutez votre site : <code class="bg-stone-100 px-2 py-0.5 rounded text-sm font-mono text-stone-800">easy-garden.netlify.app</code></div>
+                            </li>
+                            <li class="setup-step flex items-start text-stone-700 font-light">
+                                <div class="mt-px">
+                                    Dans Plausible, allez dans <strong>Settings → Visibility</strong> et activez le <strong>lien de partage public</strong>. Copiez l'URL générée (ex: <code class="bg-stone-100 px-2 py-0.5 rounded text-sm font-mono">https://plausible.io/share/easy-garden.netlify.app?auth=XXXXX</code>).
+                                </div>
+                            </li>
+                            <li class="setup-step flex items-start text-stone-700 font-light">
+                                <div class="mt-px">Collez l'URL ci-dessous et cliquez sur Enregistrer :</div>
+                            </li>
+                        </ol>
+
+                        <div class="flex gap-3">
+                            <input type="url" id="plausible-url-input" placeholder="https://plausible.io/share/easy-garden.netlify.app?auth=..." class="flex-1 border border-stone-300 rounded-md py-3 px-4 text-sm focus:outline-none focus:border-botanic focus:ring-1 focus:ring-botanic transition-all">
+                            <button id="save-plausible" class="bg-botanic-dark text-white px-6 py-3 uppercase tracking-widest text-xs font-bold hover:bg-botanic transition-colors rounded-md whitespace-nowrap">
+                                Enregistrer
+                            </button>
+                        </div>
+                        <p class="text-stone-400 text-xs mt-3 font-light">L'URL est sauvegardée localement dans votre navigateur.</p>
+
+                        <div class="mt-10 pt-8 border-t border-stone-100">
+                            <p class="text-stone-500 text-sm font-light mb-4">
+                                <strong class="text-stone-700">Important :</strong> pour que Plausible collecte des données, ajoutez ce script dans le <code class="bg-stone-100 px-1 rounded font-mono">&lt;head&gt;</code> de toutes vos pages HTML :
+                            </p>
+                            <pre class="bg-stone-900 text-botanic-light p-4 rounded-sm text-sm overflow-x-auto font-mono"><code>&lt;script defer data-domain="easy-garden.netlify.app"
+  src="https://plausible.io/js/script.js"&gt;&lt;/script&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10">
+                <h2 class="font-serif text-2xl text-stone-900 mb-6">Gestion du contenu</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <a href="/admin/" class="stat-card rounded-sm flex items-center gap-5 hover:border-botanic group">
+                        <div class="w-14 h-14 bg-botanic-light rounded-full flex items-center justify-center group-hover:bg-botanic group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-pen-to-square text-botanic group-hover:text-white text-lg" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-900 mb-1">CMS Blog</h3>
+                            <p class="text-stone-500 text-sm font-light">Créer, modifier et publier des articles</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right ml-auto text-stone-300 group-hover:text-botanic transition-colors" aria-hidden="true"></i>
+                    </a>
+                    <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" class="stat-card rounded-sm flex items-center gap-5 hover:border-botanic group">
+                        <div class="w-14 h-14 bg-botanic-light rounded-full flex items-center justify-center group-hover:bg-botanic group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-sitemap text-botanic group-hover:text-white text-lg" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-900 mb-1">Sitemap XML</h3>
+                            <p class="text-stone-500 text-sm font-light">Vérifier les pages indexées par Google</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right ml-auto text-stone-300 group-hover:text-botanic transition-colors" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const identity = window.netlifyIdentity;
+
+        function showDashboard(user) {
+            document.getElementById('auth-loading').classList.add('hidden');
+            document.getElementById('auth-wall').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            loadDashboardData();
+        }
+
+        function showAuthWall() {
+            document.getElementById('auth-loading').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('auth-wall').classList.remove('hidden');
+        }
+
+        identity.on('init', user => {
+            if (user) { showDashboard(user); } else { showAuthWall(); }
+        });
+        identity.on('login', user => { showDashboard(user); });
+        identity.on('logout', () => { showAuthWall(); });
+
+        document.getElementById('login-btn').addEventListener('click', () => identity.open());
+        document.getElementById('logout-btn').addEventListener('click', () => identity.logout());
+
+        function loadDashboardData() {
+            fetch('/data/posts.json')
+                .then(r => r.json())
+                .then(data => {
+                    const published = data.posts.filter(p => p.published);
+                    document.getElementById('post-count').textContent = published.length;
+                    if (published.length > 0) {
+                        const sorted = [...published].sort((a, b) => new Date(b.date) - new Date(a.date));
+                        const last = sorted[0];
+                        document.getElementById('last-post-date').textContent = new Date(last.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' });
+                        document.getElementById('last-post-title').textContent = last.title;
+                    }
+                })
+                .catch(() => {});
+
+            const savedUrl = localStorage.getItem('eg_plausible_url');
+            if (savedUrl) {
+                const embedUrl = savedUrl.replace('plausible.io/share/', 'plausible.io/share/') + (savedUrl.includes('?') ? '&' : '?') + 'embed=true&theme=light';
+                document.getElementById('plausible-frame').src = embedUrl;
+                document.getElementById('plausible-link').href = savedUrl;
+                document.getElementById('plausible-configured').classList.remove('hidden');
+                document.getElementById('plausible-setup').classList.add('hidden');
+            }
+        }
+
+        document.getElementById('save-plausible').addEventListener('click', () => {
+            const url = document.getElementById('plausible-url-input').value.trim();
+            if (!url || !url.startsWith('https://plausible.io/')) {
+                alert('Veuillez entrer une URL Plausible valide.');
+                return;
+            }
+            localStorage.setItem('eg_plausible_url', url);
+            loadDashboardData();
+        });
+
+        document.getElementById('plausible-url-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('save-plausible').click();
+        });
+    </script>
+</body>
+</html>

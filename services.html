@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Services | Jardinier Paysagiste Hainaut — Easy Garden</title>
+    <meta name="description" content="Découvrez tous les services Easy Garden : création de jardin, entretien pelouse, tonte, taille de haie et élagage dans le Hainaut. Devis gratuit.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://easy-garden.netlify.app/services.html">
+    <meta property="og:title" content="Nos Services Paysagers | Easy Garden Hainaut">
+    <meta property="og:description" content="Création, entretien et élagage dans le Hainaut. Artisan paysagiste avec devis gratuit.">
+    <meta property="og:url" content="https://easy-garden.netlify.app/services.html">
+    <meta property="og:image" content="https://easy-garden.netlify.app/images/easygarden_logo.webp">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://easy-garden.netlify.app/"},
+        {"@type": "ListItem", "position": 2, "name": "Services", "item": "https://easy-garden.netlify.app/services.html"}
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        botanic: { light: '#e8ece5', DEFAULT: '#728a64', dark: '#3a4f2f', deep: '#1e2b17' }
+                    },
+                    fontFamily: {
+                        sans: ['Lato', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="font-sans text-stone-800 bg-stone-50 antialiased selection:bg-botanic selection:text-white">
+
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4 nav-scrolled">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-10 md:h-12 w-auto object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300" width="48" height="48">
+                    <div class="flex flex-col">
+                        <span class="logo-text font-serif text-xl md:text-2xl font-bold tracking-wide text-stone-900">Easy Garden</span>
+                        <span class="logo-text text-[0.6rem] uppercase tracking-[0.2em] opacity-80 text-stone-700">Artisan Paysagiste</span>
+                    </div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors duration-300">Accueil</a>
+                    <a href="/services.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors duration-300 page-active">Services</a>
+                    <a href="/realisations.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors duration-300">Réalisations</a>
+                    <a href="/blog/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors duration-300">Blog</a>
+                    <a href="/contact.html" class="nav-btn glow-btn px-6 py-3 bg-botanic-dark text-white text-sm uppercase tracking-widest font-bold hover:bg-botanic transition-all duration-300 shadow-lg">Devis Gratuit</a>
+                </div>
+                <button id="mobile-menu-btn" class="burger-btn lg:hidden text-2xl text-stone-800 focus:outline-none" aria-label="Ouvrir le menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-stone-900 z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors" aria-label="Fermer le menu">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex flex-col items-center space-y-8 text-white">
+                <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-16 w-auto object-contain mb-4 brightness-0 invert" width="64" height="64">
+                <a href="/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Accueil</a>
+                <a href="/services.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Services</a>
+                <a href="/realisations.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Réalisations</a>
+                <a href="/blog/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Blog</a>
+                <a href="/contact.html" class="mobile-link px-8 py-4 bg-botanic text-white uppercase tracking-widest text-sm font-bold mt-4 hover:bg-white hover:text-stone-900 transition-colors">Devis Gratuit</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero pt-36 pb-20 px-6">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <nav class="breadcrumb mb-6" aria-label="Fil d'Ariane">
+                <a href="/">Accueil</a>
+                <span aria-hidden="true">/</span>
+                <span class="current">Services</span>
+            </nav>
+            <span class="uppercase tracking-[0.2em] text-sm text-botanic font-bold block mb-4">Nos Prestations</span>
+            <h1 class="font-serif text-5xl md:text-7xl text-white leading-tight">Expertise <br><span class="italic font-light text-botanic-light">Paysagère</span></h1>
+            <p class="text-white/70 mt-6 text-lg font-light max-w-xl">
+                De la conception à l'entretien, nous couvrons tous vos besoins en espaces verts dans la province du Hainaut.
+            </p>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+
+            <article id="creation" class="flex flex-col md:flex-row items-center gap-12 lg:gap-20 mb-32 reveal">
+                <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl">
+                    <img src="/images/EasyGarden_Tonte.webp" alt="Création et aménagement de jardin sur mesure dans le Hainaut" class="w-full h-[55vh] object-cover" width="800" height="600" loading="lazy">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <span class="text-7xl font-serif text-stone-100 block mb-2 -ml-4">01</span>
+                    <h2 class="text-3xl md:text-4xl font-serif text-stone-900 mb-4 -mt-10 relative z-10">Création & <span class="italic text-botanic-dark">Aménagement</span></h2>
+                    <div class="w-10 h-px bg-botanic mb-6"></div>
+                    <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
+                        Votre jardin commence par une idée. Nous la concrétisons avec précision. De l'étude de sol à la sélection des végétaux, chaque étape est pensée pour créer un espace cohérent, durable et adapté à votre mode de vie.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-seedling text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Plantations sur-mesure</strong>
+                                <span class="text-stone-500 text-sm font-light">Choix des végétaux adaptés à votre sol, votre exposition et vos préférences esthétiques.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-layer-group text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Engazonnement professionnel</strong>
+                                <span class="text-stone-500 text-sm font-light">Pose de pelouse en rouleaux ou semis, avec préparation du sol et fertilisation de départ.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-mountain-sun text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Aménagement paysager global</strong>
+                                <span class="text-stone-500 text-sm font-light">Massifs, bordures, terrasses, allées : une vision d'ensemble pour un résultat harmonieux.</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors duration-300">
+                        Demander un devis
+                    </a>
+                </div>
+            </article>
+
+            <article id="entretien" class="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20 mb-32 reveal">
+                <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl">
+                    <img src="/images/EasyGarden_Tonte.webp" alt="Entretien de jardin et tonte de pelouse dans le Hainaut" class="w-full h-[55vh] object-cover" width="800" height="600" loading="lazy">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <span class="text-7xl font-serif text-stone-100 block mb-2 -ml-4">02</span>
+                    <h2 class="text-3xl md:text-4xl font-serif text-stone-900 mb-4 -mt-10 relative z-10">Entretien & <span class="italic text-botanic-dark">Sublimation</span></h2>
+                    <div class="w-10 h-px bg-botanic mb-6"></div>
+                    <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
+                        Un beau jardin ne s'improvise pas. Il se cultive, semaine après semaine, avec méthode et passion. Nous assurons un suivi rigoureux pour que votre espace extérieur soit toujours impeccable.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-scissors text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Tonte & soin du gazon</strong>
+                                <span class="text-stone-500 text-sm font-light">Tonte régulière avec finition soignée des bordures et évacuation des déchets.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-leaf text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Désherbage & fertilisation</strong>
+                                <span class="text-stone-500 text-sm font-light">Traitement naturel des mauvaises herbes et apport nutritif adapté à la saison.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-rotate text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Scarification & regarnissage</strong>
+                                <span class="text-stone-500 text-sm font-light">Aération mécanique du sol et comblement des zones dégarnis pour une pelouse dense.</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors duration-300">
+                        Demander un devis
+                    </a>
+                </div>
+            </article>
+
+            <article id="elagage" class="flex flex-col md:flex-row items-center gap-12 lg:gap-20 reveal">
+                <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl">
+                    <img src="/images/EasyGarden_Tonte.webp" alt="Élagage d'arbre et taille de haie professionnelle dans le Hainaut" class="w-full h-[55vh] object-cover" width="800" height="600" loading="lazy">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <span class="text-7xl font-serif text-stone-100 block mb-2 -ml-4">03</span>
+                    <h2 class="text-3xl md:text-4xl font-serif text-stone-900 mb-4 -mt-10 relative z-10">Taille & <span class="italic text-botanic-dark">Élagage</span></h2>
+                    <div class="w-10 h-px bg-botanic mb-6"></div>
+                    <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
+                        Maîtriser les volumes tout en respectant la physiologie de la plante est un art. Nous intervenons en respectant scrupuleusement la réglementation wallonne sur la taille des haies (interdite du 1er avril au 31 juillet).
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-tree text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Taille architecturée</strong>
+                                <span class="text-stone-500 text-sm font-light">Haies, arbustes et topiaires taillés avec précision pour des volumes nets et élégants.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-stone-50 rounded">
+                            <i class="fa-solid fa-hard-hat text-botanic mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong class="text-stone-900 block text-sm uppercase tracking-wider mb-1">Élagage de sécurité</strong>
+                                <span class="text-stone-500 text-sm font-light">Intervention sur grands arbres avec équipement professionnel et évacuation des rémanents.</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors duration-300">
+                        Demander un devis
+                    </a>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-stone-100 border-t border-stone-200">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <span class="uppercase tracking-[0.2em] text-sm text-botanic-dark font-bold">Questions fréquentes</span>
+                <h2 class="font-serif text-4xl mt-4 text-stone-900">Questions sur nos services</h2>
+                <div class="w-16 h-px bg-botanic mx-auto mt-6"></div>
+            </div>
+            <div class="reveal">
+                <div class="faq-item">
+                    <button class="faq-question">Proposez-vous des contrats d'entretien annuels ?<i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i></button>
+                    <div class="faq-answer">Oui, nous proposons des formules d'entretien régulier (mensuel, bimensuel) adaptées à vos besoins et à la superficie de votre jardin. Contactez-nous pour établir un programme personnalisé.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Évacuez-vous les déchets végétaux après vos interventions ?<i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i></button>
+                    <div class="faq-answer">Absolument. L'évacuation complète de tous les déchets végétaux (tontes, branchages, rémanents) est incluse dans chaque prestation. Votre jardin est impeccable en fin d'intervention.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Quand peut-on tailler les haies en Wallonie ?<i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i></button>
+                    <div class="faq-answer">En Wallonie, la taille des haies est réglementairement interdite entre le 1er avril et le 31 juillet pour protéger la nidification des oiseaux. Nous intervenons de septembre à mars pour un résultat optimal.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Avez-vous une assurance pour vos interventions ?<i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i></button>
+                    <div class="faq-answer">Oui, Easy Garden est couvert par une assurance professionnelle en responsabilité civile pour toutes ses interventions, incluant l'élagage et les travaux à risque.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-botanic-deep">
+        <div class="max-w-4xl mx-auto px-6 text-center reveal">
+            <h2 class="font-serif text-3xl md:text-5xl text-white mb-6">Prêt à transformer votre jardin ?</h2>
+            <p class="text-botanic-light text-lg mb-10 font-light">Déplacement gratuit dans tout le Hainaut. Réponse sous 48h.</p>
+            <a href="/contact.html" class="glow-btn inline-block bg-white text-botanic-deep px-10 py-4 uppercase tracking-widest text-sm font-bold hover:bg-stone-200 transition-colors shadow-2xl">
+                Obtenir mon devis gratuit
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-stone-900 text-stone-400 pt-16 pb-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-12 w-auto brightness-0 invert opacity-90" width="48" height="48" loading="lazy">
+                        <span class="font-serif text-2xl text-white">Easy Garden</span>
+                    </div>
+                    <p class="text-sm font-light leading-relaxed max-w-sm">Paysagiste professionnel dans tout le Hainaut. Devis 100% gratuits.</p>
+                </div>
+                <div>
+                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Contact</h3>
+                    <ul class="space-y-4 text-sm font-light">
+                        <li><a href="tel:+32493824581" class="hover:text-botanic transition-colors flex items-center gap-3"><i class="fa-solid fa-phone w-4" aria-hidden="true"></i> 0493 82 45 81</a></li>
+                        <li><a href="mailto:easygarden.devis@gmail.com" class="hover:text-botanic transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope w-4" aria-hidden="true"></i> easygarden.devis@gmail.com</a></li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot w-4" aria-hidden="true"></i> Province du Hainaut</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Navigation</h3>
+                    <ul class="space-y-3 text-sm font-light">
+                        <li><a href="/" class="hover:text-botanic transition-colors">Accueil</a></li>
+                        <li><a href="/services.html" class="hover:text-botanic transition-colors">Services</a></li>
+                        <li><a href="/realisations.html" class="hover:text-botanic transition-colors">Réalisations</a></li>
+                        <li><a href="/blog/" class="hover:text-botanic transition-colors">Blog</a></li>
+                        <li><a href="/contact.html" class="hover:text-botanic transition-colors">Contact & Devis</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light tracking-wider uppercase gap-4 text-stone-500">
+                <p>&copy; 2026 Easy Garden. Artisan paysagiste. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

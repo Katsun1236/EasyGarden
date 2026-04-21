@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Réalisations | Portfolio Paysagiste Hainaut — Easy Garden</title>
+    <meta name="description" content="Découvrez les réalisations d'Easy Garden : jardins créés, pelouses entretenues et haies taillées dans le Hainaut. Portfolio photo de votre paysagiste.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://easy-garden.netlify.app/realisations.html">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://easy-garden.netlify.app/"},
+        {"@type": "ListItem", "position": 2, "name": "Réalisations", "item": "https://easy-garden.netlify.app/realisations.html"}
+      ]
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { botanic: { light: '#e8ece5', DEFAULT: '#728a64', dark: '#3a4f2f', deep: '#1e2b17' } },
+                    fontFamily: { sans: ['Lato', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .gallery-item { transition: opacity 0.4s, transform 0.4s; }
+        .gallery-item.hidden-item { opacity: 0; pointer-events: none; position: absolute; }
+        .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000; align-items: center; justify-content: center; }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
+    </style>
+</head>
+<body class="font-sans text-stone-800 bg-stone-50 antialiased selection:bg-botanic selection:text-white">
+
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4 nav-scrolled">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300" width="48" height="48">
+                    <div class="flex flex-col">
+                        <span class="font-serif text-xl md:text-2xl font-bold tracking-wide text-stone-900">Easy Garden</span>
+                        <span class="text-[0.6rem] uppercase tracking-[0.2em] opacity-80 text-stone-700">Artisan Paysagiste</span>
+                    </div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Accueil</a>
+                    <a href="/services.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Services</a>
+                    <a href="/realisations.html" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors page-active">Réalisations</a>
+                    <a href="/blog/" class="nav-link text-sm uppercase tracking-widest text-stone-700 hover:text-botanic transition-colors">Blog</a>
+                    <a href="/contact.html" class="glow-btn px-6 py-3 bg-botanic-dark text-white text-sm uppercase tracking-widest font-bold hover:bg-botanic transition-all shadow-lg">Devis Gratuit</a>
+                </div>
+                <button id="mobile-menu-btn" class="burger-btn lg:hidden text-2xl text-stone-800 focus:outline-none" aria-label="Ouvrir le menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-stone-900 z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors" aria-label="Fermer le menu"><i class="fa-solid fa-times"></i></button>
+            <div class="flex flex-col items-center space-y-8 text-white">
+                <img src="/images/easygarden_logo.webp" alt="" class="h-16 w-auto brightness-0 invert mb-4" width="64" height="64">
+                <a href="/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Accueil</a>
+                <a href="/services.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Services</a>
+                <a href="/realisations.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Réalisations</a>
+                <a href="/blog/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Blog</a>
+                <a href="/contact.html" class="mobile-link px-8 py-4 bg-botanic text-white uppercase tracking-widest text-sm font-bold mt-4 hover:bg-white hover:text-stone-900 transition-colors">Devis Gratuit</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero pt-36 pb-20 px-6">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <nav class="breadcrumb mb-6" aria-label="Fil d'Ariane">
+                <a href="/">Accueil</a><span>/</span><span class="current">Réalisations</span>
+            </nav>
+            <span class="uppercase tracking-[0.2em] text-sm text-botanic font-bold block mb-4">Portfolio</span>
+            <h1 class="font-serif text-5xl md:text-7xl text-white leading-tight">Nos <br><span class="italic font-light text-botanic-light">Réalisations</span></h1>
+            <p class="text-white/70 mt-6 text-lg font-light max-w-xl">Chaque jardin raconte une histoire. Découvrez nos créations et réalisations dans tout le Hainaut.</p>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-stone-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap gap-3 mb-16 reveal" role="group" aria-label="Filtrer les réalisations">
+                <button class="filter-btn active" data-filter="all">Tout voir</button>
+                <button class="filter-btn" data-filter="creation">Création</button>
+                <button class="filter-btn" data-filter="entretien">Entretien</button>
+                <button class="filter-btn" data-filter="elagage">Élagage</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative" id="gallery">
+
+                <div class="gallery-item reveal" data-category="creation">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Création d\\'un jardin avec pelouse et massifs fleuris, Montigny-le-Tilleul')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Création d'un jardin avec pelouse et massifs fleuris à Montigny-le-Tilleul" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Création</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Aménagement complet avec pelouse et massifs, Montigny-le-Tilleul</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal reveal-delay-1 md:mt-12" data-category="entretien">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Entretien régulier pelouse et bordures, Charleroi')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Entretien régulier de pelouse et bordures à Charleroi" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Entretien</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Entretien régulier pelouse et bordures, Charleroi</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal reveal-delay-2" data-category="elagage">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Taille architecturée de haie de charme, Thuin')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Taille architecturée de haie de charme à Thuin" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Élagage</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Taille architecturée de haie de charme, Thuin</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-category="creation">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Engazonnement et création de massifs, Binche')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Engazonnement professionnel et création de massifs à Binche" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Création</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Engazonnement et création de massifs, Binche</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal reveal-delay-1" data-category="entretien">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Tonte et scarification de pelouse, La Louvière')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Tonte et scarification de pelouse à La Louvière" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Entretien</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Tonte et scarification de pelouse, La Louvière</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal reveal-delay-2 md:mt-12" data-category="elagage">
+                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Élagage de grands arbres en sécurité, Mons')">
+                        <img src="/images/EasyGarden_Tonte.webp" alt="Élagage de grands arbres en sécurité à Mons" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
+                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 px-1">
+                        <span class="category-badge">Élagage</span>
+                        <p class="text-sm text-stone-600 font-light mt-1">Élagage de grands arbres en sécurité, Mons</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16 reveal">
+                <p class="text-stone-500 font-light mb-6">Vous avez un projet similaire en tête ?</p>
+                <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-10 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors shadow-lg">
+                    Demander un devis gratuit
+                </a>
+            </div>
+
+            <div class="mt-16 p-8 bg-white border border-stone-200 text-center reveal">
+                <p class="text-stone-600 font-light mb-4">Retrouvez encore plus de réalisations sur notre page Facebook</p>
+                <a href="https://www.facebook.com/share/18K4bjzwpv/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-[#1877F2] font-bold hover:underline">
+                    <i class="fa-brands fa-facebook text-xl" aria-hidden="true"></i> Easy Garden sur Facebook
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement photo">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl hover:text-botanic transition-colors focus:outline-none" aria-label="Fermer"><i class="fa-solid fa-times"></i></button>
+        <img id="lightbox-img" src="" alt="" class="rounded-sm shadow-2xl">
+    </div>
+
+    <footer class="bg-stone-900 text-stone-400 pt-16 pb-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light tracking-wider uppercase gap-4 text-stone-500">
+                <p>&copy; 2026 Easy Garden. Artisan paysagiste. Tous droits réservés.</p>
+                <div class="flex gap-6">
+                    <a href="/" class="hover:text-botanic transition-colors">Accueil</a>
+                    <a href="/services.html" class="hover:text-botanic transition-colors">Services</a>
+                    <a href="/contact.html" class="hover:text-botanic transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.opacity = '1';
+                        item.style.pointerEvents = 'auto';
+                        item.style.position = 'relative';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.pointerEvents = 'none';
+                        item.style.position = 'absolute';
+                    }
+                });
+            });
+        });
+
+        function openLightbox(src, alt) {
+            const lb = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-img').alt = alt;
+            lb.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('lightbox').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closeLightbox();
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    </script>
+</body>
+</html>

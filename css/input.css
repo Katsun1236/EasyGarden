@@ -28,3 +28,22 @@
     0% { transform: translateX(-100%) rotate(45deg); }
     100% { transform: translateX(100%) rotate(45deg); }
 }
+/* Styles pour la FAQ */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px; /* Ou assez pour le contenu */
+    padding-bottom: 1.5rem;
+}
+
+.faq-item i {
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active i {
+    transform: rotate(180deg);
+}

@@ -2,23 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Styles personnalisés Easy Garden */
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 .nav-scrolled {
     background-color: rgba(255, 255, 255, 0.98);
     box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
 }
 
-.glow-btn { position: relative; overflow: hidden; }
+.glow-btn { 
+    position: relative; 
+    overflow: hidden; 
+}
+
 .glow-btn:hover::after {
     animation: shine 1.5s infinite;
     opacity: 1;
@@ -28,7 +21,18 @@
     0% { transform: translateX(-100%) rotate(45deg); }
     100% { transform: translateX(100%) rotate(45deg); }
 }
-/* Styles pour la FAQ */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .faq-answer {
     max-height: 0;
     overflow: hidden;
@@ -36,7 +40,7 @@
 }
 
 .faq-item.active .faq-answer {
-    max-height: 500px; /* Ou assez pour le contenu */
+    max-height: 500px; 
     padding-bottom: 1.5rem;
 }
 

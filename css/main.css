@@ -1865,19 +1865,6 @@ video {
   transition-duration: 500ms;
 }
 
-/* Styles personnalisés Easy Garden */
-
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .nav-scrolled {
   background-color: rgba(255, 255, 255, 0.98);
   box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
@@ -1903,7 +1890,16 @@ video {
   }
 }
 
-/* Styles pour la FAQ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .faq-answer {
   max-height: 0;
@@ -1913,7 +1909,6 @@ video {
 
 .faq-item.active .faq-answer {
   max-height: 500px;
-  /* Ou assez pour le contenu */
   padding-bottom: 1.5rem;
 }
 

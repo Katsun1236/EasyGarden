@@ -23,18 +23,6 @@
       "id": "2",
       "image": "/images/EasyGarden_Tonte.webp",
       "category": "Élagage"
-    },
-    {
-      "excerpt": "il faut des idées pour ce test",
-      "author": "Basti le brave",
-      "slug": "bon-plan-de-basti",
-      "published": true,
-      "date": "2026-04-21",
-      "title": "Les bon plan de basti le brave",
-      "content": "heyyyyyyyy",
-      "id": "3",
-      "image": "/images/blog/tim-cooper-xfqguwevmvs-unsplash.jpg",
-      "category": "Conseils"
     }
   ]
 }

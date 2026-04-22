@@ -152,17 +152,17 @@ fetch('/data/posts.json')
         document.getElementById('og-image').content = post.image;
         
         const canonical = document.getElementById('page-canonical');
-        if (canonical) canonical.href = `https://easy-garden.netlify.app/blog/${post.slug}`;
+        if (canonical) canonical.href = `https://easy-garden.eublog/${post.slug}`;
         
         // Mettre à jour hreflang
         document.querySelectorAll('link[hreflang]').forEach(el => {
-            el.href = `https://easy-garden.netlify.app/blog/${post.slug}`;
+            el.href = `https://easy-garden.eu/blog/${post.slug}`;
         });
         
         // Mettre à jour og:url
         document.getElementById('og-image').content = post.image;
         if (document.querySelector('meta[property="og:url"]')) {
-            document.querySelector('meta[property="og:url"]').content = `https://easy-garden.netlify.app/blog/${post.slug}`;
+            document.querySelector('meta[property="og:url"]').content = `https://easy-garden.eu/blog/${post.slug}`;
         }
 
         // Remplir les éléments du DOM
@@ -228,7 +228,7 @@ fetch('/data/posts.json')
                 "name": "Easy Garden",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://easy-garden.netlify.app/images/easygarden_logo.webp"
+                    "url": "https://easy-garden.eu/images/easygarden_logo.webp"
                 }
             }
         };

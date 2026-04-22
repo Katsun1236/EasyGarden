@@ -4,4 +4,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /stats.html
  
-Sitemap: https://easy-garden.netlify.app/sitemap.xml
+Sitemap: https://easy-garden.eu/sitemap.xml

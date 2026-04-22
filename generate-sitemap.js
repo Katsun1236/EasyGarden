@@ -3,7 +3,7 @@ const fs = require('fs');
 // 1. Charger les données du blog
 const postsData = JSON.parse(fs.readFileSync('./data/posts.json', 'utf8'));
 
-const baseUrl = 'https://easy-garden.eu/';
+const baseUrl = 'https://easy.garden.eu/';
 const date = new Date().toISOString().split('T')[0];
 
 // 2. Générer le contenu du sitemap

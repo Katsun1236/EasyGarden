@@ -1,5 +1,5 @@
 // js/easter-egg/engine.js
-// Gère la physique (collisions robustes), les entités, le Boss, les coffres et le rendu Canvas.
+// Le moteur physique. Gère le tracteur, la boue, le vent, la taupe et les boss.
 
 import { groundY, clouds, stars, levels } from './config.js';
 import { keys } from './input.js';
@@ -23,7 +23,8 @@ let cinematicTimer = 0;
 let cinematicState = '';
 
 const gravity = 0.55;
-const friction = 0.8;
+const defaultFriction = 0.8;
+const mudFriction = 0.95; // Ça glisse !
 
 const player = {
     x: 50, y: 200, width: 24, height: 32,
@@ -97,9 +98,10 @@ function loadLevel(idx) {
     
     gameState = 'playing'; hitStopFrames = 0;
 
-    if (levelData.isBoss && levelData.boss) {
+    if (levelData.boss) {
         levelData.boss.phase = 1; levelData.boss.state = 'classic'; levelData.boss.shield = false;
         levelData.boss.invincible = false; levelData.boss.hasDoneIntro = false;
+        levelData.boss.isActive = false; // Ne s'active que si on rentre dans l'arène
     }
     
     document.getElementById('game-ui-level').innerText = "NIVEAU " + (idx + 1) + " - " + levelData.name;
@@ -157,26 +159,20 @@ function handleFallDeath(title, desc) {
 function update() {
     if (!gameActive) return;
     
-    if (hitStopFrames > 0) {
-        hitStopFrames--; draw(); gameLoop = requestAnimationFrame(update); return;
-    }
+    if (hitStopFrames > 0) { hitStopFrames--; draw(); gameLoop = requestAnimationFrame(update); return; }
     frameCount++;
 
     if (gameState === 'boss_intro') {
         cinematicTimer++;
         if (cinematicState === 'pan') {
-            let targetCamX = levelData.boss.x - canvas.width/2 + levelData.boss.w/2;
-            cameraX += (targetCamX - cameraX) * 0.05;
+            let targetCamX = levelData.boss.x - canvas.width/2 + levelData.boss.w/2; cameraX += (targetCamX - cameraX) * 0.05;
             if (cinematicTimer > 60) { cinematicState = 'roar'; cinematicTimer = 0; }
         } else if (cinematicState === 'roar') {
             if (cinematicTimer === 1) { playSound('boss_hit'); screenShake = 20; }
             if (cinematicTimer > 60) { cinematicState = 'pan_back'; cinematicTimer = 0; }
         } else if (cinematicState === 'pan_back') {
-            let targetCamX = player.x - canvas.width/2 + player.width/2;
-            cameraX += (targetCamX - cameraX) * 0.1;
-            if (Math.abs(cameraX - targetCamX) < 10 || cinematicTimer > 60) {
-                gameState = 'playing'; activateBossUI(levelData.boss);
-            }
+            let targetCamX = player.x - canvas.width/2 + player.width/2; cameraX += (targetCamX - cameraX) * 0.1;
+            if (Math.abs(cameraX - targetCamX) < 10 || cinematicTimer > 60) { gameState = 'playing'; activateBossUI(levelData.boss); }
         }
         draw(); gameLoop = requestAnimationFrame(update); return; 
     }
@@ -184,6 +180,16 @@ function update() {
     if (levelData.isBoss && !levelData.boss.hasDoneIntro && player.x > levelData.boss.arenaMin - 300) {
         gameState = 'boss_intro'; cinematicState = 'pan'; cinematicTimer = 0;
         levelData.boss.hasDoneIntro = true; player.vx = 0; player.vy = 0; 
+    }
+
+    // Gestion du type de friction (Boue ou Normal)
+    let currentFriction = defaultFriction;
+    if (player.grounded) {
+        for(let p of levelData.platforms) {
+            if (p.type === 'mud' && player.x + player.width > p.x && player.x < p.x + p.w && player.y + player.height >= p.y && player.y + player.height <= p.y + 5) {
+                currentFriction = mudFriction; // La Boue glisse !
+            }
+        }
     }
 
     nearNPC = null;
@@ -196,38 +202,27 @@ function update() {
         if (!activeDialog || activeDialog.npc !== nearNPC) activeDialog = { npc: nearNPC, line: 0, showPrompt: true };
         if (keys.interactJustPressed) {
             if(activeDialog.showPrompt) { activeDialog.showPrompt = false; } 
-            else {
-                activeDialog.line++;
-                if (activeDialog.line >= nearNPC.dialogs.length) activeDialog = null;
-            }
+            else { activeDialog.line++; if (activeDialog.line >= nearNPC.dialogs.length) activeDialog = null; }
         }
     } else if (activeDialog && activeDialog.npc.name !== "Coffre") {
         activeDialog = null;
     }
 
-    // Coffres
     for (let c of chests) {
         if (!c.opened && checkCollision(player, c)) {
             if (keys.interactJustPressed) {
-                c.opened = true; playSound('chest');
-                spawnParticles(c.x + 20, c.y + 20, '#fde047', 50);
-                
+                c.opened = true; playSound('chest'); spawnParticles(c.x + 20, c.y + 20, '#fde047', 50);
                 let itemName = c.item === 'walljump' ? "Crampons d'Élagage" : "Sécateur-Dash";
                 let itemDesc = c.item === 'walljump' ? "Maintiens la flèche vers un mur en l'air pour glisser, puis SAUTE !" : "Appuie sur MAJ en plein saut pour foncer et être invincible !";
                 if (c.item === 'walljump') player.hasWallJump = true;
                 if (c.item === 'dash') player.hasDash = true;
-                
-                activeDialog = { 
-                    npc: { x: c.x, y: c.y - 40, w: 0, h: 0, name: "Coffre", dialogs: [`Vous avez obtenu : ${itemName} !`, itemDesc] }, 
-                    line: 0, showPrompt: false 
-                };
+                activeDialog = { npc: { x: c.x, y: c.y - 40, w: 0, h: 0, name: "Coffre", dialogs: [`Vous avez obtenu : ${itemName} !`, itemDesc] }, line: 0, showPrompt: false };
             }
         }
     }
     
     if(activeDialog && activeDialog.npc.name === "Coffre" && keys.interactJustPressed) {
-        activeDialog.line++;
-        if (activeDialog.line >= activeDialog.npc.dialogs.length) activeDialog = null;
+        activeDialog.line++; if (activeDialog.line >= activeDialog.npc.dialogs.length) activeDialog = null;
     }
     keys.interactJustPressed = false; 
 
@@ -236,7 +231,6 @@ function update() {
     if (player.invincibleTimer > 0) player.invincibleTimer--;
     player.squash += (1 - player.squash) * 0.2; player.stretch += (1 - player.stretch) * 0.2;
 
-    // DASH
     if (keys.dashJustPressed && player.hasDash && player.canDash && !player.isDashing) {
         player.isDashing = true; player.dashTimer = 12; player.canDash = false;
         player.dashDir = player.facingRight ? 1 : -1; player.vy = 0;
@@ -247,7 +241,7 @@ function update() {
     if (!player.isDashing) {
         if (keys.left) { player.vx -= 1.0; player.facingRight = false; }
         if (keys.right) { player.vx += 1.0; player.facingRight = true; }
-        player.vx *= friction; player.vy += gravity;
+        player.vx *= currentFriction; player.vy += gravity;
     } else {
         player.vx = player.dashDir * 14; player.dashTimer--; player.vy = 0; 
         if (frameCount % 3 === 0) ghosts.push({ x: player.x, y: player.y, squash: player.squash, stretch: player.stretch, facingRight: player.facingRight, life: 1.0 });
@@ -256,7 +250,14 @@ function update() {
 
     if (player.grounded) { player.jumps = 0; player.canDash = true; }
     
-    // SAUT / DOUBLE SAUT / WALL JUMP
+    // NOUVEAU : COURANTS D'AIR (Vent)
+    for (let w of (levelData.windZones || [])) {
+        if (checkCollision(player, w)) {
+            player.vy -= 1.2; // Antigravité !
+            if (frameCount % 10 === 0) spawnParticles(player.x + player.width/2, player.y + player.height, '#ffffff', 1, 'wind');
+        }
+    }
+
     let touchingWallDir = 0;
     for (let p of levelData.platforms) {
         if (player.vy >= 0 && player.y + player.height > p.y && player.y < p.y + p.h) {
@@ -298,7 +299,6 @@ function update() {
     player.y += player.vy;
     const wasGrounded = player.grounded; player.grounded = false;
 
-    // EAU
     for (let w of (levelData.water || [])) {
         if (player.y + player.height > w.y + 20 && player.x + player.width > w.x && player.x < w.x + w.w) {
             playSound('water'); spawnParticles(player.x+12, w.y+10, '#3b82f6', 30);
@@ -307,7 +307,6 @@ function update() {
     }
     if (player.y > groundY + 200) if(handleFallDeath("Tombé !", "Attention où vous mettez les pieds.")) return;
 
-    // COLLISIONS PLATEFORMES Y
     for (let p of levelData.platforms) {
         if (p.type === 'moving') { p.x += p.vx; if (p.x < p.minX || p.x + p.w > p.maxX) p.vx *= -1; }
         if (p.type === 'fragile' && p.state === 'falling') { p.y += 6; continue; }
@@ -331,10 +330,14 @@ function update() {
 
     if (!wasGrounded && player.grounded) { player.squash = 1.4; player.stretch = 0.6; spawnParticles(player.x + 12, player.y + 32, '#a8a29e', 6); }
 
-    // CAMERA
     let targetCamX = player.x - canvas.width / 2 + player.width / 2;
-    if (levelData.isBoss && levelData.boss && levelData.boss.hp > 0 && gameState !== 'boss_intro') {
-        targetCamX = levelData.boss.arenaMin + (levelData.boss.arenaMax - levelData.boss.arenaMin)/2 - canvas.width/2;
+    if (levelData.boss && levelData.boss.hp > 0 && gameState !== 'boss_intro') {
+        let b = levelData.boss;
+        if (b.isActive && (b.state === 'retreat_1' || b.state === 'retreat_2')) {
+            targetCamX = b.x - canvas.width / 2; targetCamX += (Math.random() - 0.5) * 20; 
+        } else if (b.state === 'shielded' || b.phase >= 4) {
+            targetCamX = 3500 - canvas.width / 2; 
+        }
     }
     if (targetCamX < 0) targetCamX = 0; if (targetCamX > levelData.width - canvas.width) targetCamX = levelData.width - canvas.width;
     cameraX += (targetCamX - cameraX) * 0.08;
@@ -342,10 +345,9 @@ function update() {
     if (screenShake > 0) { ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake); screenShake *= 0.9; }
 
     for (let i = ghosts.length - 1; i >= 0; i--) { ghosts[i].life -= 0.05; if (ghosts[i].life <= 0) ghosts.splice(i, 1); }
-    for (let i = particles.length - 1; i >= 0; i--) { let p = particles[i]; p.x += p.vx; p.y += p.vy; p.vy += gravity * 0.5; p.rot += p.vrot; p.life -= 0.02; if (p.life <= 0) particles.splice(i, 1); }
+    for (let i = particles.length - 1; i >= 0; i--) { let p = particles[i]; p.x += p.vx; p.y += p.vy; if(p.type!=='wind') p.vy += gravity * 0.5; p.rot += p.vrot; p.life -= 0.02; if (p.life <= 0) particles.splice(i, 1); }
     for (let i = floatingTexts.length - 1; i >= 0; i--) { let ft = floatingTexts[i]; ft.y -= 1.0; ft.life -= 0.015; if (ft.life <= 0) floatingTexts.splice(i, 1); }
 
-    // TÂCHES
     for (let t of levelData.tasks) {
         if (!t.done && checkCollision(player, t)) {
             t.done = true; completedTasks++; playSound('hit'); hitStopFrames = 3; 
@@ -355,20 +357,19 @@ function update() {
         }
     }
 
-    // TÉLÉPORTEUR
-    let isTeleporterOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
+    // Le Tracteur de fin de niveau !
+    let isGoalOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
     if (!levelData.isBoss && checkCollision(player, levelData.goal)) {
-        if (isTeleporterOpen) {
+        if (isGoalOpen) {
             if (keys.interact) {
-                playSound('portal');
+                playSound('tractor');
                 if (currentLevelIdx < levels.length - 1) return loadLevel(currentLevelIdx + 1);
             }
         } else if (frameCount % 60 === 0) spawnText(player.x, player.y - 40, "Tâches ou Coffre manquant !", '#ef4444');
     }
 
-    // ITEMS
     for (let i = items.length - 1; i >= 0; i--) {
-        let item = items[i]; item.y = item.baseY + Math.sin(frameCount * 0.1) * 5; // Fix dérive !
+        let item = items[i]; item.y = item.baseY + Math.sin(frameCount * 0.1) * 5;
         if (!item.collected && checkCollision(player, item)) {
             item.collected = true; if (player.hp < player.maxHp) player.hp++;
             spawnParticles(item.x + 10, item.y + 10, '#ef4444', 25); spawnText(item.x, item.y, "+1 PV", '#ef4444');
@@ -376,7 +377,6 @@ function update() {
         }
     }
 
-    // ENNEMIS
     for (let e of enemies) {
         if (e.dead) continue;
         
@@ -386,6 +386,17 @@ function update() {
             e.x += e.vx; e.vy += gravity; e.y += e.vy;
             if (e.y >= e.baseY) { e.y = e.baseY; e.vy = 0; if (Math.random() < 0.02) e.vy = -12; }
             if (e.x < e.minX || e.x + e.w > e.maxX) e.vx *= -1;
+        }
+        else if (e.type === 'mole') {
+            e.timer++;
+            if (e.timer < 120) {
+                if (e.timer > 90 && frameCount % 5 === 0) spawnParticles(e.x + e.w/2, e.y, '#78350f', 3); // La terre tremble
+            } else if (e.timer === 120) {
+                e.vy = -13; playSound('hit'); // Elle jaillit
+            } else {
+                e.y += e.vy; e.vy += gravity;
+                if (e.y >= e.baseY) { e.y = e.baseY; e.vy = 0; e.timer = 0; }
+            }
         }
 
         if (player.invincibleTimer === 0 && checkCollision(player, e)) {
@@ -400,72 +411,95 @@ function update() {
         }
     }
 
-    // BOSS
+    // GESTION DU BOSS (CORRIGÉE : Apparaît bien dans tous les niveaux !)
     if (levelData.boss && !levelData.boss.dead && gameState !== 'boss_intro') {
         let b = levelData.boss;
-        b.timer++;
         
-        if (b.type === 'scarecrow') {
-            b.x += b.vx || 0;
-            if (b.state === 'idle') {
-                if(b.timer > 60) { b.attackType = Math.random() > 0.5 ? 'throw' : 'dash'; b.state = b.attackType; b.timer = 0; }
-            } else if (b.state === 'throw') {
-                if (b.timer === 20 || b.timer === 40) { 
-                    levelData.projectiles.push({ x: b.x+b.w/2, y: b.y + 40, vx: (player.x > b.x ? 6 : -6), vy: 0, size: 20, color: '#9ca3af', type: 'scythe', rot: 0 }); playSound('hit');
-                }
-                if (b.timer > 100) { b.state = 'idle'; b.timer = 0; b.vx = 0; }
-            } else if (b.state === 'dash') {
-                if (b.timer === 20) b.vx = (player.x > b.x ? 12 : -12);
-                if (b.timer > 60 || b.x < b.arenaMin || b.x + b.w > b.arenaMax) { b.state = 'idle'; b.timer = 0; b.vx = 0; }
-            }
-        }
-        else if (b.type === 'toad') {
-            if (b.state === 'idle') {
-                if(b.timer > 90) { b.attackType = Math.random() > 0.6 ? 'summon' : 'jump'; b.state = b.attackType; b.timer = 0; } 
-            } else if (b.state === 'jump') {
-                if(b.timer === 1) { b.vy = -18; b.vx = (player.x - b.x) * 0.03; }
-                b.vy += gravity; b.x += b.vx; b.y += b.vy;
-                if (b.x < b.arenaMin) b.x = b.arenaMin; if (b.x + b.w > b.arenaMax) b.x = b.arenaMax - b.w;
-                if (b.y >= 150 - b.h) { 
-                    b.y = 150 - b.h; b.vy = 0; b.vx = 0; b.state = 'idle'; b.timer = 0; screenShake = 20; playSound('boss_hit');
-                    levelData.projectiles.push({ x: b.x+b.w/2, y: b.y+b.h-10, vx: 7, vy: 0, size: 15, color: '#4ade80', type: 'shockwave', life: 100 });
-                    levelData.projectiles.push({ x: b.x+b.w/2, y: b.y+b.h-10, vx: -7, vy: 0, size: 15, color: '#4ade80', type: 'shockwave', life: 100 });
-                }
-            } else if (b.state === 'summon') {
-                if (b.timer === 30) {
-                    playSound('water');
-                    enemies.push({ x: b.x, y: b.y+b.h-24, w: 24, h: 24, type: 'frog', vx: -3, vy: -10, baseY: 150-24, minX: b.arenaMin, maxX: b.arenaMax, dead: false });
-                }
-                if (b.timer > 80) { b.state = 'idle'; b.timer = 0; }
-            }
+        // AGGRO DU BOSS : Il ne s'active que si on entre dans sa zone
+        if (!b.isActive && player.x >= b.arenaMin) {
+            b.isActive = true;
+            if(!levelData.isBoss) activateBossUI(b); // Affiche la barre de vie
         }
 
-        if (player.invincibleTimer === 0 && checkCollision(player, b)) {
-            if (!b.invincible && !player.isDashing && player.vy > 0 && player.y + player.height < b.y + 40) {
-                b.hp--; player.vy = -16; hitStopFrames = 10; screenShake = 25; playSound('boss_hit');
-                spawnParticles(b.x + b.w/2, b.y, '#dc2626', 80); spawnText(b.x + b.w/2, b.y - 30, "AÏE !", '#fde047', '36px');
-                updateBossUI(b);
-                if (b.hp <= 0) {
-                    b.dead = true; 
-                    // LE COFFRE APPARAÎT !
-                    chests.push({ x: b.x + b.w/2 - 20, y: b.y + b.h - 40, w: 40, h: 40, item: b.reward, opened: false });
-                    b.w = 0; // Cache le boss
+        if (b.isActive) {
+            b.timer++;
+            
+            if (b.type === 'scarecrow') {
+                b.x += b.vx || 0;
+                if (b.state === 'idle') {
+                    if(b.timer > 60) { b.attackType = Math.random() > 0.5 ? 'throw' : 'dash'; b.state = b.attackType; b.timer = 0; }
+                } else if (b.state === 'throw') {
+                    if (b.timer === 20 || b.timer === 40) { 
+                        levelData.projectiles.push({ x: b.x+b.w/2, y: b.y + 40, vx: (player.x > b.x ? 6 : -6), vy: 0, size: 20, color: '#9ca3af', type: 'scythe', rot: 0 }); playSound('hit');
+                    }
+                    if (b.timer > 100) { b.state = 'idle'; b.timer = 0; b.vx = 0; }
+                } else if (b.state === 'dash') {
+                    if (b.timer === 20) b.vx = (player.x > b.x ? 12 : -12);
+                    if (b.timer > 60 || b.x < b.arenaMin || b.x + b.w > b.arenaMax) { b.state = 'idle'; b.timer = 0; b.vx = 0; }
                 }
-            } else if (!player.isDashing) {
-                player.hp--; player.invincibleTimer = 60; screenShake = 20;
-                player.vx = (player.x < b.x) ? -18 : 18; player.vy = -10;
-                spawnText(player.x, player.y - 30, "OUCH!", '#ef4444', '24px');
-                if (player.hp <= 0) return showGameOver("Game Over", "Le boss vous a écrasé.", "Réessayer");
             }
-        }
-        
-        for (let i = levelData.projectiles.length - 1; i >= 0; i--) {
-            let p = levelData.projectiles[i]; p.x += p.vx; p.y += p.vy;
-            if(p.type === 'scythe') p.rot += 0.2;
-            if(p.type === 'shockwave') { p.life--; if(p.life <= 0) { levelData.projectiles.splice(i, 1); continue; } }
-            if (checkCollision(player, {x: p.x-p.size, y: p.y-p.size, w: p.size*2, h: p.size*2}) && player.invincibleTimer === 0 && !player.isDashing) {
-                player.hp--; player.invincibleTimer = 60; screenShake = 20; levelData.projectiles.splice(i, 1);
-                if (player.hp <= 0) return showGameOver("Game Over", "Touché par un projectile.", "Réessayer");
+            else if (b.type === 'toad') {
+                if (b.state === 'idle') {
+                    if(b.timer > 90) { b.attackType = Math.random() > 0.6 ? 'summon' : 'jump'; b.state = b.attackType; b.timer = 0; } 
+                } else if (b.state === 'jump') {
+                    if(b.timer === 1) { b.vy = -18; b.vx = (player.x - b.x) * 0.03; }
+                    b.vy += gravity; b.x += b.vx; b.y += b.vy;
+                    if (b.x < b.arenaMin) b.x = b.arenaMin; if (b.x + b.w > b.arenaMax) b.x = b.arenaMax - b.w;
+                    if (b.y >= 150 - b.h) { 
+                        b.y = 150 - b.h; b.vy = 0; b.vx = 0; b.state = 'idle'; b.timer = 0; screenShake = 20; playSound('boss_hit');
+                        levelData.projectiles.push({ x: b.x+b.w/2, y: b.y+b.h-10, vx: 7, vy: 0, size: 15, color: '#4ade80', type: 'shockwave', life: 100 });
+                        levelData.projectiles.push({ x: b.x+b.w/2, y: b.y+b.h-10, vx: -7, vy: 0, size: 15, color: '#4ade80', type: 'shockwave', life: 100 });
+                    }
+                } else if (b.state === 'summon') {
+                    if (b.timer === 30) {
+                        playSound('water');
+                        enemies.push({ x: b.x, y: b.y+b.h-24, w: 24, h: 24, type: 'frog', vx: -3, vy: -10, baseY: 150-24, minX: b.arenaMin, maxX: b.arenaMax, dead: false });
+                    }
+                    if (b.timer > 80) { b.state = 'idle'; b.timer = 0; }
+                }
+            }
+            else if (b.type === 'bramble') {
+                if (b.phase === 1) {
+                    b.x += b.vx;
+                    if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
+                    if (b.timer % 120 === 0 && b.y >= groundY - b.h - 10) b.vy = -15;
+                    if (b.hp <= 10) b.phase = 5; // On écourte pour l'exemple
+                } else if (b.phase === 5) {
+                    b.x += b.vx * 1.6;
+                    if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
+                    if (b.timer % 80 === 0 && b.y >= groundY - b.h - 10) { b.vy = -18; }
+                }
+                if (b.y < groundY - b.h) { b.vy += gravity; b.y += b.vy; } 
+                else { if (b.vy > 5) screenShake = 8; b.y = groundY - b.h; b.vy = 0; }
+            }
+
+            if (player.invincibleTimer === 0 && checkCollision(player, b)) {
+                if (!b.invincible && !player.isDashing && player.vy > 0 && player.y + player.height < b.y + 40) {
+                    b.hp--; player.vy = -16; hitStopFrames = 10; screenShake = 25; playSound('boss_hit');
+                    spawnParticles(b.x + b.w/2, b.y, '#dc2626', 80); spawnText(b.x + b.w/2, b.y - 30, "AÏE !", '#fde047', '36px');
+                    updateBossUI(b);
+                    if (b.hp <= 0) {
+                        b.dead = true; 
+                        if(b.type === 'bramble') return showGameOver("VICTOIRE MAGISTRALE !", "Le Hainaut est sauvé.", "Quitter", true);
+                        chests.push({ x: b.x + b.w/2 - 20, y: b.y + b.h - 40, w: 40, h: 40, item: b.reward, opened: false });
+                        b.w = 0; 
+                    }
+                } else if (!player.isDashing) {
+                    player.hp--; player.invincibleTimer = 60; screenShake = 20;
+                    player.vx = (player.x < b.x) ? -18 : 18; player.vy = -10;
+                    spawnText(player.x, player.y - 30, "OUCH!", '#ef4444', '24px');
+                    if (player.hp <= 0) return showGameOver("Game Over", "Le boss vous a écrasé.", "Réessayer");
+                }
+            }
+            
+            for (let i = levelData.projectiles.length - 1; i >= 0; i--) {
+                let p = levelData.projectiles[i]; p.x += p.vx; p.y += p.vy;
+                if(p.type === 'scythe') p.rot += 0.2;
+                if(p.type === 'shockwave') { p.life--; if(p.life <= 0) { levelData.projectiles.splice(i, 1); continue; } }
+                if (checkCollision(player, {x: p.x-p.size, y: p.y-p.size, w: p.size*2, h: p.size*2}) && player.invincibleTimer === 0 && !player.isDashing) {
+                    player.hp--; player.invincibleTimer = 60; screenShake = 20; levelData.projectiles.splice(i, 1);
+                    if (player.hp <= 0) return showGameOver("Game Over", "Touché par un projectile.", "Réessayer");
+                }
             }
         }
     }
@@ -539,24 +573,51 @@ function draw() {
         for(let i=0; i<=w.w; i+=15) { ctx.lineTo(w.x + i, w.y + 8 + Math.sin(frameCount*0.1 + i*0.1)*6); } ctx.stroke();
     }
 
+    for (let c of (levelData.checkpoints || [])) {
+        ctx.fillStyle = '#78350f'; ctx.fillRect(c.x + 8, c.y, 4, c.h);
+        ctx.fillStyle = c.active ? '#22c55e' : '#ef4444';
+        ctx.shadowColor = c.active ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)'; ctx.shadowBlur = 15;
+        ctx.beginPath(); ctx.moveTo(c.x + 12, c.y + 2); ctx.lineTo(c.x + 35, c.y + 12); ctx.lineTo(c.x + 12, c.y + 22); ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // Le Vent (Courants d'air)
+    for (let w of (levelData.windZones || [])) {
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(w.x, w.y, w.w, w.h);
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(w.x + w.w/3, w.y + w.h); ctx.lineTo(w.x + w.w/3, w.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(w.x + w.w*0.6, w.y + w.h); ctx.lineTo(w.x + w.w*0.6, w.y); ctx.stroke();
+    }
+
     for (let p of levelData.platforms) {
         if(p.type === 'fragile' && p.state === 'falling') ctx.globalAlpha = 0.5;
+
         if (p.type === 'bouncy') {
             ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(p.x + p.w/2, p.y + p.h, p.w/2, Math.PI, 0); ctx.fill(); 
             ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x + p.w*0.3, p.y + p.h*0.5, 6, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(p.x + p.w*0.7, p.y + p.h*0.7, 7, 0, Math.PI*2); ctx.fill();
         } else if (p.type === 'moving') {
-            ctx.fillStyle = '#b45309'; ctx.fillRect(p.x, p.y, p.w, p.h); ctx.fillStyle = '#78350f'; ctx.fillRect(p.x, p.y+p.h-4, p.w, 4);
+            ctx.fillStyle = '#b45309'; ctx.fillRect(p.x, p.y, p.w, p.h);
+            ctx.fillStyle = '#78350f'; ctx.fillRect(p.x, p.y+p.h-4, p.w, 4);
             ctx.strokeStyle = '#9ca3af'; ctx.lineWidth = 3;
             ctx.beginPath(); ctx.moveTo(p.x+15, p.y); ctx.lineTo(p.x+15, p.y-150); ctx.stroke(); 
             ctx.beginPath(); ctx.moveTo(p.x+p.w-15, p.y); ctx.lineTo(p.x+p.w-15, p.y-150); ctx.stroke();
         } else if (p.type === 'fragile') {
-            ctx.fillStyle = '#d97706'; ctx.fillRect(p.x, p.y, p.w, p.h); ctx.fillStyle = '#fde047'; ctx.fillRect(p.x, p.y, p.w, 4);
+            ctx.fillStyle = '#d97706'; ctx.fillRect(p.x, p.y, p.w, p.h);
+            ctx.fillStyle = '#fde047'; ctx.fillRect(p.x, p.y, p.w, 4);
             if(p.state === 'shaking') { ctx.fillStyle = 'rgba(239, 68, 68, 0.4)'; ctx.fillRect(p.x, p.y, p.w, p.h); }
+        } else if (p.type === 'mud') {
+            // La boue
+            ctx.fillStyle = '#451a03'; ctx.fillRect(p.x, p.y + 12, p.w, p.h - 12);
+            ctx.fillStyle = '#290f02'; ctx.fillRect(p.x, p.y, p.w, 12); // Sombre et humide
+            ctx.fillStyle = '#78350f'; ctx.fillRect(p.x, p.y+12, p.w, 4);
         } else {
             ctx.fillStyle = levelData.isBoss ? '#290f02' : '#451a03'; ctx.fillRect(p.x, p.y + 12, p.w, p.h - 12);
-            ctx.fillStyle = levelData.isBoss ? '#7c2d12' : (time === 'night' ? '#064e3b' : '#22c55e'); ctx.fillRect(p.x, p.y, p.w, 12);
-            ctx.fillStyle = levelData.isBoss ? '#9a3412' : (time === 'night' ? '#022c22' : '#16a34a'); ctx.fillRect(p.x, p.y+12, p.w, 4);
+            ctx.fillStyle = levelData.isBoss ? '#7c2d12' : (time === 'night' ? '#064e3b' : '#22c55e');
+            ctx.fillRect(p.x, p.y, p.w, 12);
+            ctx.fillStyle = levelData.isBoss ? '#9a3412' : (time === 'night' ? '#022c22' : '#16a34a');
+            ctx.fillRect(p.x, p.y+12, p.w, 4);
         }
         ctx.globalAlpha = 1.0;
     }
@@ -574,29 +635,43 @@ function draw() {
                 ctx.fillStyle = '#fde047'; ctx.font = "bold 14px Arial"; ctx.textAlign = "center";
                 ctx.fillText("'E' OUVRIR", c.x + c.w/2, c.y - 15);
             }
-        } else {
-            ctx.fillStyle = '#000'; ctx.fillRect(c.x + 4, c.y + 4, c.w - 8, c.h - 8);
-        }
+        } else { ctx.fillStyle = '#000'; ctx.fillRect(c.x + 4, c.y + 4, c.w - 8, c.h - 8); }
     }
 
-    // Le Téléporteur Magique
+    // Le Tracteur !
     if (!levelData.isBoss) {
         let g = levelData.goal;
-        let isTeleporterOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
+        let isGoalOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
         
-        ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.ellipse(g.x + g.w/2, g.y + g.h/2 + 20, g.w/2 + 5, g.h/2 + 15, 0, 0, Math.PI*2); ctx.fill();
-        if(isTeleporterOpen) { ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 30 + Math.sin(frameCount*0.1)*10; }
-        ctx.fillStyle = isTeleporterOpen ? '#22c55e' : '#475569'; ctx.beginPath(); ctx.ellipse(g.x + g.w/2, g.y + g.h/2 + 20, g.w/2, g.h/2 + 10, 0, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = isTeleporterOpen ? '#bbf7d0' : '#0f172a'; ctx.beginPath(); ctx.ellipse(g.x + g.w/2, g.y + g.h/2 + 20, g.w/2 - 10, g.h/2, 0, 0, Math.PI*2); ctx.fill();
-        ctx.shadowBlur = 0;
+        // Roues arrière
+        ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(g.x + 30, g.y + g.h - 20, 25, 0, Math.PI*2); ctx.fill();
+        // Roues avant
+        ctx.beginPath(); ctx.arc(g.x + g.w - 20, g.y + g.h - 15, 15, 0, Math.PI*2); ctx.fill();
+        // Jantes
+        ctx.fillStyle = '#94a3b8'; ctx.beginPath(); ctx.arc(g.x + 30, g.y + g.h - 20, 10, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(g.x + g.w - 20, g.y + g.h - 15, 6, 0, Math.PI*2); ctx.fill();
+        // Carrosserie
+        ctx.fillStyle = isGoalOpen ? '#ef4444' : '#7f1d1d'; // Devient rouge vif quand activé
+        ctx.fillRect(g.x + 10, g.y + g.h - 60, 60, 45); // Cabine
+        ctx.fillRect(g.x + 60, g.y + g.h - 40, g.w - 70, 25); // Moteur
+        // Toit
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(g.x + 10, g.y + g.h - 75, 60, 5); 
+        ctx.fillRect(g.x + 15, g.y + g.h - 70, 5, 10); 
+        ctx.fillRect(g.x + 60, g.y + g.h - 70, 5, 10); 
+        // Cheminée
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(g.x + g.w - 35, g.y + g.h - 65, 5, 25);
 
-        if (isTeleporterOpen) {
-            ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(g.x + g.w/2, g.y + g.h/2 + 20, 20 + Math.sin(frameCount*0.1)*5, 0, Math.PI*2); ctx.stroke();
+        if (isGoalOpen) {
+            // Fumée d'échappement qui bouge
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.beginPath(); ctx.arc(g.x + g.w - 32 + Math.sin(frameCount*0.1)*5, g.y + g.h - 70 - (frameCount%20), 8, 0, Math.PI*2); ctx.fill();
+            
             if (Math.abs((player.x+player.width/2) - (g.x+g.w/2)) < 50) {
-                ctx.shadowColor = '#22c55e'; ctx.shadowBlur = 15;
-                ctx.fillStyle = '#22c55e'; ctx.font = "bold 16px Arial"; ctx.textAlign = "center"; 
-                ctx.fillText("APPUYEZ SUR 'E'", g.x + g.w/2, g.y - 20); ctx.shadowBlur = 0;
+                ctx.shadowColor = '#fde047'; ctx.shadowBlur = 15;
+                ctx.fillStyle = '#fde047'; ctx.font = "bold 16px Arial"; ctx.textAlign = "center"; 
+                ctx.fillText("APPUYEZ SUR 'E'", g.x + g.w/2, g.y - 30); ctx.shadowBlur = 0;
             }
         }
     }
@@ -606,8 +681,7 @@ function draw() {
         if (!t.done) { ctx.shadowColor = 'rgba(74, 222, 128, 0.9)'; ctx.shadowBlur = 20 + Math.sin(frameCount * 0.1)*10; }
         if (t.type === 'grass') {
             ctx.fillStyle = t.done ? '#4ade80' : '#166534';
-            let sway = Math.sin(frameCount * 0.05 + t.x) * (t.done ? 1 : 5);
-            let yOff = t.done ? t.h - 8 : 0;
+            let sway = Math.sin(frameCount * 0.05 + t.x) * (t.done ? 1 : 5); let yOff = t.done ? t.h - 8 : 0;
             for(let i=0; i<t.w; i+=12) {
                 ctx.beginPath(); ctx.moveTo(t.x + i, t.y + t.h); ctx.lineTo(t.x + i + 6 + sway, t.y + yOff); ctx.lineTo(t.x + i + 12, t.y + t.h); ctx.fill();
             }
@@ -623,8 +697,7 @@ function draw() {
             ctx.fillStyle = '#451a03'; ctx.fillRect(t.trunkX, t.y, 18, t.trunkY - t.y);
             if (!t.done) {
                 ctx.fillRect(t.x, t.y + 5, t.trunkX - t.x, 10);
-                let sway = Math.sin(frameCount * 0.05 + t.x) * 4;
-                ctx.fillStyle = '#166534';
+                let sway = Math.sin(frameCount * 0.05 + t.x) * 4; ctx.fillStyle = '#166534';
                 ctx.beginPath(); ctx.arc(t.x + 10 + sway, t.y + 10, 28, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(t.x + 25 + sway, t.y, 23, 0, Math.PI*2); ctx.fill();
             }
@@ -635,15 +708,13 @@ function draw() {
 
     for(let npc of npcs) {
         ctx.fillStyle = npc.color; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(npc.x, npc.y, npc.w, npc.h, 6) : ctx.fillRect(npc.x, npc.y, npc.w, npc.h); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(npc.x + 6, npc.y + 10, 3, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(npc.x + 14, npc.y + 10, 3, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(npc.x + 6, npc.y + 10, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(npc.x + 14, npc.y + 10, 3, 0, Math.PI*2); ctx.fill();
     }
 
     // FANTOMES DASH
     for (let g of ghosts) {
         ctx.save(); ctx.translate(g.x + player.width/2, g.y + player.height);
-        if (!g.facingRight) ctx.scale(-1, 1);
-        ctx.scale(g.squash, g.stretch);
+        if (!g.facingRight) ctx.scale(-1, 1); ctx.scale(g.squash, g.stretch);
         ctx.globalAlpha = g.life * 0.4; ctx.fillStyle = '#3b82f6';
         ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-10, -28, 20, 18, 5) : ctx.fillRect(-10, -28, 20, 18); ctx.fill();
         ctx.beginPath(); ctx.arc(0, -38, 9, 0, Math.PI*2); ctx.fill(); ctx.restore();
@@ -679,7 +750,7 @@ function draw() {
         ctx.restore();
     }
 
-    // ENNEMIS / BOSS / PROJECTILES
+    // ENNEMIS / BOSS 
     for(let e of enemies) {
         if(e.dead) continue;
         let dir = e.vx > 0 ? 1 : -1;
@@ -691,10 +762,15 @@ function draw() {
             ctx.fillStyle = '#000'; ctx.fillRect(e.x + 8, e.y + 2, 4, 20); ctx.fillRect(e.x + 16, e.y + 2, 4, 20);
             ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(e.x + 12 - 5*dir, e.y + 6 - Math.sin(frameCount*0.5)*4, 6, 0, Math.PI*2); ctx.fill();
             ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(e.x + 12 + 10*dir, e.y + 12, 2, 0, Math.PI*2); ctx.fill();
+        } else if (e.type === 'mole') {
+            if (e.timer > 120) {
+                ctx.fillStyle = '#451a03'; ctx.fillRect(e.x, e.y, e.w, e.h); // Corps
+                ctx.fillStyle = '#fca5a5'; ctx.fillRect(e.x+4, e.y+4, 16, 8); // Nez rose
+            }
         }
     }
 
-    if (levelData.isBoss && !levelData.boss.dead && levelData.boss.w > 0) {
+    if (levelData.boss && !levelData.boss.dead && levelData.boss.w > 0) { // CORRECTION VISIBILITÉ ICI !
         let b = levelData.boss;
         if (b.type === 'scarecrow') {
             ctx.fillStyle = '#451a03'; ctx.fillRect(b.x+b.w/2-10, b.y+50, 20, b.h-50); 
@@ -706,6 +782,17 @@ function draw() {
             ctx.fillStyle = '#86efac'; ctx.beginPath(); ctx.arc(b.x+b.w/2, b.y+b.h, b.w/2.5, Math.PI, 0); ctx.fill();
             ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(b.x+30, b.y+b.h/2, 15, 0, Math.PI*2); ctx.arc(b.x+b.w-30, b.y+b.h/2, 15, 0, Math.PI*2); ctx.fill();
             ctx.fillStyle = '#000'; ctx.fillRect(b.x+25, b.y+b.h/2-2, 10, 4); ctx.fillRect(b.x+b.w-35, b.y+b.h/2-2, 10, 4);
+        } else if (b.type === 'bramble') {
+            ctx.fillStyle = '#064e3b';
+            let pulse = Math.sin(frameCount*0.1)*10;
+            ctx.beginPath(); ctx.arc(b.x+b.w/2, b.y+b.h/2, b.w/2 + pulse, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath(); ctx.ellipse(b.x+40, b.y+60, 10, 20, 0.2, 0, Math.PI*2); ctx.ellipse(b.x+b.w-40, b.y+60, 10, 20, -0.2, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#022c22'; ctx.lineWidth = 8;
+            for(let i=0; i<4; i++) {
+                ctx.beginPath(); ctx.moveTo(b.x+b.w/2, b.y+b.h/2); 
+                ctx.quadraticCurveTo(b.x+b.w/2 + (i%2===0?-100:100), b.y-50, b.x + (i*50), b.y - 100 - pulse*2); ctx.stroke();
+            }
         }
     }
 
@@ -722,6 +809,7 @@ function draw() {
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
         ctx.fillStyle = p.color;
         if (p.type === 'leaf') { ctx.beginPath(); ctx.ellipse(0, 0, p.size, p.size/2, 0, 0, Math.PI*2); ctx.fill(); } 
+        else if (p.type === 'wind') { ctx.fillRect(0,0, p.size/2, p.size*2); }
         else { ctx.shadowColor = p.color; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI*2); ctx.fill(); }
         ctx.restore();
     }
@@ -733,7 +821,6 @@ function draw() {
         ctx.fillRect(0, 0, canvas.width, barHeight); ctx.fillRect(0, canvas.height - barHeight, canvas.width, barHeight);
     }
 
-    // UI & DIALOGUES
     ctx.textAlign = "center";
     for (let ft of floatingTexts) {
         ctx.font = `bold ${ft.size} 'Playfair Display', serif`; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.life;

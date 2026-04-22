@@ -455,82 +455,99 @@
                 }
             });
 
-            // GAME LOGIC (Platformer variant)
+            // --- EASTER EGG: SUPER JARDINIER (NIVEAUX & BOSS) ---
             const keys = { left: false, right: false, up: false };
             let gameLoop;
             let gameActive = false;
-            let score = 0;
-            const totalTasks = 7;
+            let currentLevelIdx = 0;
+            let cameraX = 0;
+            let frameCount = 0;
+            
+            // Physics
+            const gravity = 0.6;
+            const friction = 0.8;
+            const groundY = 350;
 
-            // Player object
             const player = {
                 x: 50, y: 300, width: 24, height: 32,
                 vx: 0, vy: 0, speed: 5, jumpPower: -11,
                 grounded: false, facingRight: true,
-                squash: 1, stretch: 1 // Pour l'animation d'atterrissage/saut
+                squash: 1, stretch: 1, hp: 3, invincibleTimer: 0
             };
 
-            // Level design & Env
-            const gravity = 0.6;
-            const friction = 0.8;
-            const groundY = 350;
-            let frameCount = 0;
-            const clouds = [
-                {x: 100, y: 50, s: 0.2}, {x: 400, y: 80, s: 0.3}, {x: 250, y: 30, s: 0.15}
-            ];
-
-            const platforms = [
-                { x: 0, y: groundY, w: 600, h: 60 }, // Sol
-                { x: 150, y: 270, w: 120, h: 20 },   // Plateforme 1
-                { x: 380, y: 200, w: 120, h: 20 },   // Plateforme 2
-            ];
-
-            // FX Arrays
             let particles = [];
             let floatingTexts = [];
+            let levelTasks = 0;
+            let completedTasks = 0;
+            let levelData = {};
 
-            // Tasks (Herbes, Haies, Branches)
-            let tasks = [];
-
-            function initTasks() {
-                tasks = [
-                    // Tonte (Herbes hautes sur le sol)
-                    { x: 100, y: groundY - 20, w: 40, h: 20, type: 'grass', done: false, name: 'Tonte !' },
-                    { x: 280, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte !' },
-                    { x: 500, y: groundY - 20, w: 40, h: 20, type: 'grass', done: false, name: 'Tonte !' },
-                    // Taille (Haies sur le sol et plateformes)
-                    { x: 180, y: 270 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille !' },
-                    { x: 420, y: 200 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille !' },
-                    // Élagage (Branches en hauteur)
-                    { x: 200, y: groundY - 100, w: 40, h: 20, type: 'branch', done: false, trunkX: 230, trunkY: groundY, name: 'Élagage !' },
-                    { x: 450, y: 110, w: 40, h: 20, type: 'branch', done: false, trunkX: 480, trunkY: 200, name: 'Élagage !' },
-                ];
-            }
-
-            function spawnParticles(x, y, count) {
-                for (let i = 0; i < count; i++) {
-                    particles.push({
-                        x: x + Math.random() * 20 - 10,
-                        y: y + Math.random() * 20 - 10,
-                        vx: (Math.random() - 0.5) * 6,
-                        vy: (Math.random() - 1) * 6,
-                        life: 1.0,
-                        size: Math.random() * 4 + 2,
-                        rot: Math.random() * Math.PI * 2,
-                        vrot: (Math.random() - 0.5) * 0.2
-                    });
+            const levels = [
+                {   // NIVEAU 1
+                    width: 1500,
+                    goal: { x: 1350, y: groundY - 100, w: 80, h: 100 },
+                    platforms: [
+                        { x: 0, y: groundY, w: 700, h: 60 },
+                        { x: 800, y: groundY, w: 700, h: 60 }, // Trou au milieu
+                        { x: 300, y: 250, w: 100, h: 20 },
+                        { x: 550, y: 150, w: 100, h: 20 },
+                        { x: 1000, y: 250, w: 100, h: 20 },
+                    ],
+                    tasks: [
+                        { x: 200, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                        { x: 600, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                        { x: 900, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                        { x: 320, y: 250 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                        { x: 570, y: 150 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                        { x: 1020, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1050, trunkY: groundY, name: 'Élagage' },
+                    ]
+                },
+                {   // NIVEAU 2
+                    width: 2000,
+                    goal: { x: 1800, y: groundY - 100, w: 80, h: 100 },
+                    platforms: [
+                        { x: 0, y: groundY, w: 400, h: 60 },
+                        { x: 550, y: groundY - 50, w: 200, h: 110 },
+                        { x: 900, y: groundY, w: 300, h: 60 },
+                        { x: 1350, y: groundY - 80, w: 800, h: 140 },
+                        { x: 250, y: 200, w: 80, h: 20 },
+                        { x: 750, y: 150, w: 80, h: 20 },
+                        { x: 1150, y: 220, w: 100, h: 20 },
+                    ],
+                    tasks: [
+                        { x: 300, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                        { x: 600, y: groundY - 70, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                        { x: 1000, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                        { x: 1450, y: groundY - 125, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                        { x: 250, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 280, trunkY: groundY, name: 'Élagage' },
+                        { x: 750, y: groundY - 150, w: 40, h: 20, type: 'branch', done: false, trunkX: 780, trunkY: groundY - 50, name: 'Élagage' },
+                        { x: 1600, y: groundY - 200, w: 40, h: 20, type: 'branch', done: false, trunkX: 1630, trunkY: groundY - 80, name: 'Élagage' }
+                    ]
+                },
+                {   // BOSS LEVEL
+                    width: 800,
+                    goal: { x: -1000, y: 0, w: 1, h: 1 }, // Pas de goal, il faut battre le boss
+                    isBoss: true,
+                    platforms: [
+                        { x: 0, y: groundY, w: 800, h: 60 },
+                        { x: 100, y: 250, w: 80, h: 20 },
+                        { x: 620, y: 250, w: 80, h: 20 },
+                    ],
+                    tasks: [],
+                    boss: {
+                        x: 600, y: groundY - 100, w: 60, h: 100, hp: 3, vx: -2, state: 'move', timer: 0,
+                        name: "RONCE MUTANTE"
+                    }
                 }
-            }
+            ];
 
-            function spawnText(x, y, text) {
-                floatingTexts.push({ x: x, y: y, text: text, life: 1.0 });
-            }
+            const clouds = [ {x: 100, y: 50, s: 0.2}, {x: 400, y: 80, s: 0.3}, {x: 250, y: 30, s: 0.15}, {x: 600, y: 60, s: 0.25}, {x: 800, y: 40, s: 0.2} ];
 
             function startGameUI() {
                 gameContainer.classList.remove('hidden');
                 gameContainer.classList.add('flex');
                 document.body.style.overflow = 'hidden';
-                resetGame();
+                currentLevelIdx = 0;
+                loadLevel(currentLevelIdx);
             }
 
             function closeGameUI() {
@@ -542,22 +559,43 @@
             }
 
             closeBtn.addEventListener('click', closeGameUI);
-            restartBtn.addEventListener('click', resetGame);
+            restartBtn.addEventListener('click', () => loadLevel(0));
 
-            function resetGame() {
-                player.x = 50; player.y = 300;
+            function loadLevel(idx) {
+                currentLevelIdx = idx;
+                levelData = JSON.parse(JSON.stringify(levels[idx])); // Deep copy
+                player.x = 50; player.y = 200;
                 player.vx = 0; player.vy = 0;
                 player.facingRight = true;
-                player.squash = 1; player.stretch = 1;
-                score = 0;
+                player.hp = 3; player.invincibleTimer = 0;
+                
+                completedTasks = 0;
+                levelTasks = levelData.tasks.length;
                 particles = [];
                 floatingTexts = [];
-                scoreElement.innerText = score + '/' + totalTasks;
+                
+                scoreElement.innerText = levelData.isBoss ? "BATTEZ LA RONCE !" : `TÂCHES: 0/${levelTasks}`;
                 gameOverScreen.classList.add('hidden');
-                initTasks();
                 gameActive = true;
                 cancelAnimationFrame(gameLoop);
                 update();
+            }
+
+            function spawnParticles(x, y, color, count) {
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: x + Math.random() * 20 - 10,
+                        y: y + Math.random() * 20 - 10,
+                        vx: (Math.random() - 0.5) * 6,
+                        vy: (Math.random() - 1) * 6,
+                        life: 1.0, size: Math.random() * 4 + 2, rot: Math.random() * Math.PI * 2, vrot: (Math.random() - 0.5) * 0.2,
+                        color: color
+                    });
+                }
+            }
+
+            function spawnText(x, y, text, color = '#fff') {
+                floatingTexts.push({ x: x, y: y, text: text, life: 1.0, color: color });
             }
 
             function checkCollision(r1, r2) {
@@ -565,20 +603,41 @@
                        r1.y < r2.y + r2.h && r1.y + r1.height > r2.y;
             }
 
+            function showGameOver(title, desc, btnText, isWin = false) {
+                gameActive = false;
+                document.getElementById('game-end-title').innerText = title;
+                document.getElementById('game-end-text').innerText = desc;
+                restartBtn.innerText = btnText;
+                
+                if (isWin) {
+                    restartBtn.onclick = () => {
+                        // RECOMPENSE : Mettre la tondeuse en curseur sur tout le site !
+                        const cursorSVG = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>🚜</text></svg>"), auto`;
+                        document.body.style.cursor = cursorSVG;
+                        document.querySelectorAll('a, button, input, .cursor-pointer').forEach(el => {
+                            el.style.cursor = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>✂️</text></svg>"), pointer`;
+                        });
+                        closeGameUI();
+                    };
+                } else {
+                    restartBtn.onclick = () => loadLevel(currentLevelIdx);
+                }
+                
+                gameOverScreen.classList.remove('hidden');
+            }
+
             function update() {
                 if (!gameActive) return;
+                frameCount++;
 
-                // Environment animations
-                clouds.forEach(c => { c.x -= c.s; if(c.x < -100) c.x = 700; });
-
-                // Smooth recovery for squash/stretch
+                // Physics & Movement
+                if (player.invincibleTimer > 0) player.invincibleTimer--;
+                
                 player.squash += (1 - player.squash) * 0.2;
                 player.stretch += (1 - player.stretch) * 0.2;
 
-                // Physics & Movement
-                let moving = false;
-                if (keys.left) { player.vx -= 0.8; player.facingRight = false; moving = true; }
-                if (keys.right) { player.vx += 0.8; player.facingRight = true; moving = true; }
+                if (keys.left) { player.vx -= 0.8; player.facingRight = false; }
+                if (keys.right) { player.vx += 0.8; player.facingRight = true; }
                 
                 player.vx *= friction;
                 player.vy += gravity;
@@ -586,78 +645,129 @@
                 if (keys.up && player.grounded) {
                     player.vy = player.jumpPower;
                     player.grounded = false;
-                    player.squash = 0.7; // Saut = étiré
-                    player.stretch = 1.3;
-                    spawnParticles(player.x + 12, player.y + 32, 5); // Poussière au saut
+                    player.squash = 0.7; player.stretch = 1.3;
+                    spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 5);
                 }
 
-                // Limit speed
                 if (player.vx > player.speed) player.vx = player.speed;
                 if (player.vx < -player.speed) player.vx = -player.speed;
 
-                // Move X
                 player.x += player.vx;
                 if (player.x < 0) player.x = 0;
-                if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+                if (player.x + player.width > levelData.width) player.x = levelData.width - player.width;
 
-                // Move Y
                 player.y += player.vy;
                 const wasGrounded = player.grounded;
                 player.grounded = false;
 
+                // Dead by falling
+                if (player.y > 500) {
+                    return showGameOver("Tombé !", "Faites attention où vous marchez.", "Recommencer le niveau");
+                }
+
                 // Platforms Collision
-                for (let p of platforms) {
-                    if (player.vy > 0 && 
-                        player.x + player.width > p.x + 5 && player.x < p.x + p.w - 5 &&
+                for (let p of levelData.platforms) {
+                    if (player.vy > 0 && player.x + player.width > p.x + 5 && player.x < p.x + p.w - 5 &&
                         player.y + player.height >= p.y && player.y + player.height <= p.y + player.vy + 2) {
-                        player.grounded = true;
-                        player.vy = 0;
-                        player.y = p.y - player.height;
+                        player.grounded = true; player.vy = 0; player.y = p.y - player.height;
                     }
                 }
 
-                // Landing animation
                 if (!wasGrounded && player.grounded) {
-                    player.squash = 1.4; // Écrasé à l'atterrissage
-                    player.stretch = 0.6;
+                    player.squash = 1.4; player.stretch = 0.6;
                 }
 
-                // FX Update
+                // Camera Logic
+                cameraX = player.x - canvas.width / 2 + player.width / 2;
+                if (cameraX < 0) cameraX = 0;
+                if (cameraX > levelData.width - canvas.width) cameraX = levelData.width - canvas.width;
+
+                // Environment
+                clouds.forEach(c => { c.x -= c.s; if(c.x < -100) c.x = levelData.width + 100; });
                 for (let i = particles.length - 1; i >= 0; i--) {
                     let p = particles[i];
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += gravity * 0.5; // Feuilles légères
-                    p.rot += p.vrot;
-                    p.life -= 0.02;
+                    p.x += p.vx; p.y += p.vy; p.vy += gravity * 0.5; p.rot += p.vrot; p.life -= 0.02;
                     if (p.life <= 0) particles.splice(i, 1);
                 }
-
                 for (let i = floatingTexts.length - 1; i >= 0; i--) {
                     let ft = floatingTexts[i];
-                    ft.y -= 1.5;
-                    ft.life -= 0.015;
+                    ft.y -= 1.5; ft.life -= 0.015;
                     if (ft.life <= 0) floatingTexts.splice(i, 1);
                 }
 
                 // Tasks Interaction
-                for (let t of tasks) {
-                    if (!t.done && checkCollision(player, {x: t.x, y: t.y, w: t.w, h: t.h})) {
+                for (let t of levelData.tasks) {
+                    if (!t.done && checkCollision(player, t)) {
                         t.done = true;
-                        score++;
-                        scoreElement.innerText = score + '/' + totalTasks;
-                        
-                        spawnParticles(t.x + t.w/2, t.y + t.h/2, 20);
-                        spawnText(t.x + t.w/2, t.y - 10, t.name);
+                        completedTasks++;
+                        scoreElement.innerText = `TÂCHES: ${completedTasks}/${levelTasks}`;
+                        spawnParticles(t.x + t.w/2, t.y + t.h/2, '#22c55e', 20);
+                        spawnText(t.x + t.w/2, t.y - 10, t.name, '#4ade80');
                     }
                 }
 
-                // Win condition
-                if (score >= totalTasks && floatingTexts.length === 0) { // Attend que les textes disparaissent
-                    gameActive = false;
-                    document.getElementById('game-end-title').innerText = "Chantier Terminé !";
-                    document.getElementById('game-end-text').innerText = "Vous êtes un maître paysagiste.";
-                    gameOverScreen.classList.remove('hidden');
+                // Goal Interaction
+                if (!levelData.isBoss && checkCollision(player, levelData.goal)) {
+                    if (completedTasks >= levelTasks) {
+                        if (currentLevelIdx < levels.length - 1) {
+                            return loadLevel(currentLevelIdx + 1);
+                        }
+                    } else {
+                        if (frameCount % 60 === 0) spawnText(player.x, player.y - 20, "Finissez les tâches !", '#ef4444');
+                    }
+                }
+
+                // Boss Logic
+                if (levelData.isBoss) {
+                    let boss = levelData.boss;
+                    
+                    if (boss.hp > 0) {
+                        boss.timer++;
+                        
+                        // Boss Move
+                        boss.x += boss.vx;
+                        if (boss.x < 0 || boss.x + boss.w > levelData.width) boss.vx *= -1;
+                        
+                        // Boss Jump randomly
+                        if (boss.timer % 150 === 0 && boss.y >= groundY - boss.h - 10) {
+                            boss.vy = -12;
+                        }
+                        if (boss.y < groundY - boss.h) {
+                            boss.vy += gravity;
+                            boss.y += boss.vy;
+                        } else {
+                            boss.y = groundY - boss.h;
+                            boss.vy = 0;
+                        }
+
+                        // Player hits Boss (jump on top)
+                        if (player.invincibleTimer === 0 && checkCollision(player, boss)) {
+                            // Check if jumping on head
+                            if (player.vy > 0 && player.y + player.height < boss.y + 20) {
+                                boss.hp--;
+                                player.vy = -10; // Rebond
+                                spawnParticles(boss.x + boss.w/2, boss.y, '#65a30d', 30);
+                                spawnText(boss.x + boss.w/2, boss.y - 20, "CRITIQUE!", '#fde047');
+                                boss.vx *= 1.5; // Plus rapide
+                            } else {
+                                // Boss hits player
+                                player.hp--;
+                                player.invincibleTimer = 60;
+                                player.vx = (player.x < boss.x) ? -10 : 10;
+                                player.vy = -5;
+                                spawnText(player.x, player.y - 20, "Aïe!", '#ef4444');
+                                if (player.hp <= 0) return showGameOver("Game Over", "La Ronce a gagné.", "Réessayer");
+                            }
+                        }
+                    } else {
+                        // Boss dead
+                        if (boss.w > 0) {
+                            spawnParticles(boss.x + boss.w/2, boss.y + boss.h/2, '#166534', 10);
+                            boss.w -= 2; boss.x += 1; boss.h -= 2; boss.y += 2;
+                        } else {
+                            return showGameOver("VICTOIRE !", "Le Hainaut est sauvé des mauvaises herbes. Profitez de votre nouveau curseur !", "Récupérer la récompense", true);
+                        }
+                    }
                 }
 
                 draw();
@@ -665,191 +775,152 @@
             }
 
             function draw() {
-                frameCount++;
-
-                // Sky Gradient
+                // Sky
                 let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                skyGrad.addColorStop(0, '#38bdf8'); // light blue
-                skyGrad.addColorStop(1, '#e0f2fe'); // lighter blue
+                if (levelData.isBoss) {
+                    skyGrad.addColorStop(0, '#7f1d1d'); // red dark sky
+                    skyGrad.addColorStop(1, '#fca5a5');
+                } else {
+                    skyGrad.addColorStop(0, '#38bdf8');
+                    skyGrad.addColorStop(1, '#e0f2fe');
+                }
                 ctx.fillStyle = skyGrad;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Sun (Pulsing)
-                let pulse = Math.sin(frameCount * 0.05) * 5;
-                let sunGrad = ctx.createRadialGradient(500, 80, 10, 500, 80, 60 + pulse);
-                sunGrad.addColorStop(0, 'rgba(253, 224, 71, 1)');
-                sunGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
-                ctx.fillStyle = sunGrad;
-                ctx.beginPath(); ctx.arc(500, 80, 60 + pulse, 0, Math.PI*2); ctx.fill();
+                ctx.save();
+                ctx.translate(-cameraX, 0);
 
-                // Mountains (Parallax effect basic)
-                ctx.fillStyle = '#bae6fd';
-                ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(150, 150); ctx.lineTo(350, groundY); ctx.fill();
-                ctx.fillStyle = '#7dd3fc';
-                ctx.beginPath(); ctx.moveTo(200, groundY); ctx.lineTo(450, 100); ctx.lineTo(700, groundY); ctx.fill();
+                // Mountains Parallax
+                ctx.fillStyle = levelData.isBoss ? '#991b1b' : '#bae6fd';
+                ctx.beginPath(); ctx.moveTo(cameraX*0.8, groundY); ctx.lineTo(cameraX*0.8 + 150, 150); ctx.lineTo(cameraX*0.8 + 350, groundY); ctx.fill();
+                ctx.fillStyle = levelData.isBoss ? '#7f1d1d' : '#7dd3fc';
+                ctx.beginPath(); ctx.moveTo(cameraX*0.8 + 200, groundY); ctx.lineTo(cameraX*0.8 + 450, 100); ctx.lineTo(cameraX*0.8 + 700, groundY); ctx.fill();
 
                 // Clouds
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillStyle = levelData.isBoss ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.9)';
                 clouds.forEach(c => {
                     ctx.beginPath();
-                    ctx.arc(c.x, c.y + Math.sin(frameCount*0.02 + c.x)*2, 20, 0, Math.PI*2); // Bobbing nuages
+                    ctx.arc(c.x, c.y + Math.sin(frameCount*0.02 + c.x)*2, 20, 0, Math.PI*2);
                     ctx.arc(c.x + 25, c.y - 15 + Math.sin(frameCount*0.02 + c.x)*2, 25, 0, Math.PI*2);
                     ctx.arc(c.x + 50, c.y + Math.sin(frameCount*0.02 + c.x)*2, 20, 0, Math.PI*2);
                     ctx.fill();
                 });
 
-                // Platforms (Islands/Ground)
-                for (let p of platforms) {
-                    // Dirt
-                    ctx.fillStyle = '#78350f';
+                // Platforms
+                for (let p of levelData.platforms) {
+                    ctx.fillStyle = levelData.isBoss ? '#451a03' : '#78350f';
                     ctx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
-                    // Dirt specks
-                    ctx.fillStyle = '#451a03';
-                    ctx.fillRect(p.x + 20, p.y + 20, 10, 4);
-                    if(p.w > 100) ctx.fillRect(p.x + p.w - 40, p.y + 30, 15, 5);
-
-                    // Grass top
-                    ctx.fillStyle = '#22c55e';
+                    ctx.fillStyle = levelData.isBoss ? '#7c2d12' : '#22c55e';
                     ctx.beginPath();
-                    if (ctx.roundRect) {
-                        ctx.roundRect(p.x - 5, p.y, p.w + 10, 15, 8);
-                    } else {
-                        ctx.fillRect(p.x - 5, p.y, p.w + 10, 15);
-                    }
+                    if (ctx.roundRect) ctx.roundRect(p.x - 5, p.y, p.w + 10, 15, 8);
+                    else ctx.fillRect(p.x - 5, p.y, p.w + 10, 15);
                     ctx.fill();
-                    // Grass highlight
-                    ctx.fillStyle = '#4ade80';
-                    ctx.fillRect(p.x - 2, p.y + 2, p.w + 4, 4);
                 }
 
-                // Tasks (Vegetation)
-                for (let t of tasks) {
+                // Goal (House)
+                if (!levelData.isBoss) {
+                    let g = levelData.goal;
+                    ctx.fillStyle = '#fef08a'; // mur
+                    ctx.fillRect(g.x, g.y + 40, g.w, 60);
+                    ctx.fillStyle = '#ef4444'; // toit
+                    ctx.beginPath(); ctx.moveTo(g.x - 10, g.y + 40); ctx.lineTo(g.x + g.w/2, g.y); ctx.lineTo(g.x + g.w + 10, g.y + 40); ctx.fill();
+                    ctx.fillStyle = '#3b82f6'; // porte
+                    ctx.fillRect(g.x + 30, g.y + 60, 20, 40);
+                    
+                    if (completedTasks >= levelTasks) {
+                        ctx.fillStyle = '#22c55e'; ctx.font = "20px Arial"; ctx.fillText("✓", g.x + 30, g.y - 10);
+                    }
+                }
+
+                // Boss
+                if (levelData.isBoss && levelData.boss.hp > 0) {
+                    let b = levelData.boss;
+                    ctx.fillStyle = '#14532d'; // Dark Green Base
+                    ctx.beginPath(); ctx.arc(b.x+b.w/2, b.y+b.h/2, b.w/2 + Math.sin(frameCount*0.1)*5, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#84cc16';
+                    ctx.fillRect(b.x + 10, b.y + 20, 10, 10); // Oeil méchant 1
+                    ctx.fillRect(b.x + b.w - 20, b.y + 20, 10, 10); // Oeil méchant 2
+                    
+                    // Thorns
+                    ctx.fillStyle = '#78350f';
+                    ctx.beginPath(); ctx.moveTo(b.x-10, b.y+30); ctx.lineTo(b.x, b.y+20); ctx.lineTo(b.x, b.y+40); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(b.x+b.w+10, b.y+30); ctx.lineTo(b.x+b.w, b.y+20); ctx.lineTo(b.x+b.w, b.y+40); ctx.fill();
+                    
+                    ctx.fillStyle = '#dc2626'; // Barre HP Boss
+                    ctx.fillRect(b.x, b.y - 20, b.w * (b.hp/3), 8);
+                }
+
+                // Tasks
+                for (let t of levelData.tasks) {
                     if (t.type === 'grass') {
-                        // Grass tufts with swaying
                         ctx.fillStyle = t.done ? '#4ade80' : '#166534';
-                        let h = t.done ? 6 : t.h;
                         let yOff = t.done ? t.h - 6 : 0;
-                        let sway = Math.sin(frameCount * 0.05 + t.x) * (t.done ? 1 : 4);
                         for(let i=0; i<t.w; i+=10) {
-                            ctx.beginPath();
-                            ctx.moveTo(t.x + i, t.y + t.h);
-                            ctx.lineTo(t.x + i + 5 + sway, t.y + yOff - (Math.sin(i)*3));
-                            ctx.lineTo(t.x + i + 10, t.y + t.h);
-                            ctx.fill();
+                            ctx.beginPath(); ctx.moveTo(t.x + i, t.y + t.h); ctx.lineTo(t.x + i + 5, t.y + yOff - (Math.sin(i)*3)); ctx.lineTo(t.x + i + 10, t.y + t.h); ctx.fill();
                         }
                     } else if (t.type === 'hedge') {
-                        let swayX = Math.sin(frameCount * 0.03 + t.x) * 2;
-                        let swayY = Math.cos(frameCount * 0.04 + t.x) * 2;
                         if (!t.done) {
-                            // Wild bush breathing
                             ctx.fillStyle = '#14532d';
-                            ctx.beginPath(); ctx.arc(t.x+15+swayX, t.y+25+swayY, 25, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.arc(t.x+35-swayX, t.y+20-swayY, 30, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.arc(t.x+45+swayX, t.y+35+swayY, 20, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x+15, t.y+25, 25, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x+35, t.y+20, 30, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x+45, t.y+35, 20, 0, Math.PI*2); ctx.fill();
                         } else {
-                            // Trimmed Topiary
-                            ctx.fillStyle = '#15803d';
-                            ctx.fillRect(t.x, t.y + 20, t.w, t.h - 20);
-                            ctx.strokeStyle = '#166534'; ctx.lineWidth = 3;
-                            ctx.strokeRect(t.x, t.y + 20, t.w, t.h - 20);
+                            ctx.fillStyle = '#15803d'; ctx.fillRect(t.x, t.y + 20, t.w, t.h - 20);
+                            ctx.strokeStyle = '#166534'; ctx.lineWidth = 3; ctx.strokeRect(t.x, t.y + 20, t.w, t.h - 20);
                         }
                     } else if (t.type === 'branch') {
-                        // Tree Trunk
-                        ctx.fillStyle = '#451a03';
-                        ctx.fillRect(t.trunkX, t.y, 15, t.trunkY - t.y);
-                        
+                        ctx.fillStyle = '#451a03'; ctx.fillRect(t.trunkX, t.y, 15, t.trunkY - t.y);
                         if (!t.done) {
-                            // Branch
                             ctx.fillRect(t.x, t.y + 5, t.trunkX - t.x, 8);
-                            // Leaves swaying
-                            let sway = Math.sin(frameCount * 0.05 + t.x) * 3;
                             ctx.fillStyle = '#166534';
-                            ctx.beginPath(); ctx.arc(t.x + 10 + sway, t.y + 10, 25, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.arc(t.x + 25 + sway, t.y, 20, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x + 10, t.y + 10, 25, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x + 25, t.y, 20, 0, Math.PI*2); ctx.fill();
                         }
-                        
-                        // Top leaves
-                        ctx.fillStyle = '#14532d';
-                        ctx.beginPath(); ctx.arc(t.trunkX + 7, t.y - 10, 35, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#14532d'; ctx.beginPath(); ctx.arc(t.trunkX + 7, t.y - 10, 35, 0, Math.PI*2); ctx.fill();
                     }
                 }
 
-                // FX: Particles (Leaves)
-                for (let p of particles) {
+                // Player Drawing
+                if (player.invincibleTimer % 4 < 2) { // Blink
                     ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rot);
-                    ctx.fillStyle = `rgba(34, 197, 94, ${p.life})`; // text-green-500
-                    ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI*2); ctx.fill();
+                    ctx.translate(player.x + player.width/2, player.y + player.height);
+                    if (!player.facingRight) ctx.scale(-1, 1);
+                    ctx.scale(player.squash, player.stretch);
+                    
+                    let walkAnim = (Math.abs(player.vx) > 0.1 && player.grounded) ? Math.sin(frameCount * 0.3) * 15 : (!player.grounded ? 20 : 0);
+
+                    ctx.fillStyle = '#fca5a5'; ctx.save(); ctx.translate(0, -22); ctx.rotate(-walkAnim * Math.PI/180); ctx.fillRect(-3, 0, 6, 12); ctx.restore();
+                    ctx.fillStyle = '#1e293b'; ctx.save(); ctx.translate(0, -10); ctx.rotate(walkAnim * Math.PI/180); ctx.fillRect(-4, 0, 8, 10); ctx.restore();
+                    
+                    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-8, -25, 16, 16, 4) : ctx.fillRect(-8, -25, 16, 16); ctx.fill();
+                    
+                    ctx.fillStyle = '#334155'; ctx.save(); ctx.translate(0, -10); ctx.rotate(-walkAnim * Math.PI/180); ctx.fillRect(-4, 0, 8, 10); ctx.restore();
+                    ctx.fillStyle = '#fca5a5'; ctx.save(); ctx.translate(0, -22); ctx.rotate(walkAnim * Math.PI/180); ctx.fillRect(-3, 0, 6, 12); ctx.restore();
+
+                    ctx.fillStyle = '#fca5a5'; ctx.beginPath(); ctx.arc(0, -32, 7, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#000'; ctx.fillRect(2, -34, 2, 2);
+                    ctx.fillStyle = '#166534'; ctx.beginPath(); ctx.arc(0, -34, 7, Math.PI, 0); ctx.fill(); ctx.fillRect(0, -34, 10, 3);
+                    
                     ctx.restore();
                 }
 
-                // Player Drawing (Custom Shape with squash/stretch & animations)
-                ctx.save();
-                
-                // Centre du joueur pour l'échelle
-                ctx.translate(player.x + player.width/2, player.y + player.height);
-                
-                if (!player.facingRight) ctx.scale(-1, 1); // Flip
-                ctx.scale(player.squash, player.stretch); // Squash & Stretch
-                
-                // Animation de marche (angles des membres)
-                let walkAnim = 0;
-                if (Math.abs(player.vx) > 0.1 && player.grounded) {
-                    walkAnim = Math.sin(frameCount * 0.3) * 15; // en degrés
-                } else if (!player.grounded) {
-                    walkAnim = 20; // Pose de saut
+                // Particles
+                for (let p of particles) {
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI*2); ctx.fill(); ctx.restore();
                 }
 
-                // Bras arrière
-                ctx.fillStyle = '#fca5a5'; // Peau
-                ctx.save(); ctx.translate(0, -22); ctx.rotate(-walkAnim * Math.PI/180);
-                ctx.fillRect(-3, 0, 6, 12); ctx.restore();
-
-                // Jambe arrière
-                ctx.fillStyle = '#1e293b'; // Pantalon sombre
-                ctx.save(); ctx.translate(0, -10); ctx.rotate(walkAnim * Math.PI/180);
-                ctx.fillRect(-4, 0, 8, 10); ctx.restore();
-
-                // Corps (Gilet vert/jaune)
-                ctx.fillStyle = '#84cc16'; // lime-500
-                ctx.beginPath();
-                ctx.roundRect ? ctx.roundRect(-8, -25, 16, 16, 4) : ctx.fillRect(-8, -25, 16, 16);
-                ctx.fill();
-
-                // Jambe avant
-                ctx.fillStyle = '#334155'; // Pantalon
-                ctx.save(); ctx.translate(0, -10); ctx.rotate(-walkAnim * Math.PI/180);
-                ctx.fillRect(-4, 0, 8, 10); ctx.restore();
-
-                // Bras avant
-                ctx.fillStyle = '#fca5a5';
-                ctx.save(); ctx.translate(0, -22); ctx.rotate(walkAnim * Math.PI/180);
-                ctx.fillRect(-3, 0, 6, 12); ctx.restore();
-
-                // Tête
-                ctx.fillStyle = '#fca5a5';
-                ctx.beginPath(); ctx.arc(0, -32, 7, 0, Math.PI*2); ctx.fill();
-                // Oeil
-                ctx.fillStyle = '#000';
-                ctx.fillRect(2, -34, 2, 2);
-                // Casquette (Visière + Haut)
-                ctx.fillStyle = '#166534'; // Vert sombre
-                ctx.beginPath(); ctx.arc(0, -34, 7, Math.PI, 0); ctx.fill(); // Dôme
-                ctx.fillRect(0, -34, 10, 3); // Visière
-
-                ctx.restore();
-
-                // FX: Floating Texts
-                ctx.textAlign = "center";
-                ctx.font = "bold 16px 'Playfair Display', serif";
+                // UI Overlay in World
+                ctx.textAlign = "center"; ctx.font = "bold 16px Arial";
                 for (let ft of floatingTexts) {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${ft.life})`;
-                    ctx.shadowColor = `rgba(0, 0, 0, ${ft.life})`;
-                    ctx.shadowBlur = 4;
-                    ctx.fillText(ft.text, ft.x, ft.y);
+                    ctx.fillStyle = ft.color; ctx.fillText(ft.text, ft.x, ft.y);
                 }
-                ctx.shadowBlur = 0; // Reset
+
+                ctx.restore(); // End Camera transform
+
+                // UI Static (HP)
+                ctx.fillStyle = '#ef4444'; ctx.textAlign = "left"; ctx.font = "24px Arial";
+                ctx.fillText("❤️".repeat(player.hp), 10, 50);
             }
 
             // Keyboard controls

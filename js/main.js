@@ -35,8 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                obs.unobserve(entry.target);
+                const el = entry.target;
+                let delay = 0;
+                if (el.classList.contains('reveal-delay-1')) delay = 150;
+                else if (el.classList.contains('reveal-delay-2')) delay = 300;
+                setTimeout(() => {
+                    el.classList.add('active');
+                }, delay);
+                obs.unobserve(el);
             }
         });
     }, { threshold: 0.12 });

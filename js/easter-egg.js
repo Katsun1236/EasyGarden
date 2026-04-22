@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverScreen = document.getElementById('game-over-screen');
 
     // --- GAME ENGINE ---
-    const keys = { left: false, right: false, up: false, space: false };
+    const keys = { left: false, right: false, up: false, space: false, jumpJustPressed: false };
     let gameLoop;
     let gameActive = false;
     let currentLevelIdx = 0;
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         x: 50, y: 200, width: 24, height: 32,
         vx: 0, vy: 0, speed: 6, jumpPower: -12.5,
         grounded: false, facingRight: true,
-        squash: 1, stretch: 1, hp: 3, maxHp: 3, invincibleTimer: 0
+        squash: 1, stretch: 1, hp: 3, maxHp: 3, invincibleTimer: 0, jumps: 0, spawnX: 50, spawnY: 200
     };
 
     let particles = [];
@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 950, y: groundY, w: 900, h: 60 }, // Trou
                 { x: 450, y: 300, w: 120, h: 20 },
             ],
-            water: [ { x: 800, y: groundY + 10, w: 150, h: 50 } ], // Flaque de boue
+            water: [ { x: 800, y: groundY + 10, w: 150, h: 50 } ],
+            checkpoints: [{x: 1000, y: groundY - 60, w: 20, h: 60, active: false}],
             tasks: [
                 { x: 500, y: 300 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
                 { x: 1100, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 1800, y: groundY, w: 800, h: 60 },
             ],
             water: [ { x: 500, y: groundY + 10, w: 150, h: 50 }, { x: 1250, y: groundY + 10, w: 100, h: 50 } ],
+            checkpoints: [{x: 1300, y: groundY - 60, w: 20, h: 60, active: false}],
             tasks: [
                 { x: 300, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
                 { x: 1070, y: 250 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
@@ -144,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 2600, y: groundY, w: 400, h: 60 },
             ],
             water: [ { x: 300, y: groundY + 10, w: 600, h: 50 }, { x: 1300, y: groundY + 10, w: 600, h: 50 }, { x: 2300, y: groundY + 10, w: 300, h: 50 } ],
+            checkpoints: [{x: 1000, y: groundY - 60, w: 20, h: 60, active: false}, {x: 2000, y: groundY - 60, w: 20, h: 60, active: false}],
             tasks: [
                 { x: 1000, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
                 { x: 1150, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
@@ -172,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 2100, y: groundY, w: 700, h: 60 },
             ],
             water: [ { x: 500, y: groundY + 10, w: 550, h: 50 }, { x: 1550, y: groundY + 10, w: 550, h: 50 } ],
+            checkpoints: [{x: 1200, y: groundY - 60, w: 20, h: 60, active: false}, {x: 2200, y: groundY - 60, w: 20, h: 60, active: false}],
             tasks: [
                 { x: 300, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
                 { x: 670, y: 150 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
@@ -233,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player.vx = 0; player.vy = 0;
         player.facingRight = true;
         player.hp = player.maxHp; player.invincibleTimer = 0;
+        player.spawnX = 50; player.spawnY = 200;
         
         enemies = levelData.enemies || [];
         items = levelData.items || [];
@@ -334,12 +339,21 @@ document.addEventListener('DOMContentLoaded', () => {
         player.vx *= friction;
         player.vy += gravity;
 
+        if (player.grounded) player.jumps = 0;
+        
         if (keys.up && player.grounded) {
             player.vy = player.jumpPower;
             player.grounded = false;
+            player.jumps = 1;
             player.squash = 0.6; player.stretch = 1.4;
             spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 5);
+        } else if (keys.jumpJustPressed && player.jumps < 2 && !player.grounded) {
+            player.vy = player.jumpPower * 0.9;
+            player.jumps = 2;
+            player.squash = 0.7; player.stretch = 1.3;
+            spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 8);
         }
+        keys.jumpJustPressed = false;
 
         if (player.vx > player.speed) player.vx = player.speed;
         if (player.vx < -player.speed) player.vx = -player.speed;
@@ -352,16 +366,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const wasGrounded = player.grounded;
         player.grounded = false;
 
+        function handleFallDeath(title, desc) {
+            player.hp--;
+            if (player.hp <= 0) {
+                showGameOver("Game Over", desc, "Réessayer");
+                return true;
+            }
+            player.x = player.spawnX; player.y = player.spawnY;
+            player.vx = 0; player.vy = 0; player.invincibleTimer = 60;
+            cameraX = player.x - canvas.width / 2;
+            spawnText(player.x, player.y - 20, "-1 PV", '#ef4444');
+            return false;
+        }
+
         // Water Hazards
         for (let w of (levelData.water || [])) {
             if (player.y + player.height > w.y + 20 && player.x + player.width > w.x && player.x < w.x + w.w) {
                 spawnParticles(player.x+12, w.y+10, '#3b82f6', 20);
-                return showGameOver("Plouf !", "Vous êtes tombé à l'eau.", "Recommencer");
+                if(handleFallDeath("Plouf !", "Vous êtes tombé à l'eau.")) return;
             }
         }
         
         // Fall Death
-        if (player.y > 600) return showGameOver("Tombé !", "Attention où vous mettez les pieds.", "Recommencer");
+        if (player.y > 600) {
+            if(handleFallDeath("Tombé !", "Attention où vous mettez les pieds.")) return;
+        }
 
         // Platforms Logic
         for (let p of levelData.platforms) {
@@ -453,6 +482,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     spawnParticles(player.x, player.y, '#ef4444', 10);
                     if (player.hp <= 0) return showGameOver("Game Over", "Les nuisibles ont gagné.", "Réessayer");
                 }
+            }
+        }
+
+        // Checkpoints
+        for (let c of (levelData.checkpoints || [])) {
+            if (!c.active && checkCollision(player, c)) {
+                c.active = true;
+                player.spawnX = c.x; player.spawnY = c.y - 20;
+                spawnParticles(c.x + 10, c.y, '#fde047', 20);
+                spawnText(c.x, c.y - 20, "CHECKPOINT", '#fde047');
             }
         }
 
@@ -693,6 +732,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 ctx.fillStyle = '#14532d'; ctx.beginPath(); ctx.arc(t.trunkX + 7, t.y - 10, 35, 0, Math.PI*2); ctx.fill();
             }
+        }
+
+        // Checkpoints
+        for (let c of (levelData.checkpoints || [])) {
+            ctx.fillStyle = '#78350f'; // Poteau
+            ctx.fillRect(c.x + 8, c.y, 4, c.h);
+            ctx.fillStyle = c.active ? '#22c55e' : '#ef4444'; // Drapeau
+            ctx.beginPath(); ctx.moveTo(c.x + 12, c.y + 2); ctx.lineTo(c.x + 30, c.y + 10); ctx.lineTo(c.x + 12, c.y + 18); ctx.fill();
         }
 
         // Enemies

@@ -1,5 +1,5 @@
 // js/easter-egg/audio.js
-// Génération procédurale de sons rétro (API Web Audio)
+// Identique à ta version, pas de changement majeur requis ici.
 
 let audioCtx;
 
@@ -44,7 +44,6 @@ export function playSound(type) {
         gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
         osc.start(now); osc.stop(now + 0.4);
     } else if (type === 'tractor') {
-        // Bruit de moteur Diesel
         osc.type = 'sawtooth'; osc.frequency.setValueAtTime(60, now); osc.frequency.linearRampToValueAtTime(120, now + 0.8);
         gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
         osc.start(now); osc.stop(now + 1.0);

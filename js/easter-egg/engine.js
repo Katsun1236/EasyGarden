@@ -1,5 +1,5 @@
 // js/easter-egg/engine.js
-// Le moteur physique. Gère le tracteur, la boue, le vent, la taupe et les boss.
+// ⚠️ ÉNORME MISE À JOUR PHYSIQUE : AABB X et Y séparés + Wall-Jump Hollow Knight + Checkpoints fonctionnels.
 
 import { groundY, clouds, stars, levels } from './config.js';
 import { keys } from './input.js';
@@ -13,18 +13,12 @@ let gameActive = false;
 export const isGameActive = () => gameActive;
 
 let currentLevelIdx = 0;
-let cameraX = 0;
-let frameCount = 0;
-let screenShake = 0;
-
-let hitStopFrames = 0; 
-let gameState = 'playing'; 
-let cinematicTimer = 0;
-let cinematicState = '';
+let cameraX = 0; let frameCount = 0; let screenShake = 0;
+let hitStopFrames = 0; let gameState = 'playing'; 
+let cinematicTimer = 0; let cinematicState = '';
 
 const gravity = 0.55;
-const defaultFriction = 0.8;
-const mudFriction = 0.95; // Ça glisse !
+const defaultFriction = 0.8; const mudFriction = 0.95; 
 
 const player = {
     x: 50, y: 200, width: 24, height: 32,
@@ -33,14 +27,14 @@ const player = {
     squash: 1, stretch: 1, hp: 5, maxHp: 5, invincibleTimer: 0,
     jumps: 0, spawnX: 50, spawnY: 200,
     hasWallJump: false, hasDash: false, 
-    canDash: true, isDashing: false, dashTimer: 0, dashDir: 1
+    canDash: true, isDashing: false, dashTimer: 0, dashDir: 1,
+    wallJumpTimer: 0 // Bloque les inputs X pendant le saut façon Hollow Knight
 };
 
 let particles = []; let floatingTexts = []; let ghosts = [];
 let enemies = []; let items = []; let npcs = []; let chests = [];
 let levelTasks = 0; let completedTasks = 0;
-let levelData = {};
-let activeDialog = null; let nearNPC = null;
+let levelData = {}; let activeDialog = null; let nearNPC = null;
 
 export function initEngine() {
     gameContainer = document.getElementById('easter-egg-game-container');
@@ -55,7 +49,6 @@ export function initEngine() {
     bossNameTxt = document.getElementById('boss-name');
 
     closeBtn.addEventListener('click', closeGameUI);
-    restartBtn.addEventListener('click', () => { initAudio(); loadLevel(levelData.isBoss ? currentLevelIdx : 0); });
 }
 
 export function startGameUI() {
@@ -72,8 +65,12 @@ function closeGameUI() {
 }
 
 function activateBossUI(boss) {
-    bossHpContainer.classList.remove('hidden'); bossNameTxt.innerText = boss.name;
-    setTimeout(() => bossHpContainer.classList.remove('opacity-0'), 50); updateBossUI(boss);
+    bossHpContainer.classList.remove('hidden'); 
+    bossNameTxt.innerText = boss.name;
+    // Force le navigateur à rafraîchir l'élément pour jouer la transition CSS
+    void bossHpContainer.offsetWidth; 
+    bossHpContainer.classList.remove('opacity-0'); 
+    updateBossUI(boss);
 }
 
 function updateBossUI(boss) {
@@ -87,7 +84,7 @@ function loadLevel(idx) {
     player.x = player.spawnX = 50; player.y = player.spawnY = 200;
     player.vx = 0; player.vy = 0; player.facingRight = true;
     player.hp = player.maxHp; player.invincibleTimer = 0; player.jumps = 0;
-    player.isDashing = false; player.canDash = true;
+    player.isDashing = false; player.canDash = true; player.wallJumpTimer = 0;
     
     enemies = levelData.enemies || []; items = levelData.items || [];
     npcs = levelData.npcs || []; chests = [];
@@ -101,7 +98,7 @@ function loadLevel(idx) {
     if (levelData.boss) {
         levelData.boss.phase = 1; levelData.boss.state = 'classic'; levelData.boss.shield = false;
         levelData.boss.invincible = false; levelData.boss.hasDoneIntro = false;
-        levelData.boss.isActive = false; // Ne s'active que si on rentre dans l'arène
+        levelData.boss.isActive = false; 
     }
     
     document.getElementById('game-ui-level').innerText = "NIVEAU " + (idx + 1) + " - " + levelData.name;
@@ -119,8 +116,7 @@ function spawnParticles(x, y, color, count, type = 'normal') {
         particles.push({
             x: x + Math.random() * 20 - 10, y: y + Math.random() * 20 - 10,
             vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 1) * 10,
-            life: 1.0, size: Math.random() * 6 + 3, rot: Math.random() * Math.PI * 2, vrot: (Math.random() - 0.5) * 0.4,
-            color: color, type: type
+            life: 1.0, size: Math.random() * 6 + 3, rot: Math.random() * Math.PI * 2, vrot: (Math.random() - 0.5) * 0.4, color: color, type: type
         });
     }
 }
@@ -129,28 +125,43 @@ function spawnText(x, y, text, color = '#fff', size = '18px') {
     floatingTexts.push({ x: x, y: y, text: text, life: 1.0, color: color, size: size });
 }
 
+// Fonction de collision stricte
 function checkCollision(r1, r2) {
     let w1 = r1.w || r1.width; let h1 = r1.h || r1.height;
     let w2 = r2.w || r2.width; let h2 = r2.h || r2.height;
     return r1.x < r2.x + w2 && r1.x + w1 > r2.x && r1.y < r2.y + h2 && r1.y + h1 > r2.y;
 }
 
-function showGameOver(title, desc, btnText, isWin = false) {
-    gameActive = false;
-    document.getElementById('game-end-title').innerText = title; document.getElementById('game-end-text').innerText = desc;
-    restartBtn.innerText = btnText;
-    
-    if (isWin) {
-        restartBtn.onclick = () => { closeGameUI(); };
-    } else {
-        restartBtn.onclick = () => loadLevel(currentLevelIdx);
-    }
-    gameOverScreen.classList.remove('hidden');
-}
-
-function handleFallDeath(title, desc) {
+// Gère le Game Over / Checkpoint
+function handleDeath(desc) {
     player.hp--;
-    if (player.hp <= 0) { showGameOver("Game Over", desc, "Réessayer"); return true; }
+    if (player.hp <= 0) {
+        gameActive = false;
+        document.getElementById('game-end-title').innerText = "Mort !"; 
+        document.getElementById('game-end-text').innerText = desc;
+        restartBtn.innerText = "Continuer au Checkpoint";
+        restartBtn.onclick = () => {
+            // Respawn Checkpoint !
+            player.hp = player.maxHp;
+            player.x = player.spawnX; player.y = player.spawnY;
+            player.vx = 0; player.vy = 0; player.invincibleTimer = 60; player.wallJumpTimer = 0;
+            cameraX = player.x - canvas.width / 2;
+            
+            // Reset Boss si on est mort contre lui
+            if (levelData.boss && !levelData.boss.dead) {
+                levelData.boss.hp = levelData.boss.maxHp;
+                levelData.boss.x = levelData.boss.startX;
+                levelData.boss.state = 'idle'; levelData.boss.isActive = false; levelData.boss.hasDoneIntro = false;
+                gameState = 'playing';
+                if(bossHpContainer) { bossHpContainer.classList.add('opacity-0'); setTimeout(() => bossHpContainer.classList.add('hidden'), 500); }
+            }
+            gameOverScreen.classList.add('hidden');
+            gameActive = true; update();
+        };
+        gameOverScreen.classList.remove('hidden');
+        return true;
+    }
+    // Simple dégât de chute
     player.x = player.spawnX; player.y = player.spawnY; player.vx = 0; player.vy = 0; player.invincibleTimer = 60;
     cameraX = player.x - canvas.width / 2; spawnText(player.x, player.y - 20, "-1 PV", '#ef4444', '24px');
     return false;
@@ -159,9 +170,11 @@ function handleFallDeath(title, desc) {
 function update() {
     if (!gameActive) return;
     
+    // Hit Stop (Impact lourd)
     if (hitStopFrames > 0) { hitStopFrames--; draw(); gameLoop = requestAnimationFrame(update); return; }
     frameCount++;
 
+    // Cinématique d'intro du Boss
     if (gameState === 'boss_intro') {
         cinematicTimer++;
         if (cinematicState === 'pan') {
@@ -177,21 +190,22 @@ function update() {
         draw(); gameLoop = requestAnimationFrame(update); return; 
     }
 
-    if (levelData.isBoss && !levelData.boss.hasDoneIntro && player.x > levelData.boss.arenaMin - 300) {
+    if (levelData.boss && !levelData.boss.hasDoneIntro && player.x > levelData.boss.arenaMin - 300) {
         gameState = 'boss_intro'; cinematicState = 'pan'; cinematicTimer = 0;
         levelData.boss.hasDoneIntro = true; player.vx = 0; player.vy = 0; 
     }
 
-    // Gestion du type de friction (Boue ou Normal)
+    // Gestion Friction (Boue)
     let currentFriction = defaultFriction;
     if (player.grounded) {
         for(let p of levelData.platforms) {
             if (p.type === 'mud' && player.x + player.width > p.x && player.x < p.x + p.w && player.y + player.height >= p.y && player.y + player.height <= p.y + 5) {
-                currentFriction = mudFriction; // La Boue glisse !
+                currentFriction = mudFriction; 
             }
         }
     }
 
+    // Interactions Dialogues & Coffres
     nearNPC = null;
     for (let npc of npcs) {
         let dist = Math.abs((player.x + player.width/2) - (npc.x + npc.w/2));
@@ -213,7 +227,7 @@ function update() {
             if (keys.interactJustPressed) {
                 c.opened = true; playSound('chest'); spawnParticles(c.x + 20, c.y + 20, '#fde047', 50);
                 let itemName = c.item === 'walljump' ? "Crampons d'Élagage" : "Sécateur-Dash";
-                let itemDesc = c.item === 'walljump' ? "Maintiens la flèche vers un mur en l'air pour glisser, puis SAUTE !" : "Appuie sur MAJ en plein saut pour foncer et être invincible !";
+                let itemDesc = c.item === 'walljump' ? "Glissez sur les murs et sautez pour rebondir tel un ninja !" : "Appuyez sur MAJ en plein saut pour foncer et être invincible !";
                 if (c.item === 'walljump') player.hasWallJump = true;
                 if (c.item === 'dash') player.hasDash = true;
                 activeDialog = { npc: { x: c.x, y: c.y - 40, w: 0, h: 0, name: "Coffre", dialogs: [`Vous avez obtenu : ${itemName} !`, itemDesc] }, line: 0, showPrompt: false };
@@ -226,44 +240,85 @@ function update() {
     }
     keys.interactJustPressed = false; 
 
-    clouds.forEach(c => { c.x -= c.s; if(c.x < -200) c.x = levelData.width + 200; });
-
-    if (player.invincibleTimer > 0) player.invincibleTimer--;
-    player.squash += (1 - player.squash) * 0.2; player.stretch += (1 - player.stretch) * 0.2;
-
-    if (keys.dashJustPressed && player.hasDash && player.canDash && !player.isDashing) {
-        player.isDashing = true; player.dashTimer = 12; player.canDash = false;
-        player.dashDir = player.facingRight ? 1 : -1; player.vy = 0;
-        playSound('dash'); spawnParticles(player.x, player.y+10, '#3b82f6', 15);
-    }
-    keys.dashJustPressed = false;
-
-    if (!player.isDashing) {
-        if (keys.left) { player.vx -= 1.0; player.facingRight = false; }
-        if (keys.right) { player.vx += 1.0; player.facingRight = true; }
-        player.vx *= currentFriction; player.vy += gravity;
-    } else {
-        player.vx = player.dashDir * 14; player.dashTimer--; player.vy = 0; 
-        if (frameCount % 3 === 0) ghosts.push({ x: player.x, y: player.y, squash: player.squash, stretch: player.stretch, facingRight: player.facingRight, life: 1.0 });
-        if (player.dashTimer <= 0) player.isDashing = false;
-    }
-
-    if (player.grounded) { player.jumps = 0; player.canDash = true; }
-    
-    // NOUVEAU : COURANTS D'AIR (Vent)
+    // Vent
     for (let w of (levelData.windZones || [])) {
         if (checkCollision(player, w)) {
-            player.vy -= 1.2; // Antigravité !
+            player.vy -= 1.2; 
             if (frameCount % 10 === 0) spawnParticles(player.x + player.width/2, player.y + player.height, '#ffffff', 1, 'wind');
         }
     }
 
+    if (player.invincibleTimer > 0) player.invincibleTimer--;
+    player.squash += (1 - player.squash) * 0.2; player.stretch += (1 - player.stretch) * 0.2;
+
+    // --- 1. MOUVEMENT HORIZONTAL (X) ---
+    if (keys.dashJustPressed && player.hasDash && player.canDash && !player.isDashing) {
+        player.isDashing = true; player.dashTimer = 12; player.canDash = false;
+        player.dashDir = player.facingRight ? 1 : -1; player.vy = 0; player.wallJumpTimer = 0;
+        playSound('dash'); spawnParticles(player.x, player.y+10, '#3b82f6', 15);
+    }
+    keys.dashJustPressed = false;
+
+    if (player.isDashing) {
+        player.vx = player.dashDir * 14; player.dashTimer--; player.vy = 0; 
+        if (frameCount % 3 === 0) ghosts.push({ x: player.x, y: player.y, squash: player.squash, stretch: player.stretch, facingRight: player.facingRight, life: 1.0 });
+        if (player.dashTimer <= 0) player.isDashing = false;
+    } else if (player.wallJumpTimer > 0) {
+        // Hollow Knight : On ignore les inputs X pendant l'impulsion du wall jump !
+        player.wallJumpTimer--;
+    } else {
+        if (keys.left) { player.vx -= 1.0; player.facingRight = false; }
+        if (keys.right) { player.vx += 1.0; player.facingRight = true; }
+        player.vx *= currentFriction;
+    }
+
+    // Gestion des plateformes mouvantes
+    let platformDeltaX = 0;
+    for (let p of levelData.platforms) {
+        if (p.type === 'moving') {
+            p.x += p.vx; if (p.x < p.minX || p.x + p.w > p.maxX) p.vx *= -1;
+            // Si on est posé sur la plateforme, on bouge avec elle
+            if (player.grounded && player.y + player.height === p.y && player.x + player.width > p.x && player.x < p.x + p.w) {
+                platformDeltaX = p.vx;
+            }
+        }
+        if (p.type === 'fragile' && p.state === 'falling') p.y += 6;
+    }
+
+    player.x += platformDeltaX;
+
+    if (!player.isDashing && player.wallJumpTimer === 0) {
+        if (player.vx > player.speed) player.vx = player.speed;
+        if (player.vx < -player.speed) player.vx = -player.speed;
+    }
+
+    player.x += player.vx;
+    if (player.x < 0) { player.x = 0; player.vx = 0; }
+    if (player.x + player.width > levelData.width) { player.x = levelData.width - player.width; player.vx = 0; }
+
+    // --- 2. RÉSOLUTION DES COLLISIONS HORIZONTALES (X) ---
     let touchingWallDir = 0;
     for (let p of levelData.platforms) {
-        if (player.vy >= 0 && player.y + player.height > p.y && player.y < p.y + p.h) {
-            if (player.x + player.width >= p.x - 2 && player.x + player.width <= p.x + 5 && keys.right) touchingWallDir = 1;
-            if (player.x <= p.x + p.w + 2 && player.x >= p.x + p.w - 5 && keys.left) touchingWallDir = -1;
+        if (p.type === 'bouncy') continue; // Les bumpers ne bloquent pas le mouvement horizontal
+        
+        // On résout les chevauchements purs
+        if (checkCollision(player, p)) {
+            if (player.vx > 0 || platformDeltaX > 0) { player.x = p.x - player.width; player.vx = 0; } 
+            else if (player.vx < 0 || platformDeltaX < 0) { player.x = p.x + p.w; player.vx = 0; }
+            if (player.isDashing) { player.isDashing = false; player.dashTimer = 0; }
         }
+        
+        // On détecte un mur contre lequel on "pousse" pour le Wall-Jump (Box élargie de 2 pixels)
+        if (player.vy > 0 && player.y + player.height > p.y && player.y < p.y + p.h) {
+            if (player.x + player.width >= p.x - 1 && player.x + player.width <= p.x + 1 && keys.right) touchingWallDir = 1;
+            if (player.x <= p.x + p.w + 1 && player.x >= p.x + p.w - 1 && keys.left) touchingWallDir = -1;
+        }
+    }
+
+    // --- 3. MOUVEMENT VERTICAL (Y) ---
+    if (!player.isDashing) {
+        player.vy += gravity;
+        if (player.vy > 14) player.vy = 14; // Terminal velocity
     }
 
     let isWallSliding = false;
@@ -273,10 +328,14 @@ function update() {
     }
 
     if (keys.jumpJustPressed && !player.isDashing) {
-        if (isWallSliding) {
-            playSound('jump'); player.vy = player.jumpPower * 0.9; player.vx = touchingWallDir * -10; 
+        if (isWallSliding || (touchingWallDir !== 0 && !player.grounded)) {
+            // HOLLOW KNIGHT WALL JUMP : Impulsion forte en diagonale et blocage des contrôles X
+            playSound('jump'); player.vy = player.jumpPower * 0.85; 
+            player.vx = touchingWallDir * -12; // Éjection puissante du mur
             player.facingRight = (touchingWallDir === -1); player.jumps = 1;
-            player.squash = 0.7; player.stretch = 1.3; spawnParticles(player.x + (touchingWallDir===1?player.width:0), player.y + 16, '#d4d4d8', 12);
+            player.wallJumpTimer = 15; // Bloque les touches Gauche/Droite pendant 15 frames
+            player.squash = 0.7; player.stretch = 1.3; 
+            spawnParticles(player.x + (touchingWallDir===1?player.width:0), player.y + 16, '#d4d4d8', 12);
         } else if (player.grounded) {
             playSound('jump'); player.vy = player.jumpPower; player.grounded = false; player.jumps = 1;
             player.squash = 0.6; player.stretch = 1.4; spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 8);
@@ -287,49 +346,52 @@ function update() {
     }
     keys.jumpJustPressed = false; 
 
-    if (!player.isDashing) {
-        if (player.vx > player.speed) player.vx = player.speed;
-        if (player.vx < -player.speed) player.vx = -player.speed;
-    }
-
-    player.x += player.vx;
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > levelData.width) player.x = levelData.width - player.width;
-
     player.y += player.vy;
     const wasGrounded = player.grounded; player.grounded = false;
 
-    for (let w of (levelData.water || [])) {
-        if (player.y + player.height > w.y + 20 && player.x + player.width > w.x && player.x < w.x + w.w) {
-            playSound('water'); spawnParticles(player.x+12, w.y+10, '#3b82f6', 30);
-            if(handleFallDeath("Plouf !", "Vous êtes tombé à l'eau.")) return;
-        }
-    }
-    if (player.y > groundY + 200) if(handleFallDeath("Tombé !", "Attention où vous mettez les pieds.")) return;
-
+    // --- 4. RÉSOLUTION DES COLLISIONS VERTICALES (Y) ---
     for (let p of levelData.platforms) {
-        if (p.type === 'moving') { p.x += p.vx; if (p.x < p.minX || p.x + p.w > p.maxX) p.vx *= -1; }
-        if (p.type === 'fragile' && p.state === 'falling') { p.y += 6; continue; }
-
-        if (player.vy > 0 && player.x + player.width > p.x + 5 && player.x < p.x + p.w - 5 &&
-            player.y + player.height >= p.y && player.y + player.height <= p.y + player.vy + 3) {
-            
-            player.y = p.y - player.height; player.vy = 0; player.grounded = true;
-            if (p.type === 'moving') player.x += p.vx;
-            
-            if (p.type === 'bouncy') {
-                playSound('bounce'); player.vy = -17; player.grounded = false;
-                player.squash = 0.5; player.stretch = 1.5; spawnParticles(player.x + 12, player.y + 32, '#ef4444', 15);
-            }
-            if (p.type === 'fragile') {
-                if(p.state === 'idle') p.state = 'shaking';
-                p.timer++; if(p.timer > 25) p.state = 'falling';
+        if (checkCollision(player, p)) {
+            if (player.vy > 0) {
+                // Atterrissage
+                player.y = p.y - player.height; player.vy = 0; player.grounded = true;
+                player.jumps = 0; player.canDash = true; player.wallJumpTimer = 0; // Reset tout
+                
+                if (p.type === 'bouncy') {
+                    playSound('bounce'); player.vy = -18; player.grounded = false; player.jumps = 1;
+                    player.squash = 0.5; player.stretch = 1.5; spawnParticles(player.x + 12, player.y + 32, '#ef4444', 15);
+                }
+                if (p.type === 'fragile') {
+                    if(p.state === 'idle') p.state = 'shaking';
+                    p.timer++; if(p.timer > 25) p.state = 'falling';
+                }
+            } else if (player.vy < 0) {
+                // Tête contre le plafond
+                if (p.type !== 'bouncy') { player.y = p.y + p.h; player.vy = 0; }
             }
         }
     }
 
     if (!wasGrounded && player.grounded) { player.squash = 1.4; player.stretch = 0.6; spawnParticles(player.x + 12, player.y + 32, '#a8a29e', 6); }
 
+    // --- LOGIQUE DE MORT (Eau & Trous) ---
+    for (let w of (levelData.water || [])) {
+        if (player.y + player.height > w.y + 20 && player.x + player.width > w.x && player.x < w.x + w.w) {
+            playSound('water'); spawnParticles(player.x+12, w.y+10, '#3b82f6', 30);
+            if(handleDeath("Vous êtes tombé à l'eau.")) return;
+        }
+    }
+    if (player.y > groundY + 200) if(handleDeath("Attention où vous mettez les pieds.")) return;
+
+    // Checkpoints
+    for (let c of (levelData.checkpoints || [])) {
+        if (!c.active && checkCollision(player, c)) {
+            c.active = true; player.spawnX = c.x; player.spawnY = c.y - 20; 
+            spawnParticles(c.x + 10, c.y, '#fde047', 30); spawnText(c.x, c.y - 30, "SAUVEGARDÉ !", '#fde047', '22px');
+        }
+    }
+
+    // Caméra 
     let targetCamX = player.x - canvas.width / 2 + player.width / 2;
     if (levelData.boss && levelData.boss.hp > 0 && gameState !== 'boss_intro') {
         let b = levelData.boss;
@@ -344,6 +406,7 @@ function update() {
 
     if (screenShake > 0) { ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake); screenShake *= 0.9; }
 
+    // Nettoyage visuel
     for (let i = ghosts.length - 1; i >= 0; i--) { ghosts[i].life -= 0.05; if (ghosts[i].life <= 0) ghosts.splice(i, 1); }
     for (let i = particles.length - 1; i >= 0; i--) { let p = particles[i]; p.x += p.vx; p.y += p.vy; if(p.type!=='wind') p.vy += gravity * 0.5; p.rot += p.vrot; p.life -= 0.02; if (p.life <= 0) particles.splice(i, 1); }
     for (let i = floatingTexts.length - 1; i >= 0; i--) { let ft = floatingTexts[i]; ft.y -= 1.0; ft.life -= 0.015; if (ft.life <= 0) floatingTexts.splice(i, 1); }
@@ -357,7 +420,6 @@ function update() {
         }
     }
 
-    // Le Tracteur de fin de niveau !
     let isGoalOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
     if (!levelData.isBoss && checkCollision(player, levelData.goal)) {
         if (isGoalOpen) {
@@ -390,9 +452,9 @@ function update() {
         else if (e.type === 'mole') {
             e.timer++;
             if (e.timer < 120) {
-                if (e.timer > 90 && frameCount % 5 === 0) spawnParticles(e.x + e.w/2, e.y, '#78350f', 3); // La terre tremble
+                if (e.timer > 90 && frameCount % 5 === 0) spawnParticles(e.x + e.w/2, e.y, '#78350f', 3); 
             } else if (e.timer === 120) {
-                e.vy = -13; playSound('hit'); // Elle jaillit
+                e.vy = -13; playSound('hit'); 
             } else {
                 e.y += e.vy; e.vy += gravity;
                 if (e.y >= e.baseY) { e.y = e.baseY; e.vy = 0; e.timer = 0; }
@@ -406,19 +468,17 @@ function update() {
             } else if (!player.isDashing) {
                 player.hp--; player.invincibleTimer = 60; player.vx = (player.x < e.x) ? -12 : 12; player.vy = -7;
                 spawnParticles(player.x, player.y, '#ef4444', 15);
-                if (player.hp <= 0) return showGameOver("Game Over", "Les nuisibles ont gagné.", "Réessayer");
+                if(handleDeath("Les nuisibles ont gagné.")) return;
             }
         }
     }
 
-    // GESTION DU BOSS (CORRIGÉE : Apparaît bien dans tous les niveaux !)
     if (levelData.boss && !levelData.boss.dead && gameState !== 'boss_intro') {
         let b = levelData.boss;
         
-        // AGGRO DU BOSS : Il ne s'active que si on entre dans sa zone
         if (!b.isActive && player.x >= b.arenaMin) {
             b.isActive = true;
-            if(!levelData.isBoss) activateBossUI(b); // Affiche la barre de vie
+            if(!levelData.isBoss) activateBossUI(b); 
         }
 
         if (b.isActive) {
@@ -463,7 +523,7 @@ function update() {
                     b.x += b.vx;
                     if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
                     if (b.timer % 120 === 0 && b.y >= groundY - b.h - 10) b.vy = -15;
-                    if (b.hp <= 10) b.phase = 5; // On écourte pour l'exemple
+                    if (b.hp <= 10) b.phase = 5; 
                 } else if (b.phase === 5) {
                     b.x += b.vx * 1.6;
                     if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
@@ -488,7 +548,7 @@ function update() {
                     player.hp--; player.invincibleTimer = 60; screenShake = 20;
                     player.vx = (player.x < b.x) ? -18 : 18; player.vy = -10;
                     spawnText(player.x, player.y - 30, "OUCH!", '#ef4444', '24px');
-                    if (player.hp <= 0) return showGameOver("Game Over", "Le boss vous a écrasé.", "Réessayer");
+                    if(handleDeath("Le boss vous a écrasé.")) return;
                 }
             }
             
@@ -498,7 +558,7 @@ function update() {
                 if(p.type === 'shockwave') { p.life--; if(p.life <= 0) { levelData.projectiles.splice(i, 1); continue; } }
                 if (checkCollision(player, {x: p.x-p.size, y: p.y-p.size, w: p.size*2, h: p.size*2}) && player.invincibleTimer === 0 && !player.isDashing) {
                     player.hp--; player.invincibleTimer = 60; screenShake = 20; levelData.projectiles.splice(i, 1);
-                    if (player.hp <= 0) return showGameOver("Game Over", "Touché par un projectile.", "Réessayer");
+                    if(handleDeath("Touché par un projectile.")) return;
                 }
             }
         }
@@ -581,10 +641,8 @@ function draw() {
         ctx.shadowBlur = 0;
     }
 
-    // Le Vent (Courants d'air)
     for (let w of (levelData.windZones || [])) {
-        ctx.fillStyle = 'rgba(255,255,255,0.1)';
-        ctx.fillRect(w.x, w.y, w.w, w.h);
+        ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(w.x, w.y, w.w, w.h);
         ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(w.x + w.w/3, w.y + w.h); ctx.lineTo(w.x + w.w/3, w.y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(w.x + w.w*0.6, w.y + w.h); ctx.lineTo(w.x + w.w*0.6, w.y); ctx.stroke();
@@ -608,9 +666,8 @@ function draw() {
             ctx.fillStyle = '#fde047'; ctx.fillRect(p.x, p.y, p.w, 4);
             if(p.state === 'shaking') { ctx.fillStyle = 'rgba(239, 68, 68, 0.4)'; ctx.fillRect(p.x, p.y, p.w, p.h); }
         } else if (p.type === 'mud') {
-            // La boue
             ctx.fillStyle = '#451a03'; ctx.fillRect(p.x, p.y + 12, p.w, p.h - 12);
-            ctx.fillStyle = '#290f02'; ctx.fillRect(p.x, p.y, p.w, 12); // Sombre et humide
+            ctx.fillStyle = '#290f02'; ctx.fillRect(p.x, p.y, p.w, 12); 
             ctx.fillStyle = '#78350f'; ctx.fillRect(p.x, p.y+12, p.w, 4);
         } else {
             ctx.fillStyle = levelData.isBoss ? '#290f02' : '#451a03'; ctx.fillRect(p.x, p.y + 12, p.w, p.h - 12);
@@ -622,15 +679,13 @@ function draw() {
         ctx.globalAlpha = 1.0;
     }
 
-    // Coffres
     for (let c of chests) {
         ctx.fillStyle = '#b45309'; ctx.fillRect(c.x, c.y, c.w, c.h);
         ctx.fillStyle = '#fde047'; ctx.fillRect(c.x - 2, c.y + 15, c.w + 4, 8);
         ctx.fillStyle = '#78350f'; ctx.fillRect(c.x + c.w/2 - 4, c.y + 12, 8, 14);
         if (!c.opened) {
             ctx.shadowColor = '#fde047'; ctx.shadowBlur = 15;
-            ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2; ctx.strokeRect(c.x, c.y, c.w, c.h);
-            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2; ctx.strokeRect(c.x, c.y, c.w, c.h); ctx.shadowBlur = 0;
             if (Math.abs((player.x+player.width/2) - (c.x+c.w/2)) < 50) {
                 ctx.fillStyle = '#fde047'; ctx.font = "bold 14px Arial"; ctx.textAlign = "center";
                 ctx.fillText("'E' OUVRIR", c.x + c.w/2, c.y - 15);
@@ -638,36 +693,23 @@ function draw() {
         } else { ctx.fillStyle = '#000'; ctx.fillRect(c.x + 4, c.y + 4, c.w - 8, c.h - 8); }
     }
 
-    // Le Tracteur !
     if (!levelData.isBoss) {
         let g = levelData.goal;
         let isGoalOpen = completedTasks >= levelTasks && (!levelData.boss || levelData.boss.dead) && chests.every(c => c.opened);
         
-        // Roues arrière
         ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(g.x + 30, g.y + g.h - 20, 25, 0, Math.PI*2); ctx.fill();
-        // Roues avant
         ctx.beginPath(); ctx.arc(g.x + g.w - 20, g.y + g.h - 15, 15, 0, Math.PI*2); ctx.fill();
-        // Jantes
         ctx.fillStyle = '#94a3b8'; ctx.beginPath(); ctx.arc(g.x + 30, g.y + g.h - 20, 10, 0, Math.PI*2); ctx.fill();
         ctx.beginPath(); ctx.arc(g.x + g.w - 20, g.y + g.h - 15, 6, 0, Math.PI*2); ctx.fill();
-        // Carrosserie
-        ctx.fillStyle = isGoalOpen ? '#ef4444' : '#7f1d1d'; // Devient rouge vif quand activé
-        ctx.fillRect(g.x + 10, g.y + g.h - 60, 60, 45); // Cabine
-        ctx.fillRect(g.x + 60, g.y + g.h - 40, g.w - 70, 25); // Moteur
-        // Toit
+        ctx.fillStyle = isGoalOpen ? '#ef4444' : '#7f1d1d'; 
+        ctx.fillRect(g.x + 10, g.y + g.h - 60, 60, 45); ctx.fillRect(g.x + 60, g.y + g.h - 40, g.w - 70, 25); 
         ctx.fillStyle = '#1e293b';
-        ctx.fillRect(g.x + 10, g.y + g.h - 75, 60, 5); 
-        ctx.fillRect(g.x + 15, g.y + g.h - 70, 5, 10); 
-        ctx.fillRect(g.x + 60, g.y + g.h - 70, 5, 10); 
-        // Cheminée
-        ctx.fillStyle = '#475569';
-        ctx.fillRect(g.x + g.w - 35, g.y + g.h - 65, 5, 25);
+        ctx.fillRect(g.x + 10, g.y + g.h - 75, 60, 5); ctx.fillRect(g.x + 15, g.y + g.h - 70, 5, 10); ctx.fillRect(g.x + 60, g.y + g.h - 70, 5, 10); 
+        ctx.fillStyle = '#475569'; ctx.fillRect(g.x + g.w - 35, g.y + g.h - 65, 5, 25);
 
         if (isGoalOpen) {
-            // Fumée d'échappement qui bouge
             ctx.fillStyle = 'rgba(255,255,255,0.5)';
             ctx.beginPath(); ctx.arc(g.x + g.w - 32 + Math.sin(frameCount*0.1)*5, g.y + g.h - 70 - (frameCount%20), 8, 0, Math.PI*2); ctx.fill();
-            
             if (Math.abs((player.x+player.width/2) - (g.x+g.w/2)) < 50) {
                 ctx.shadowColor = '#fde047'; ctx.shadowBlur = 15;
                 ctx.fillStyle = '#fde047'; ctx.font = "bold 16px Arial"; ctx.textAlign = "center"; 
@@ -676,7 +718,6 @@ function draw() {
         }
     }
 
-    // TÂCHES
     for (let t of levelData.tasks) {
         if (!t.done) { ctx.shadowColor = 'rgba(74, 222, 128, 0.9)'; ctx.shadowBlur = 20 + Math.sin(frameCount * 0.1)*10; }
         if (t.type === 'grass') {
@@ -711,7 +752,6 @@ function draw() {
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(npc.x + 6, npc.y + 10, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(npc.x + 14, npc.y + 10, 3, 0, Math.PI*2); ctx.fill();
     }
 
-    // FANTOMES DASH
     for (let g of ghosts) {
         ctx.save(); ctx.translate(g.x + player.width/2, g.y + player.height);
         if (!g.facingRight) ctx.scale(-1, 1); ctx.scale(g.squash, g.stretch);
@@ -721,13 +761,10 @@ function draw() {
     }
     ctx.globalAlpha = 1.0;
 
-    // JOUEUR
     if (player.invincibleTimer % 4 < 2) { 
         ctx.save(); ctx.translate(player.x + player.width/2, player.y + player.height);
         if (!player.facingRight) ctx.scale(-1, 1);
-        
-        if (player.isDashing) { ctx.rotate(Math.PI/2); ctx.scale(1.5, 0.5); } 
-        else ctx.scale(player.squash, player.stretch);
+        if (player.isDashing) { ctx.rotate(Math.PI/2); ctx.scale(1.5, 0.5); } else ctx.scale(player.squash, player.stretch);
         
         let walkAnim = (Math.abs(player.vx) > 0.1 && player.grounded) ? Math.sin(frameCount * 0.5) * 25 : (!player.grounded ? 30 : 0);
 
@@ -750,7 +787,6 @@ function draw() {
         ctx.restore();
     }
 
-    // ENNEMIS / BOSS 
     for(let e of enemies) {
         if(e.dead) continue;
         let dir = e.vx > 0 ? 1 : -1;
@@ -764,13 +800,13 @@ function draw() {
             ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(e.x + 12 + 10*dir, e.y + 12, 2, 0, Math.PI*2); ctx.fill();
         } else if (e.type === 'mole') {
             if (e.timer > 120) {
-                ctx.fillStyle = '#451a03'; ctx.fillRect(e.x, e.y, e.w, e.h); // Corps
-                ctx.fillStyle = '#fca5a5'; ctx.fillRect(e.x+4, e.y+4, 16, 8); // Nez rose
+                ctx.fillStyle = '#451a03'; ctx.fillRect(e.x, e.y, e.w, e.h); 
+                ctx.fillStyle = '#fca5a5'; ctx.fillRect(e.x+4, e.y+4, 16, 8); 
             }
         }
     }
 
-    if (levelData.boss && !levelData.boss.dead && levelData.boss.w > 0) { // CORRECTION VISIBILITÉ ICI !
+    if (levelData.boss && !levelData.boss.dead && levelData.boss.w > 0) { 
         let b = levelData.boss;
         if (b.type === 'scarecrow') {
             ctx.fillStyle = '#451a03'; ctx.fillRect(b.x+b.w/2-10, b.y+50, 20, b.h-50); 

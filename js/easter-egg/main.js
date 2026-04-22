@@ -1,5 +1,5 @@
 // js/easter-egg/main.js
-// Injecte l'interface et lie tous tes modules entre eux !
+// Injecte l'interface (correction de la Boss Bar z-index 50) et lie les modules.
 
 import { initInputs } from './input.js';
 import { initEngine, startGameUI, isGameActive } from './engine.js';
@@ -20,8 +20,8 @@ const gameHTML = `
             <button id="restart-game-btn" class="glow-btn px-8 py-4 bg-botanic text-white uppercase tracking-widest text-sm font-bold hover:bg-botanic-dark transition-all rounded-full shadow-[0_0_20px_rgba(114,138,100,0.5)]">Rejouer</button>
         </div>
         
-        <!-- Barre de vie du Boss -->
-        <div id="boss-hp-container" class="absolute top-16 left-1/2 transform -translate-x-1/2 w-3/4 max-w-lg hidden z-10 opacity-0 transition-opacity duration-500">
+        <!-- Barre de vie du Boss (Mise à jour Z-index: 50 pour passer au dessus du Canvas !) -->
+        <div id="boss-hp-container" class="absolute top-16 left-1/2 transform -translate-x-1/2 w-3/4 max-w-lg hidden z-50 opacity-0 transition-opacity duration-500">
             <div class="text-white text-center font-serif text-lg md:text-xl mb-1 tracking-widest" id="boss-name" style="text-shadow: 2px 2px 0 #000;">BOSS</div>
             <div class="w-full h-4 bg-stone-800 border-2 border-stone-400 rounded-sm overflow-hidden">
                 <div id="boss-hp-fill" class="h-full bg-red-600 transition-all duration-300 ease-out" style="width: 100%;"></div>

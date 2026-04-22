@@ -51,3 +51,60 @@
 .faq-item.active i {
     transform: rotate(180deg);
 }
+
+@layer components {
+  .page-hero {
+    @apply relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-secondary text-white overflow-hidden;
+  }
+  .breadcrumb {
+    @apply flex items-center space-x-2 text-sm text-gray-300 mb-6;
+  }
+
+  .blog-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full border border-gray-100;
+  }
+  .category-badge {
+    @apply px-4 py-1.5 rounded-full text-sm font-medium tracking-wide uppercase;
+  }
+  .stat-card {
+    @apply bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100;
+  }
+  .prose-article {
+    @apply prose prose-lg max-w-none prose-headings:font-playfair prose-headings:text-secondary prose-a:text-primary hover:prose-a:text-primary-dark prose-img:rounded-2xl;
+  }
+
+  .filter-btn {
+    @apply px-6 py-2 rounded-full font-medium transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-primary hover:text-white;
+  }
+  .filter-btn.active {
+    @apply bg-primary text-white shadow-md;
+  }
+  .logo-text {
+    @apply font-playfair font-bold text-2xl tracking-tight;
+  }
+
+  .faq-question {
+    @apply w-full flex items-center justify-between p-6 text-left focus:outline-none;
+  }
+  .faq-icon {
+    @apply w-6 h-6 text-primary transition-transform duration-300;
+  }
+  .faq-item.active .faq-icon {
+    @apply rotate-180;
+  }
+
+  .img-zoom {
+    @apply w-full h-full object-cover transition-transform duration-700 group-hover:scale-105;
+  }
+  
+  .reveal-delay-1 {
+    animation-delay: 150ms;
+  }
+  .reveal-delay-2 {
+    animation-delay: 300ms;
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce 3s infinite;
+  }
+}

@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/webp" href="/images/easygarden_logo.webp">
     <title id="page-title">Article | Blog Easy Garden</title>
     <meta name="description" id="page-desc" content="Article du blog Easy Garden, paysagiste dans le Hainaut.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" id="page-canonical" href="https://easy-garden.netlify.app/blog/">
+    <link rel="canonical" id="page-canonical" href="https://easy-garden.netlify.app/blog/article">
+    <link rel="alternate" hreflang="fr-BE" href="https://easy-garden.netlify.app/blog/article">
+    <meta name="theme-color" content="#728a64">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Easy Garden">
     <meta id="og-title" property="og:title" content="Article | Easy Garden">
@@ -14,9 +17,10 @@
     <meta id="og-image" property="og:image" content="">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script type="application/ld+json" id="article-schema"></script>
 </head>
@@ -151,6 +155,19 @@
 
     <script src="/js/main.js"></script>
     <script>
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check text-sm" aria-hidden="true"></i>';
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+        }, 2000);
+    }).catch(() => {
+        alert('Impossible de copier le lien');
+    });
+}
+
 const params = new URLSearchParams(window.location.search);
 let slug = params.get('slug');
 if (!slug) {
@@ -167,16 +184,97 @@ fetch('/data/posts.json')
         const post = data.posts.find(p => p.slug === slug && p.published);
         if (!post) throw new Error('Article introuvable');
 
+        // Mettre à jour le titre et les metas
         document.title = `${post.title} | Easy Garden`;
         document.querySelector('meta[name="description"]').setAttribute("content", post.excerpt);
+        document.getElementById('page-title').textContent = `${post.title} | Easy Garden`;
+        document.getElementById('page-desc').content = post.excerpt;
+        document.getElementById('og-title').content = post.title;
+        document.getElementById('og-desc').content = post.excerpt;
+        document.getElementById('og-image').content = post.image;
         
         const canonical = document.getElementById('page-canonical');
         if (canonical) canonical.href = `https://easy-garden.netlify.app/blog/${post.slug}`;
+        
+        // Mettre à jour hreflang
+        document.querySelectorAll('link[hreflang]').forEach(el => {
+            el.href = `https://easy-garden.netlify.app/blog/${post.slug}`;
+        });
+        
+        // Mettre à jour og:url
+        document.getElementById('og-image').content = post.image;
+        if (document.querySelector('meta[property="og:url"]')) {
+            document.querySelector('meta[property="og:url"]').content = `https://easy-garden.netlify.app/blog/${post.slug}`;
+        }
 
+        // Remplir les éléments du DOM
         document.getElementById('article-title').textContent = post.title;
         document.getElementById('article-body').innerHTML = marked.parse(post.content);
         document.getElementById('hero-img').src = post.image;
         document.getElementById('hero-img').alt = post.title;
+        
+        // Remplir les métadonnées
+        const dateObj = new Date(post.date);
+        const dateFormatted = dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('article-date').textContent = dateFormatted;
+        document.getElementById('article-author').textContent = post.author || 'Easy Garden';
+        document.getElementById('breadcrumb-title').textContent = post.title;
+        
+        if (post.category) {
+            const badge = document.getElementById('article-category');
+            badge.textContent = post.category;
+            badge.className = 'category-badge mb-4 inline-block';
+        }
+        
+        // Calculer le temps de lecture
+        const wordCount = post.content.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / 200);
+        document.getElementById('reading-time').innerHTML = `<i class="fa-regular fa-clock" aria-hidden="true"></i> ${readingTime} min de lecture`;
+        
+        // Remplir le lien de partage Facebook
+        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+        document.getElementById('share-fb').href = fbUrl;
+        
+        // Remplir les articles connexes
+        const relatedPostsDiv = document.getElementById('related-posts');
+        if (post.relatedPosts && post.relatedPosts.length > 0) {
+            const related = data.posts.filter(p => post.relatedPosts.includes(p.slug));
+            related.forEach(related => {
+                const item = document.createElement('a');
+                item.href = `/blog/${related.slug}`;
+                item.className = 'block p-3 border border-stone-200 rounded hover:border-botanic hover:bg-botanic-light/20 transition-all';
+                item.innerHTML = `
+                    <p class="text-stone-700 text-sm font-light hover:text-botanic">${related.title}</p>
+                    <span class="text-xs text-stone-400">${new Date(related.date).toLocaleDateString('fr-FR')}</span>
+                `;
+                relatedPostsDiv.appendChild(item);
+            });
+        } else {
+            relatedPostsDiv.innerHTML = '<p class="text-stone-400 text-sm font-light">Aucun article connexe.</p>';
+        }
+        
+        // Générer le JSON-LD structuré
+        const schema = {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": post.excerpt,
+            "image": post.image,
+            "datePublished": post.date,
+            "author": {
+                "@type": "Person",
+                "name": post.author || "Easy Garden"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "Easy Garden",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://easy-garden.netlify.app/images/easygarden_logo.webp"
+                }
+            }
+        };
+        document.getElementById('article-schema').innerHTML = JSON.stringify(schema);
         
         document.getElementById('loading-state').classList.add('hidden');
         document.getElementById('article-content').classList.remove('hidden');

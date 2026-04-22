@@ -16,14 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.classList.remove('translate-x-full');
         mobileMenu.classList.add('translate-x-0');
         document.body.style.overflow = 'hidden';
+        btnOpen.setAttribute('aria-expanded', 'true');
     }
     function closeMenu() {
         mobileMenu.classList.add('translate-x-full');
         mobileMenu.classList.remove('translate-x-0');
         document.body.style.overflow = '';
+        btnOpen.setAttribute('aria-expanded', 'false');
     }
 
-    if (btnOpen) btnOpen.addEventListener('click', openMenu);
+    if (btnOpen) {
+        btnOpen.setAttribute('aria-expanded', 'false');
+        btnOpen.addEventListener('click', openMenu);
+    }
     if (btnClose) btnClose.addEventListener('click', closeMenu);
     mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
 
@@ -38,12 +43,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    document.querySelectorAll('.faq-question').forEach(btn => {
+    document.querySelectorAll('.faq-question').forEach((btn, index) => {
+        const answerId = `faq-answer-${index}`;
+        const answer = btn.nextElementSibling;
+        if (answer) answer.id = answerId;
+        
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', answerId);
+        
         btn.addEventListener('click', () => {
             const item = btn.closest('.faq-item');
             const isOpen = item.classList.contains('active');
-            document.querySelectorAll('.faq-item.active').forEach(i => i.classList.remove('active'));
-            if (!isOpen) item.classList.add('active');
+            
+            document.querySelectorAll('.faq-item.active').forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+            });
+            
+            if (!isOpen) {
+                item.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
+            }
         });
     });
 

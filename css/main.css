@@ -1580,6 +1580,10 @@ video {
   padding: 2rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -2237,6 +2241,10 @@ video {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-botanic-light\/20:hover {
+  background-color: rgb(232 236 229 / 0.2);
 }
 
 .hover\:bg-gradient-to-tr:hover {

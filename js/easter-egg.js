@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLevelIdx = 0;
     let cameraX = 0;
     let frameCount = 0;
+    let screenShake = 0;
     
     // Physics
     const gravity = 0.55;
@@ -201,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             items: [ { x: 2640, y: 110, w: 20, h: 20, type: 'hp', collected: false } ]
         },
         {   // NIVEAU 5 : Nuit (BOSS)
-            name: "L'Antre de la Ronce", time: "night", width: 1200,
+            name: "L'Antre de la Ronce", time: "night", width: 4000,
             goal: { x: -1000, y: 0, w: 1, h: 1 }, 
             isBoss: true,
             platforms: [
@@ -209,11 +210,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 200, y: 300, w: 120, h: 20 },
                 { x: 880, y: 300, w: 120, h: 20 },
                 { x: 540, y: 200, w: 120, h: 20 }, 
+                // Phase 2: Course poursuite
+                { x: 1200, y: groundY, w: 400, h: 60 },
+                { x: 1700, y: groundY - 50, w: 150, h: 20, type: 'fragile', timer: 0, state: 'idle' },
+                { x: 1950, y: groundY - 100, w: 150, h: 20, type: 'moving', minX: 1950, maxX: 2200, vx: 3 },
+                { x: 2350, y: groundY, w: 650, h: 60 },
+                // Phase 3 & 4 & 5: Arène finale
+                { x: 3000, y: groundY, w: 1000, h: 60 },
+                { x: 3200, y: 300, w: 100, h: 20 },
+                { x: 3700, y: 300, w: 100, h: 20 },
+                { x: 3450, y: 200, w: 100, h: 20 }
             ],
-            water: [], tasks: [], enemies: [], items: [], npcs: [],
+            water: [
+                { x: 1600, y: groundY + 10, w: 100, h: 50 },
+                { x: 2200, y: groundY + 10, w: 150, h: 50 }
+            ], 
+            tasks: [], enemies: [], items: [
+                { x: 1400, y: groundY - 50, w: 20, h: 20, type: 'hp', collected: false },
+                { x: 2600, y: groundY - 50, w: 20, h: 20, type: 'hp', collected: false }
+            ], npcs: [],
             boss: {
-                x: 900, y: groundY - 140, w: 100, h: 140, hp: 7, maxHp: 7, vx: -4, state: 'move', timer: 0,
-                name: "RONCE MUTANTE"
+                x: 900, y: groundY - 140, w: 100, h: 140, hp: 25, maxHp: 25, vx: -4, vy: 0, state: 'classic', timer: 0,
+                name: "RONCE MUTANTE", phase: 1, shield: false, invincible: false, arenaMin: 0, arenaMax: 1200
             }
         }
     ];
@@ -256,6 +274,17 @@ document.addEventListener('DOMContentLoaded', () => {
         floatingTexts = [];
         activeDialog = null;
         nearNPC = null;
+        levelData.projectiles = [];
+        levelData.switches = [];
+        
+        if (levelData.isBoss) {
+            levelData.boss.phase = 1;
+            levelData.boss.state = 'classic';
+            levelData.boss.shield = false;
+            levelData.boss.invincible = false;
+            levelData.boss.arenaMin = 0;
+            levelData.boss.arenaMax = 1200;
+        }
         
         document.getElementById('game-ui-level').innerText = "NIVEAU " + (idx + 1) + " - " + levelData.name;
         document.getElementById('game-ui-score').innerHTML = levelData.isBoss ? "BATTEZ LA RONCE !" : `TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/${levelTasks}</span>`;
@@ -447,9 +476,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Camera (Smooth follow)
         let targetCamX = player.x - canvas.width / 2 + player.width / 2;
+        if (levelData.isBoss && levelData.boss && levelData.boss.hp > 0) {
+            let b = levelData.boss;
+            if (b.state === 'retreat_1' || b.state === 'retreat_2') {
+                targetCamX = b.x - canvas.width / 2;
+                targetCamX += (Math.random() - 0.5) * 20; // Shake
+            } else if (b.state === 'waiting' && player.x < 1900) {
+                // Let player navigate the chase course, normal camera
+            } else if (b.state === 'shielded' || b.phase >= 4) {
+                targetCamX = 3500 - canvas.width / 2; // Lock camera to final arena center
+            }
+        }
+        
         if (targetCamX < 0) targetCamX = 0;
         if (targetCamX > levelData.width - canvas.width) targetCamX = levelData.width - canvas.width;
         cameraX += (targetCamX - cameraX) * 0.08;
+
+        // Screen Shake
+        if (screenShake > 0) {
+            ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+            screenShake *= 0.9;
+        }
 
         // Particles & Texts
         for (let i = particles.length - 1; i >= 0; i--) {
@@ -546,34 +593,144 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Boss
         if (levelData.isBoss) {
-            let boss = levelData.boss;
-            if (boss.hp > 0) {
-                boss.timer++;
-                boss.x += boss.vx;
-                if (boss.x < 50 || boss.x + boss.w > levelData.width - 50) boss.vx *= -1;
+            let b = levelData.boss;
+            if (b.hp > 0) {
+                b.timer++;
                 
-                if (boss.timer % 90 === 0 && boss.y >= groundY - boss.h - 10) boss.vy = -17;
-                if (boss.y < groundY - boss.h) {
-                    boss.vy += gravity; boss.y += boss.vy;
-                } else {
-                    boss.y = groundY - boss.h; boss.vy = 0;
+                // --- LOGIQUE DES PHASES ---
+                
+                // PHASE 1: Combat classique (HP > 20)
+                if (b.phase === 1) {
+                    b.x += b.vx;
+                    if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
+                    if (b.timer % 120 === 0 && b.y >= groundY - b.h - 10) b.vy = -15;
+                    
+                    if (b.hp <= 20) {
+                        b.phase = 2; b.state = 'retreat_1';
+                        spawnText(b.x, b.y - 50, "C'EST TOUT ?", '#ef4444', '30px');
+                    }
+                }
+                
+                // PHASE 2: Retraite 1 & Mobs
+                else if (b.phase === 2) {
+                    if (b.state === 'retreat_1') {
+                        b.x += 10; // S'enfuit à droite
+                        if (b.x > 2500) { 
+                            b.state = 'waiting'; b.phase = 3; 
+                            b.x = 3500; b.arenaMin = 3000; b.arenaMax = 4000;
+                            // Spawn des mobs de défense
+                            enemies.push({ x: 1300, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 2, minX: 1200, maxX: 1600, dead: false });
+                            enemies.push({ x: 2400, y: groundY - 24, w: 24, h: 24, type: 'frog', vx: 3, vy: 0, baseY: groundY-24, minX: 2300, maxX: 2900, dead: false });
+                        }
+                    }
+                }
+                
+                // PHASE 3: Course poursuite
+                else if (b.phase === 3) {
+                    if (player.x > 3000) {
+                        b.phase = 4; b.state = 'shielded';
+                        b.hp = 15; // Reset HP pour la phase finale
+                        levelData.switches = [
+                            { x: 3100, y: 270, w: 30, h: 30, active: false },
+                            { x: 3850, y: 270, w: 30, h: 30, active: false }
+                        ];
+                        spawnText(3500, 150, "ACTIVEZ LES LEVIERS !", '#fde047', '28px');
+                    }
+                    // Projectiles pendant la course
+                    if (b.timer % 80 === 0) {
+                        levelData.projectiles.push({ x: cameraX + canvas.width + 50, y: 100 + Math.random()*300, vx: -7, vy: 0, size: 10, color: '#4d7c0f' });
+                    }
+                }
+                
+                // PHASE 4: Bouclier & Leviers
+                else if (b.phase === 4) {
+                    b.invincible = true;
+                    b.x = 3500;
+                    if (b.timer % 60 === 0) { // Pluie de graines
+                        levelData.projectiles.push({ x: 3200 + Math.random()*600, y: -20, vx: 0, vy: 5, size: 8, color: '#ef4444' });
+                    }
+                    
+                    // Check leviers
+                    let allActive = true;
+                    for(let s of levelData.switches) {
+                        if (player.x < s.x + s.w && player.x + player.width > s.x && player.y < s.y + s.h && player.y + player.height > s.y && keys.interactJustPressed) {
+                            s.active = true;
+                            spawnParticles(s.x, s.y, '#fde047', 20);
+                        }
+                        if (!s.active) allActive = false;
+                    }
+                    
+                    if (allActive) {
+                        b.phase = 5; b.invincible = false; b.state = 'classic';
+                        spawnText(b.x, b.y - 50, "NON ! MON BOUCLIER !", '#ef4444', '30px');
+                    }
+                }
+                
+                // PHASE 5: Confrontation finale (HP 10 -> 0)
+                else if (b.phase === 5) {
+                    b.x += b.vx * 1.6;
+                    if (b.x < b.arenaMin || b.x + b.w > b.arenaMax) b.vx *= -1;
+                    if (b.timer % 80 === 0 && b.y >= groundY - b.h - 10) {
+                        b.vy = -18;
+                        // Shockwave attack when landing
+                        if (Math.random() < 0.4) {
+                            levelData.projectiles.push({ x: b.x + b.w/2, y: groundY - 5, vx: 6, vy: 0, size: 15, color: '#991b1b', type: 'shockwave' });
+                            levelData.projectiles.push({ x: b.x + b.w/2, y: groundY - 5, vx: -6, vy: 0, size: 15, color: '#991b1b', type: 'shockwave' });
+                            screenShake = 15;
+                        }
+                    }
+                    
+                    if (b.timer % 100 === 0) { // Tir visé frénétique
+                        let dx = (player.x + player.width/2) - (b.x + b.w/2);
+                        let dy = (player.y + player.height/2) - (b.y + b.h/2);
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        levelData.projectiles.push({ x: b.x + b.w/2, y: b.y + b.h/2, vx: (dx/dist)*9, vy: (dy/dist)*9, size: 12, color: '#b91c1c' });
+                    }
                 }
 
-                if (player.invincibleTimer === 0 && checkCollision(player, boss)) {
-                    if (player.vy > 0 && player.y + player.height < boss.y + 40) {
-                        boss.hp--; player.vy = -16;
-                        spawnParticles(boss.x + boss.w/2, boss.y, '#65a30d', 60);
-                        spawnText(boss.x + boss.w/2, boss.y - 30, "BAM!", '#fde047', '32px');
-                        boss.vx *= 1.15; 
-                        if(boss.hp === 1) boss.vx *= 1.5; // Enrage
+                // Physique de base du boss (Saut)
+                if (b.y < groundY - b.h) {
+                    b.vy += gravity; b.y += b.vy;
+                } else {
+                    if (b.vy > 5) screenShake = 8; // Shake on land
+                    b.y = groundY - b.h; b.vy = 0;
+                }
+
+                // Collisions projectiles -> joueur
+                for (let i = levelData.projectiles.length - 1; i >= 0; i--) {
+                    let p = levelData.projectiles[i];
+                    p.x += p.vx; p.y += p.vy;
+                    // Shockwave animation
+                    if (p.type === 'shockwave') p.size += 0.5;
+
+                    if (player.invincibleTimer === 0 && player.x < p.x + p.size && player.x + player.width > p.x && player.y < p.y + p.size && player.y + player.height > p.y) {
+                        player.hp--; player.invincibleTimer = 60;
+                        screenShake = 20;
+                        levelData.projectiles.splice(i, 1);
+                        if (player.hp <= 0) return showGameOver("Game Over", "La Ronce vous a eu de loin.", "Réessayer");
+                    }
+                    else if (p.x < cameraX - 100 || p.x > cameraX + canvas.width + 100 || p.y > groundY + 100 || p.y < -500) {
+                        levelData.projectiles.splice(i, 1);
+                    }
+                }
+
+                if (player.invincibleTimer === 0 && checkCollision(player, b)) {
+                    if (!b.invincible && player.vy > 0 && player.y + player.height < b.y + 40) {
+                        b.hp--; player.vy = -16;
+                        screenShake = 25;
+                        spawnParticles(b.x + b.w/2, b.y, '#dc2626', 80);
+                        spawnText(b.x + b.w/2, b.y - 30, "AÏE !", '#fde047', '36px');
+                        if (b.hp === 10) { b.phase = 5; spawnText(b.x, b.y-100, "FINISSONS-EN !", '#ef4444', '40px'); }
                     } else {
                         player.hp--; player.invincibleTimer = 60;
-                        player.vx = (player.x < boss.x) ? -16 : 16; player.vy = -9;
-                        spawnText(player.x, player.y - 30, "Aïe!", '#ef4444', '24px');
+                        screenShake = 20;
+                        player.vx = (player.x < b.x) ? -18 : 18; player.vy = -10;
+                        spawnText(player.x, player.y - 30, "OUCH!", '#ef4444', '24px');
                         if (player.hp <= 0) return showGameOver("Game Over", "La Ronce vous a écrasé.", "Réessayer");
                     }
                 }
             } else {
+                screenShake = 5; // Final death shake
                 if (boss.w > 0) {
                     spawnParticles(boss.x + boss.w/2, boss.y + boss.h/2, '#166534', 30);
                     boss.w -= 3; boss.x += 1.5; boss.h -= 3; boss.y += 3;
@@ -795,23 +952,89 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.shadowBlur = 0;
         }
 
+        // Leviers (Switches)
+        if (levelData.switches) {
+            for (let s of levelData.switches) {
+                ctx.fillStyle = '#451a03'; ctx.fillRect(s.x + 10, s.y + 10, 10, 20); // Socle
+                ctx.save();
+                ctx.translate(s.x + 15, s.y + 15);
+                ctx.rotate(s.active ? 0.8 : -0.8);
+                ctx.fillStyle = s.active ? '#22c55e' : '#ef4444';
+                ctx.fillRect(-3, -20, 6, 20); // Manche
+                ctx.restore();
+                if (!s.active && Math.abs(player.x - s.x) < 60) {
+                    ctx.fillStyle = '#fff'; ctx.font = "bold 14px Arial"; ctx.textAlign = "center"; ctx.fillText("'E' ACTIVER", s.x + 15, s.y - 10);
+                }
+            }
+        }
+
+        // Projectiles
+        if (levelData.projectiles) {
+            for (let p of levelData.projectiles) {
+                ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
         // Boss
         if (levelData.isBoss && levelData.boss.hp > 0) {
             let b = levelData.boss;
-            ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 30 + Math.sin(frameCount*0.1)*20;
-            ctx.fillStyle = '#14532d'; let pulse = Math.sin(frameCount*0.1)*12;
+
+            // Aura de bouclier en Phase 4
+            if (b.invincible) {
+                ctx.strokeStyle = 'rgba(147, 197, 253, 0.6)'; ctx.lineWidth = 8;
+                ctx.setLineDash([15, 10]);
+                ctx.beginPath(); ctx.arc(b.x + b.w/2, b.y + b.h/2, b.w + Math.sin(frameCount*0.1)*20, 0, Math.PI*2); ctx.stroke();
+                ctx.setLineDash([]);
+                // Rayons d'énergie
+                ctx.strokeStyle = 'rgba(191, 219, 254, 0.3)'; ctx.lineWidth = 2;
+                for(let i=0; i<8; i++) {
+                    let ang = frameCount*0.02 + i*(Math.PI/4);
+                    ctx.beginPath(); ctx.moveTo(b.x+b.w/2, b.y+b.h/2); ctx.lineTo(b.x+b.w/2 + Math.cos(ang)*200, b.y+b.h/2 + Math.sin(ang)*200); ctx.stroke();
+                }
+            }
+
+            // Tentacules animées (8 bras)
+            ctx.strokeStyle = '#064e3b'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+            for(let i=0; i<8; i++) {
+                let ang = (i * Math.PI / 4) + Math.sin(frameCount*0.05 + i)*0.3;
+                let len = b.w * 0.8 + Math.sin(frameCount*0.1 + i)*15;
+                ctx.beginPath();
+                ctx.moveTo(b.x + b.w/2, b.y + b.h/2);
+                let cp1x = b.x + b.w/2 + Math.cos(ang-0.2)*len*0.6;
+                let cp1y = b.y + b.h/2 + Math.sin(ang-0.2)*len*0.6;
+                let tx = b.x + b.w/2 + Math.cos(ang)*len;
+                let ty = b.y + b.h/2 + Math.sin(ang)*len;
+                ctx.quadraticCurveTo(cp1x, cp1y, tx, ty);
+                ctx.stroke();
+                // Épines sur les tentacules
+                ctx.fillStyle = '#b91c1c';
+                ctx.beginPath(); ctx.arc(tx, ty, 5, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Corps principal (Pulsant)
+            ctx.shadowColor = b.phase === 5 ? '#ef4444' : '#166534'; ctx.shadowBlur = 40 + Math.sin(frameCount*0.1)*25;
+            let pulse = Math.sin(frameCount*0.1)*15;
+            let grad = ctx.createRadialGradient(b.x+b.w/2, b.y+b.h/2, 5, b.x+b.w/2, b.y+b.h/2, b.w/2 + pulse);
+            grad.addColorStop(0, b.phase === 5 ? '#b91c1c' : '#064e3b');
+            grad.addColorStop(1, '#022c22');
+            ctx.fillStyle = grad;
             ctx.beginPath(); ctx.arc(b.x+b.w/2, b.y+b.h/2, b.w/2 + pulse, 0, Math.PI*2); ctx.fill();
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#064e3b'; ctx.beginPath(); ctx.arc(b.x+b.w/2 - 10, b.y+b.h/2 - 10, b.w/3 + pulse, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.ellipse(b.x + 20, b.y + 30, 10, 15, 0.5, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(b.x + b.w - 20, b.y + 30, 10, 15, -0.5, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#78350f';
-            for(let i=0; i<4; i++) {
-                ctx.beginPath(); ctx.moveTo(b.x-20, b.y+20+i*25); ctx.lineTo(b.x, b.y+10+i*25); ctx.lineTo(b.x, b.y+35+i*25); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(b.x+b.w+20, b.y+20+i*25); ctx.lineTo(b.x+b.w, b.y+10+i*25); ctx.lineTo(b.x+b.w, b.y+35+i*25); ctx.fill();
+            // Yeux menaçants
+            ctx.fillStyle = '#ef4444';
+            let eyeY = b.y + 40 + Math.sin(frameCount*0.05)*5;
+            let eyeOpen = 10 + Math.sin(frameCount*0.1)*5;
+            if (b.phase === 5) { // Yeux enragés
+                ctx.beginPath(); ctx.ellipse(b.x + 25, eyeY, 15, eyeOpen, 0.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(b.x + b.w - 25, eyeY, 15, eyeOpen, -0.4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(b.x + 25 + Math.random()*2, eyeY, 4, 0, Math.PI*2); ctx.arc(b.x + b.w - 25 + Math.random()*2, eyeY, 4, 0, Math.PI*2); ctx.fill();
+            } else {
+                ctx.beginPath(); ctx.ellipse(b.x + 30, eyeY, 12, eyeOpen, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(b.x + b.w - 30, eyeY, 12, eyeOpen, -0.2, 0, Math.PI*2); ctx.fill();
             }
-            ctx.fillStyle = '#451a03'; ctx.fillRect(b.x - 10, b.y - 40, b.w + 20, 12);
-            ctx.fillStyle = '#ef4444'; ctx.fillRect(b.x - 9, b.y - 39, (b.w+18) * (b.hp/b.maxHp), 10);
         }
 
         // Player Drawing

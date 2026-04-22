@@ -151,7 +151,7 @@
 
     <section id="vision" class="py-24 md:py-32 px-6 bg-stone-50">
         <div class="max-w-4xl mx-auto text-center reveal">
-            <i class="fa-solid fa-leaf text-4xl text-botanic mb-8 opacity-80" aria-hidden="true"></i>
+            <i id="easter-egg-leaf" class="fa-solid fa-leaf text-4xl text-botanic mb-8 opacity-80 select-none" aria-hidden="true"></i>
             <h2 data-cms="accueil.vision_quote" class="font-serif text-3xl md:text-5xl text-stone-900 leading-snug mb-10">"Nous concevons des jardins qui évoluent avec le temps, des espaces où la nature et l'architecture s'accordent en parfaite harmonie."</h2>
             <p data-cms="accueil.vision_text" class="text-stone-600 max-w-2xl mx-auto text-lg leading-relaxed">Situés à Montigny-le-Tilleul, nous mettons notre passion et notre exigence au service de vos espaces extérieurs dans <strong class="text-stone-900">l'ensemble de la province du Hainaut</strong>. De l'idée initiale à l'entretien régulier, chaque détail compte.</p>
             <div class="flex flex-wrap justify-center gap-8 mt-16">
@@ -375,6 +375,24 @@
         </div>
     </footer>
 
+    <!-- EASTER EGG GAME -->
+    <div id="easter-egg-game-container" class="fixed inset-0 bg-stone-900 z-[100] hidden flex-col items-center justify-center p-4">
+        <button id="close-game-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors z-[101]" aria-label="Fermer le jeu"><i class="fa-solid fa-times"></i></button>
+        <div class="text-center mb-6">
+            <h2 class="font-serif text-3xl md:text-5xl text-white mb-2"><span class="text-botanic-light">Super</span> Jardinier !</h2>
+            <p class="text-stone-400">Flèches GAUCHE/DROITE pour bouger, HAUT pour sauter.<br>Tondez l'herbe, taillez les haies et élaguez les branches !</p>
+        </div>
+        <div class="relative bg-stone-800 p-2 rounded-lg shadow-2xl border border-stone-700">
+            <div class="absolute top-4 left-6 text-white font-bold tracking-widest z-10">TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/7</span></div>
+            <div id="game-over-screen" class="absolute inset-0 bg-stone-900/90 flex flex-col items-center justify-center hidden rounded-lg z-20">
+                <h3 id="game-end-title" class="font-serif text-4xl text-white mb-4">Chantier terminé !</h3>
+                <p id="game-end-text" class="text-stone-300 mb-6 text-lg">Le jardin est parfait.</p>
+                <button id="restart-game-btn" class="glow-btn px-6 py-3 bg-botanic text-white uppercase tracking-widest text-sm font-bold hover:bg-botanic-dark transition-all">Rejouer</button>
+            </div>
+            <canvas id="gameCanvas" width="600" height="400" class="bg-[#87CEEB] rounded border border-botanic/30" style="image-rendering: pixelated;"></canvas>
+        </div>
+    </div>
+
     <script src="/js/main.js"></script>
     <script>
         fetch('/data/posts.json')
@@ -401,4 +419,250 @@
             .catch(() => { document.getElementById('blog-preview').innerHTML = ''; });
     </script>
 
+    <!-- GAME LOGIC (Platformer variant) -->
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active'));
+                btn.classList.toggle('active');
+            });
+        });
+
+        // EASTER EGG SCRIPT
+        document.addEventListener('DOMContentLoaded', () => {
+            const leaf = document.getElementById('easter-egg-leaf');
+            const gameContainer = document.getElementById('easter-egg-game-container');
+            const closeBtn = document.getElementById('close-game-btn');
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreElement = document.getElementById('game-score');
+            const finalScoreElement = document.getElementById('final-score');
+            const gameOverScreen = document.getElementById('game-over-screen');
+            const restartBtn = document.getElementById('restart-game-btn');
+            
+            let clickCount = 0;
+            let clickTimeout;
+            
+            leaf.addEventListener('click', () => {
+                clickCount++;
+                clearTimeout(clickTimeout);
+                
+                if (clickCount >= 7) {
+                    clickCount = 0;
+                    startGameUI();
+                } else {
+                    clickTimeout = setTimeout(() => { clickCount = 0; }, 1500); // Réinitialise si pas de clic dans les 1.5s
+                }
+            });
+
+            // GAME LOGIC (Platformer variant)
+            const keys = { left: false, right: false, up: false };
+            let gameLoop;
+            let gameActive = false;
+            let score = 0;
+            const totalTasks = 7;
+
+            // Player object
+            const player = {
+                x: 50, y: 300, width: 20, height: 30,
+                vx: 0, vy: 0, speed: 4, jumpPower: -10,
+                grounded: false, color: '#eab308' // Casque jaune/Gilet
+            };
+
+            // Level design
+            const gravity = 0.5;
+            const friction = 0.8;
+            const groundY = 350;
+
+            const platforms = [
+                { x: 0, y: groundY, w: 600, h: 50 }, // Sol
+                { x: 150, y: 280, w: 100, h: 10 },   // Plateforme 1
+                { x: 350, y: 220, w: 100, h: 10 },   // Plateforme 2
+            ];
+
+            // Tasks (Herbes, Haies, Branches)
+            let tasks = [];
+
+            function initTasks() {
+                tasks = [
+                    // Tonte (Herbes hautes sur le sol)
+                    { x: 100, y: groundY - 15, w: 30, h: 15, type: 'grass', done: false },
+                    { x: 280, y: groundY - 15, w: 40, h: 15, type: 'grass', done: false },
+                    { x: 500, y: groundY - 15, w: 30, h: 15, type: 'grass', done: false },
+                    // Taille (Haies sur le sol et plateformes)
+                    { x: 200, y: groundY - 40, w: 40, h: 40, type: 'hedge', done: false },
+                    { x: 400, y: 220 - 40, w: 40, h: 40, type: 'hedge', done: false },
+                    // Élagage (Branches en hauteur)
+                    { x: 180, y: 220, w: 30, h: 15, type: 'branch', done: false },
+                    { x: 450, y: 150, w: 30, h: 15, type: 'branch', done: false },
+                ];
+            }
+
+            function startGameUI() {
+                gameContainer.classList.remove('hidden');
+                gameContainer.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                resetGame();
+            }
+
+            function closeGameUI() {
+                gameContainer.classList.add('hidden');
+                gameContainer.classList.remove('flex');
+                document.body.style.overflow = '';
+                gameActive = false;
+                cancelAnimationFrame(gameLoop);
+            }
+
+            closeBtn.addEventListener('click', closeGameUI);
+            restartBtn.addEventListener('click', resetGame);
+
+            function resetGame() {
+                player.x = 50; player.y = 300;
+                player.vx = 0; player.vy = 0;
+                score = 0;
+                scoreElement.innerText = score + '/' + totalTasks;
+                gameOverScreen.classList.add('hidden');
+                initTasks();
+                gameActive = true;
+                cancelAnimationFrame(gameLoop);
+                update();
+            }
+
+            function checkCollision(r1, r2) {
+                return r1.x < r2.x + r2.w && r1.x + r1.width > r2.x &&
+                       r1.y < r2.y + r2.h && r1.y + r1.height > r2.y;
+            }
+
+            function update() {
+                if (!gameActive) return;
+
+                // Physics & Movement
+                if (keys.left) player.vx -= 0.5;
+                if (keys.right) player.vx += 0.5;
+                
+                player.vx *= friction;
+                player.vy += gravity;
+
+                if (keys.up && player.grounded) {
+                    player.vy = player.jumpPower;
+                    player.grounded = false;
+                }
+
+                // Limit speed
+                if (player.vx > player.speed) player.vx = player.speed;
+                if (player.vx < -player.speed) player.vx = -player.speed;
+
+                // Move X
+                player.x += player.vx;
+                // Wall bounds
+                if (player.x < 0) player.x = 0;
+                if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+                // Move Y
+                player.y += player.vy;
+                player.grounded = false;
+
+                // Platforms Collision
+                for (let p of platforms) {
+                    // Simple top collision (landing)
+                    if (player.vy > 0 && 
+                        player.x + player.width > p.x && player.x < p.x + p.w &&
+                        player.y + player.height >= p.y && player.y + player.height <= p.y + player.vy + 1) {
+                        player.grounded = true;
+                        player.vy = 0;
+                        player.y = p.y - player.height;
+                    }
+                }
+
+                // Tasks Interaction
+                for (let t of tasks) {
+                    if (!t.done && checkCollision(player, {x: t.x, y: t.y, w: t.w, h: t.h})) {
+                        t.done = true;
+                        score++;
+                        scoreElement.innerText = score + '/' + totalTasks;
+                        
+                        // Shrink/transform task visually
+                        if(t.type === 'hedge') { t.y += 20; t.h -= 20; }
+                        if(t.type === 'grass') { t.y += 10; t.h -= 10; }
+                    }
+                }
+
+                // Win condition
+                if (score >= totalTasks) {
+                    gameActive = false;
+                    document.getElementById('game-end-title').innerText = "Chantier Terminé !";
+                    document.getElementById('game-end-text').innerText = "Vous êtes un maître paysagiste.";
+                    gameOverScreen.classList.remove('hidden');
+                }
+
+                draw();
+                gameLoop = requestAnimationFrame(update);
+            }
+
+            function draw() {
+                // Clear sky
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw Sun/Clouds (Deco)
+                ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(550, 50, 30, 0, Math.PI*2); ctx.fill();
+                
+                // Draw Platforms
+                ctx.fillStyle = '#654321'; // Terre
+                for (let p of platforms) {
+                    ctx.fillRect(p.x, p.y, p.w, p.h);
+                    ctx.fillStyle = '#4ade80'; // Herbe au dessus
+                    ctx.fillRect(p.x, p.y, p.w, 4);
+                    ctx.fillStyle = '#654321';
+                }
+
+                // Draw Tasks
+                for (let t of tasks) {
+                    if (t.type === 'grass') {
+                        ctx.fillStyle = t.done ? '#22c55e' : '#166534'; // Vert clair si tondu, foncé si hautes herbes
+                    } else if (t.type === 'hedge') {
+                        ctx.fillStyle = t.done ? '#15803d' : '#14532d'; // Haie propre vs Haie sauvage
+                    } else if (t.type === 'branch') {
+                        ctx.fillStyle = t.done ? 'transparent' : '#78350f'; // Disparait si coupée
+                        if(!t.done) {
+                            ctx.fillRect(t.x, t.y, t.w, t.h);
+                            ctx.fillStyle = '#166534';
+                            ctx.beginPath(); ctx.arc(t.x + t.w, t.y, 15, 0, Math.PI*2); ctx.fill();
+                        }
+                    }
+                    if (t.type !== 'branch' || !t.done) {
+                        ctx.fillRect(t.x, t.y, t.w, t.h);
+                    }
+                }
+
+                // Draw Player (Jardinier)
+                ctx.fillStyle = '#1e293b'; // Pantalon
+                ctx.fillRect(player.x, player.y + 15, player.width, 15);
+                ctx.fillStyle = player.color; // Gilet
+                ctx.fillRect(player.x, player.y + 5, player.width, 10);
+                ctx.fillStyle = '#fca5a5'; // Visage
+                ctx.fillRect(player.x + 4, player.y, 12, 8);
+                // Casquette verte
+                ctx.fillStyle = '#166534';
+                ctx.fillRect(player.x + (player.vx >= 0 ? 4 : -2), player.y - 4, 14, 4);
+            }
+
+            // Keyboard controls
+            window.addEventListener('keydown', e => {
+                if (!gameActive) return;
+                if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].indexOf(e.code) > -1) {
+                    e.preventDefault();
+                }
+                if (e.code === 'ArrowLeft') keys.left = true;
+                if (e.code === 'ArrowRight') keys.right = true;
+                if (e.code === 'ArrowUp' || e.code === 'Space') keys.up = true;
+            });
+
+            window.addEventListener('keyup', e => {
+                if (e.code === 'ArrowLeft') keys.left = false;
+                if (e.code === 'ArrowRight') keys.right = false;
+                if (e.code === 'ArrowUp' || e.code === 'Space') keys.up = false;
+            });
+        });
+    </script>
 </body></html>

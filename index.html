@@ -464,21 +464,30 @@
 
             // Player object
             const player = {
-                x: 50, y: 300, width: 20, height: 30,
-                vx: 0, vy: 0, speed: 4, jumpPower: -10,
-                grounded: false, color: '#eab308' // Casque jaune/Gilet
+                x: 50, y: 300, width: 24, height: 32,
+                vx: 0, vy: 0, speed: 5, jumpPower: -11,
+                grounded: false, facingRight: true,
+                squash: 1, stretch: 1 // Pour l'animation d'atterrissage/saut
             };
 
-            // Level design
-            const gravity = 0.5;
+            // Level design & Env
+            const gravity = 0.6;
             const friction = 0.8;
             const groundY = 350;
+            let frameCount = 0;
+            const clouds = [
+                {x: 100, y: 50, s: 0.2}, {x: 400, y: 80, s: 0.3}, {x: 250, y: 30, s: 0.15}
+            ];
 
             const platforms = [
-                { x: 0, y: groundY, w: 600, h: 50 }, // Sol
-                { x: 150, y: 280, w: 100, h: 10 },   // Plateforme 1
-                { x: 350, y: 220, w: 100, h: 10 },   // Plateforme 2
+                { x: 0, y: groundY, w: 600, h: 60 }, // Sol
+                { x: 150, y: 270, w: 120, h: 20 },   // Plateforme 1
+                { x: 380, y: 200, w: 120, h: 20 },   // Plateforme 2
             ];
+
+            // FX Arrays
+            let particles = [];
+            let floatingTexts = [];
 
             // Tasks (Herbes, Haies, Branches)
             let tasks = [];
@@ -486,16 +495,35 @@
             function initTasks() {
                 tasks = [
                     // Tonte (Herbes hautes sur le sol)
-                    { x: 100, y: groundY - 15, w: 30, h: 15, type: 'grass', done: false },
-                    { x: 280, y: groundY - 15, w: 40, h: 15, type: 'grass', done: false },
-                    { x: 500, y: groundY - 15, w: 30, h: 15, type: 'grass', done: false },
+                    { x: 100, y: groundY - 20, w: 40, h: 20, type: 'grass', done: false, name: 'Tonte !' },
+                    { x: 280, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte !' },
+                    { x: 500, y: groundY - 20, w: 40, h: 20, type: 'grass', done: false, name: 'Tonte !' },
                     // Taille (Haies sur le sol et plateformes)
-                    { x: 200, y: groundY - 40, w: 40, h: 40, type: 'hedge', done: false },
-                    { x: 400, y: 220 - 40, w: 40, h: 40, type: 'hedge', done: false },
+                    { x: 180, y: 270 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille !' },
+                    { x: 420, y: 200 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille !' },
                     // Élagage (Branches en hauteur)
-                    { x: 180, y: 220, w: 30, h: 15, type: 'branch', done: false },
-                    { x: 450, y: 150, w: 30, h: 15, type: 'branch', done: false },
+                    { x: 200, y: groundY - 100, w: 40, h: 20, type: 'branch', done: false, trunkX: 230, trunkY: groundY, name: 'Élagage !' },
+                    { x: 450, y: 110, w: 40, h: 20, type: 'branch', done: false, trunkX: 480, trunkY: 200, name: 'Élagage !' },
                 ];
+            }
+
+            function spawnParticles(x, y, count) {
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: x + Math.random() * 20 - 10,
+                        y: y + Math.random() * 20 - 10,
+                        vx: (Math.random() - 0.5) * 6,
+                        vy: (Math.random() - 1) * 6,
+                        life: 1.0,
+                        size: Math.random() * 4 + 2,
+                        rot: Math.random() * Math.PI * 2,
+                        vrot: (Math.random() - 0.5) * 0.2
+                    });
+                }
+            }
+
+            function spawnText(x, y, text) {
+                floatingTexts.push({ x: x, y: y, text: text, life: 1.0 });
             }
 
             function startGameUI() {
@@ -519,7 +547,11 @@
             function resetGame() {
                 player.x = 50; player.y = 300;
                 player.vx = 0; player.vy = 0;
+                player.facingRight = true;
+                player.squash = 1; player.stretch = 1;
                 score = 0;
+                particles = [];
+                floatingTexts = [];
                 scoreElement.innerText = score + '/' + totalTasks;
                 gameOverScreen.classList.add('hidden');
                 initTasks();
@@ -536,9 +568,17 @@
             function update() {
                 if (!gameActive) return;
 
+                // Environment animations
+                clouds.forEach(c => { c.x -= c.s; if(c.x < -100) c.x = 700; });
+
+                // Smooth recovery for squash/stretch
+                player.squash += (1 - player.squash) * 0.2;
+                player.stretch += (1 - player.stretch) * 0.2;
+
                 // Physics & Movement
-                if (keys.left) player.vx -= 0.5;
-                if (keys.right) player.vx += 0.5;
+                let moving = false;
+                if (keys.left) { player.vx -= 0.8; player.facingRight = false; moving = true; }
+                if (keys.right) { player.vx += 0.8; player.facingRight = true; moving = true; }
                 
                 player.vx *= friction;
                 player.vy += gravity;
@@ -546,6 +586,9 @@
                 if (keys.up && player.grounded) {
                     player.vy = player.jumpPower;
                     player.grounded = false;
+                    player.squash = 0.7; // Saut = étiré
+                    player.stretch = 1.3;
+                    spawnParticles(player.x + 12, player.y + 32, 5); // Poussière au saut
                 }
 
                 // Limit speed
@@ -554,24 +597,47 @@
 
                 // Move X
                 player.x += player.vx;
-                // Wall bounds
                 if (player.x < 0) player.x = 0;
                 if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
 
                 // Move Y
                 player.y += player.vy;
+                const wasGrounded = player.grounded;
                 player.grounded = false;
 
                 // Platforms Collision
                 for (let p of platforms) {
-                    // Simple top collision (landing)
                     if (player.vy > 0 && 
-                        player.x + player.width > p.x && player.x < p.x + p.w &&
-                        player.y + player.height >= p.y && player.y + player.height <= p.y + player.vy + 1) {
+                        player.x + player.width > p.x + 5 && player.x < p.x + p.w - 5 &&
+                        player.y + player.height >= p.y && player.y + player.height <= p.y + player.vy + 2) {
                         player.grounded = true;
                         player.vy = 0;
                         player.y = p.y - player.height;
                     }
+                }
+
+                // Landing animation
+                if (!wasGrounded && player.grounded) {
+                    player.squash = 1.4; // Écrasé à l'atterrissage
+                    player.stretch = 0.6;
+                }
+
+                // FX Update
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += gravity * 0.5; // Feuilles légères
+                    p.rot += p.vrot;
+                    p.life -= 0.02;
+                    if (p.life <= 0) particles.splice(i, 1);
+                }
+
+                for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                    let ft = floatingTexts[i];
+                    ft.y -= 1.5;
+                    ft.life -= 0.015;
+                    if (ft.life <= 0) floatingTexts.splice(i, 1);
                 }
 
                 // Tasks Interaction
@@ -581,14 +647,13 @@
                         score++;
                         scoreElement.innerText = score + '/' + totalTasks;
                         
-                        // Shrink/transform task visually
-                        if(t.type === 'hedge') { t.y += 20; t.h -= 20; }
-                        if(t.type === 'grass') { t.y += 10; t.h -= 10; }
+                        spawnParticles(t.x + t.w/2, t.y + t.h/2, 20);
+                        spawnText(t.x + t.w/2, t.y - 10, t.name);
                     }
                 }
 
                 // Win condition
-                if (score >= totalTasks) {
+                if (score >= totalTasks && floatingTexts.length === 0) { // Attend que les textes disparaissent
                     gameActive = false;
                     document.getElementById('game-end-title').innerText = "Chantier Terminé !";
                     document.getElementById('game-end-text').innerText = "Vous êtes un maître paysagiste.";
@@ -600,51 +665,191 @@
             }
 
             function draw() {
-                // Clear sky
-                ctx.fillStyle = '#87CEEB';
+                frameCount++;
+
+                // Sky Gradient
+                let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGrad.addColorStop(0, '#38bdf8'); // light blue
+                skyGrad.addColorStop(1, '#e0f2fe'); // lighter blue
+                ctx.fillStyle = skyGrad;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Draw Sun/Clouds (Deco)
-                ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(550, 50, 30, 0, Math.PI*2); ctx.fill();
-                
-                // Draw Platforms
-                ctx.fillStyle = '#654321'; // Terre
+                // Sun (Pulsing)
+                let pulse = Math.sin(frameCount * 0.05) * 5;
+                let sunGrad = ctx.createRadialGradient(500, 80, 10, 500, 80, 60 + pulse);
+                sunGrad.addColorStop(0, 'rgba(253, 224, 71, 1)');
+                sunGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
+                ctx.fillStyle = sunGrad;
+                ctx.beginPath(); ctx.arc(500, 80, 60 + pulse, 0, Math.PI*2); ctx.fill();
+
+                // Mountains (Parallax effect basic)
+                ctx.fillStyle = '#bae6fd';
+                ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(150, 150); ctx.lineTo(350, groundY); ctx.fill();
+                ctx.fillStyle = '#7dd3fc';
+                ctx.beginPath(); ctx.moveTo(200, groundY); ctx.lineTo(450, 100); ctx.lineTo(700, groundY); ctx.fill();
+
+                // Clouds
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                clouds.forEach(c => {
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y + Math.sin(frameCount*0.02 + c.x)*2, 20, 0, Math.PI*2); // Bobbing nuages
+                    ctx.arc(c.x + 25, c.y - 15 + Math.sin(frameCount*0.02 + c.x)*2, 25, 0, Math.PI*2);
+                    ctx.arc(c.x + 50, c.y + Math.sin(frameCount*0.02 + c.x)*2, 20, 0, Math.PI*2);
+                    ctx.fill();
+                });
+
+                // Platforms (Islands/Ground)
                 for (let p of platforms) {
-                    ctx.fillRect(p.x, p.y, p.w, p.h);
-                    ctx.fillStyle = '#4ade80'; // Herbe au dessus
-                    ctx.fillRect(p.x, p.y, p.w, 4);
-                    ctx.fillStyle = '#654321';
+                    // Dirt
+                    ctx.fillStyle = '#78350f';
+                    ctx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
+                    // Dirt specks
+                    ctx.fillStyle = '#451a03';
+                    ctx.fillRect(p.x + 20, p.y + 20, 10, 4);
+                    if(p.w > 100) ctx.fillRect(p.x + p.w - 40, p.y + 30, 15, 5);
+
+                    // Grass top
+                    ctx.fillStyle = '#22c55e';
+                    ctx.beginPath();
+                    if (ctx.roundRect) {
+                        ctx.roundRect(p.x - 5, p.y, p.w + 10, 15, 8);
+                    } else {
+                        ctx.fillRect(p.x - 5, p.y, p.w + 10, 15);
+                    }
+                    ctx.fill();
+                    // Grass highlight
+                    ctx.fillStyle = '#4ade80';
+                    ctx.fillRect(p.x - 2, p.y + 2, p.w + 4, 4);
                 }
 
-                // Draw Tasks
+                // Tasks (Vegetation)
                 for (let t of tasks) {
                     if (t.type === 'grass') {
-                        ctx.fillStyle = t.done ? '#22c55e' : '#166534'; // Vert clair si tondu, foncé si hautes herbes
-                    } else if (t.type === 'hedge') {
-                        ctx.fillStyle = t.done ? '#15803d' : '#14532d'; // Haie propre vs Haie sauvage
-                    } else if (t.type === 'branch') {
-                        ctx.fillStyle = t.done ? 'transparent' : '#78350f'; // Disparait si coupée
-                        if(!t.done) {
-                            ctx.fillRect(t.x, t.y, t.w, t.h);
-                            ctx.fillStyle = '#166534';
-                            ctx.beginPath(); ctx.arc(t.x + t.w, t.y, 15, 0, Math.PI*2); ctx.fill();
+                        // Grass tufts with swaying
+                        ctx.fillStyle = t.done ? '#4ade80' : '#166534';
+                        let h = t.done ? 6 : t.h;
+                        let yOff = t.done ? t.h - 6 : 0;
+                        let sway = Math.sin(frameCount * 0.05 + t.x) * (t.done ? 1 : 4);
+                        for(let i=0; i<t.w; i+=10) {
+                            ctx.beginPath();
+                            ctx.moveTo(t.x + i, t.y + t.h);
+                            ctx.lineTo(t.x + i + 5 + sway, t.y + yOff - (Math.sin(i)*3));
+                            ctx.lineTo(t.x + i + 10, t.y + t.h);
+                            ctx.fill();
                         }
-                    }
-                    if (t.type !== 'branch' || !t.done) {
-                        ctx.fillRect(t.x, t.y, t.w, t.h);
+                    } else if (t.type === 'hedge') {
+                        let swayX = Math.sin(frameCount * 0.03 + t.x) * 2;
+                        let swayY = Math.cos(frameCount * 0.04 + t.x) * 2;
+                        if (!t.done) {
+                            // Wild bush breathing
+                            ctx.fillStyle = '#14532d';
+                            ctx.beginPath(); ctx.arc(t.x+15+swayX, t.y+25+swayY, 25, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x+35-swayX, t.y+20-swayY, 30, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x+45+swayX, t.y+35+swayY, 20, 0, Math.PI*2); ctx.fill();
+                        } else {
+                            // Trimmed Topiary
+                            ctx.fillStyle = '#15803d';
+                            ctx.fillRect(t.x, t.y + 20, t.w, t.h - 20);
+                            ctx.strokeStyle = '#166534'; ctx.lineWidth = 3;
+                            ctx.strokeRect(t.x, t.y + 20, t.w, t.h - 20);
+                        }
+                    } else if (t.type === 'branch') {
+                        // Tree Trunk
+                        ctx.fillStyle = '#451a03';
+                        ctx.fillRect(t.trunkX, t.y, 15, t.trunkY - t.y);
+                        
+                        if (!t.done) {
+                            // Branch
+                            ctx.fillRect(t.x, t.y + 5, t.trunkX - t.x, 8);
+                            // Leaves swaying
+                            let sway = Math.sin(frameCount * 0.05 + t.x) * 3;
+                            ctx.fillStyle = '#166534';
+                            ctx.beginPath(); ctx.arc(t.x + 10 + sway, t.y + 10, 25, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(t.x + 25 + sway, t.y, 20, 0, Math.PI*2); ctx.fill();
+                        }
+                        
+                        // Top leaves
+                        ctx.fillStyle = '#14532d';
+                        ctx.beginPath(); ctx.arc(t.trunkX + 7, t.y - 10, 35, 0, Math.PI*2); ctx.fill();
                     }
                 }
 
-                // Draw Player (Jardinier)
-                ctx.fillStyle = '#1e293b'; // Pantalon
-                ctx.fillRect(player.x, player.y + 15, player.width, 15);
-                ctx.fillStyle = player.color; // Gilet
-                ctx.fillRect(player.x, player.y + 5, player.width, 10);
-                ctx.fillStyle = '#fca5a5'; // Visage
-                ctx.fillRect(player.x + 4, player.y, 12, 8);
-                // Casquette verte
-                ctx.fillStyle = '#166534';
-                ctx.fillRect(player.x + (player.vx >= 0 ? 4 : -2), player.y - 4, 14, 4);
+                // FX: Particles (Leaves)
+                for (let p of particles) {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = `rgba(34, 197, 94, ${p.life})`; // text-green-500
+                    ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI*2); ctx.fill();
+                    ctx.restore();
+                }
+
+                // Player Drawing (Custom Shape with squash/stretch & animations)
+                ctx.save();
+                
+                // Centre du joueur pour l'échelle
+                ctx.translate(player.x + player.width/2, player.y + player.height);
+                
+                if (!player.facingRight) ctx.scale(-1, 1); // Flip
+                ctx.scale(player.squash, player.stretch); // Squash & Stretch
+                
+                // Animation de marche (angles des membres)
+                let walkAnim = 0;
+                if (Math.abs(player.vx) > 0.1 && player.grounded) {
+                    walkAnim = Math.sin(frameCount * 0.3) * 15; // en degrés
+                } else if (!player.grounded) {
+                    walkAnim = 20; // Pose de saut
+                }
+
+                // Bras arrière
+                ctx.fillStyle = '#fca5a5'; // Peau
+                ctx.save(); ctx.translate(0, -22); ctx.rotate(-walkAnim * Math.PI/180);
+                ctx.fillRect(-3, 0, 6, 12); ctx.restore();
+
+                // Jambe arrière
+                ctx.fillStyle = '#1e293b'; // Pantalon sombre
+                ctx.save(); ctx.translate(0, -10); ctx.rotate(walkAnim * Math.PI/180);
+                ctx.fillRect(-4, 0, 8, 10); ctx.restore();
+
+                // Corps (Gilet vert/jaune)
+                ctx.fillStyle = '#84cc16'; // lime-500
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(-8, -25, 16, 16, 4) : ctx.fillRect(-8, -25, 16, 16);
+                ctx.fill();
+
+                // Jambe avant
+                ctx.fillStyle = '#334155'; // Pantalon
+                ctx.save(); ctx.translate(0, -10); ctx.rotate(-walkAnim * Math.PI/180);
+                ctx.fillRect(-4, 0, 8, 10); ctx.restore();
+
+                // Bras avant
+                ctx.fillStyle = '#fca5a5';
+                ctx.save(); ctx.translate(0, -22); ctx.rotate(walkAnim * Math.PI/180);
+                ctx.fillRect(-3, 0, 6, 12); ctx.restore();
+
+                // Tête
+                ctx.fillStyle = '#fca5a5';
+                ctx.beginPath(); ctx.arc(0, -32, 7, 0, Math.PI*2); ctx.fill();
+                // Oeil
+                ctx.fillStyle = '#000';
+                ctx.fillRect(2, -34, 2, 2);
+                // Casquette (Visière + Haut)
+                ctx.fillStyle = '#166534'; // Vert sombre
+                ctx.beginPath(); ctx.arc(0, -34, 7, Math.PI, 0); ctx.fill(); // Dôme
+                ctx.fillRect(0, -34, 10, 3); // Visière
+
+                ctx.restore();
+
+                // FX: Floating Texts
+                ctx.textAlign = "center";
+                ctx.font = "bold 16px 'Playfair Display', serif";
+                for (let ft of floatingTexts) {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${ft.life})`;
+                    ctx.shadowColor = `rgba(0, 0, 0, ${ft.life})`;
+                    ctx.shadowBlur = 4;
+                    ctx.fillText(ft.text, ft.x, ft.y);
+                }
+                ctx.shadowBlur = 0; // Reset
             }
 
             // Keyboard controls

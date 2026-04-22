@@ -4,12 +4,15 @@ backend:
 
 locale: fr
 
-media_folder: "images/blog"
-public_folder: "/images/blog"
+# Dossier global pour les médias (images)
+media_folder: "images"
+public_folder: "/images"
 
 collections:
   - name: "blog"
     label: "Articles de Blog"
+    media_folder: "images/blog"
+    public_folder: "/images/blog"
     files:
       - label: "Gérer tous les articles"
         name: "posts"
@@ -65,9 +68,12 @@ collections:
   - name: "gestion_site"
     label: "Gestion du Site"
     files:
+
       - file: "data/realisations.json"
         label: "Portfolio (Réalisations)"
         name: "realisations"
+        media_folder: "images/realisations"
+        public_folder: "/images/realisations"
         fields:
           - label: "Liste de tes chantiers"
             name: "projets"
@@ -81,6 +87,8 @@ collections:
       - file: "data/images_globales.json"
         label: "Images du site"
         name: "images_globales"
+        media_folder: "images/globales"
+        public_folder: "/images/globales"
         fields:
           - {label: "Image d'accueil (Hero)", name: "hero_accueil", widget: "image", required: false}
           - {label: "Image page Services", name: "hero_services", widget: "image", required: false}

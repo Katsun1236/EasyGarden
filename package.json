@@ -6,10 +6,12 @@
   "scripts": {
     "build:css": "npx tailwindcss -i ./css/input.css -o ./css/main.css --minify",
     "build:sitemap": "node generate-sitemap.js",
-    "build": "npm run build:css && npm run build:sitemap",
+    "build:images": "node convert-to-webp.js",
+    "build": "npm run build:images && npm run build:css && npm run build:sitemap",
     "watch": "npx tailwindcss -i ./css/input.css -o ./css/main.css --watch"
   },
   "devDependencies": {
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.3"
   }
 }

@@ -89,100 +89,17 @@
 
     <section class="py-24 px-6 bg-stone-50">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-wrap gap-3 mb-16 reveal" role="group" aria-label="Filtrer les réalisations">
-                <button class="filter-btn active" data-filter="all">Tout voir</button>
-                <button class="filter-btn" data-filter="creation">Création</button>
-                <button class="filter-btn" data-filter="entretien">Entretien</button>
-                <button class="filter-btn" data-filter="elagage">Élagage</button>
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="Création">Création</button>
+                <button class="filter-btn" data-filter="Entretien">Entretien</button>
+                <button class="filter-btn" data-filter="Abattage">Abattage</button>
+                <button class="filter-btn" data-filter="Aménagement">Aménagement</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative" id="gallery">
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> </div>
 
-                <div class="gallery-item reveal" data-category="creation">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Création d&#39;un jardin avec pelouse et massifs fleuris, Montigny-le-Tilleul')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Création d'un jardin avec pelouse et massifs fleuris à Montigny-le-Tilleul" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Création</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Aménagement complet avec pelouse et massifs, Montigny-le-Tilleul</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item reveal reveal-delay-1 md:mt-12" data-category="entretien">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Entretien régulier pelouse et bordures, Charleroi')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Entretien régulier de pelouse et bordures à Charleroi" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Entretien</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Entretien régulier pelouse et bordures, Charleroi</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item reveal reveal-delay-2" data-category="elagage">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Taille architecturée de haie de charme, Thuin')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Taille architecturée de haie de charme à Thuin" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Élagage</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Taille architecturée de haie de charme, Thuin</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item reveal" data-category="creation">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Engazonnement et création de massifs, Binche')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Engazonnement professionnel et création de massifs à Binche" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Création</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Engazonnement et création de massifs, Binche</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item reveal reveal-delay-1" data-category="entretien">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Tonte et scarification de pelouse, La Louvière')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Tonte et scarification de pelouse à La Louvière" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Entretien</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Tonte et scarification de pelouse, La Louvière</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item reveal reveal-delay-2 md:mt-12" data-category="elagage">
-                    <div class="img-zoom h-72 shadow-md cursor-pointer group" onclick="openLightbox('/images/EasyGarden_Tonte.webp', 'Élagage de grands arbres en sécurité, Mons')">
-                        <img src="/images/EasyGarden_Tonte.webp" alt="Élagage de grands arbres en sécurité à Mons" class="w-full h-full object-cover" loading="lazy" width="600" height="400">
-                        <div class="absolute inset-0 bg-botanic-deep/0 group-hover:bg-botanic-deep/40 transition-all duration-300 flex items-center justify-center">
-                            <i class="fa-solid fa-magnifying-glass text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3 px-1">
-                        <span class="category-badge">Élagage</span>
-                        <p class="text-sm text-stone-600 font-light mt-1">Élagage de grands arbres en sécurité, Mons</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-16 reveal">
-                <p class="text-stone-500 font-light mb-6">Vous avez un projet similaire en tête ?</p>
-                <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-10 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors shadow-lg">
-                    Demander un devis gratuit
-                </a>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative" id="gallery"></div> 
 
             <div class="mt-16 p-8 bg-white border border-stone-200 text-center reveal">
                 <p class="text-stone-600 font-light mb-4">Retrouvez encore plus de réalisations sur notre page Facebook</p>
@@ -272,6 +189,86 @@
             if (e.target === e.currentTarget) closeLightbox();
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('portfolio-grid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let tousLesProjets = []; 
+
+        fetch('/data/realisations.json')
+            .then(response => {
+                if (!response.ok) throw new Error("Fichier JSON introuvable (Normal si la collection CMS est vide)");
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.projets) {
+                    tousLesProjets = data.projets;
+                    afficherProjets(tousLesProjets);
+                }
+            })
+            .catch(error => {
+                console.warn("Info CMS :", error.message);
+                grid.innerHTML = '<p class="text-gray-500 text-center col-span-full">Aucune réalisation pour le moment.</p>';
+            });
+
+        function afficherProjets(projets) {
+            grid.innerHTML = ''; 
+            
+            if (projets.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 text-center col-span-full">Aucun projet dans cette catégorie.</p>';
+                return;
+            }
+
+            projets.forEach((projet, index) => {
+                const delay = index % 3 === 0 ? '' : (index % 3 === 1 ? 'reveal-delay-1' : 'reveal-delay-2');
+                
+                const cardHTML = `
+                    <div class="blog-card group reveal ${delay}">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="${projet.image}" alt="${projet.title}" class="img-zoom" loading="lazy">
+                            <div class="absolute top-4 right-4">
+                                <span class="category-badge bg-primary text-white shadow-sm">${projet.category}</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-playfair font-bold text-secondary mb-3">${projet.title}</h3>
+                            <p class="text-gray-600 flex-grow">${projet.description}</p>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+            
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        obs.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.12 });
+            
+            grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                const categorieFiltre = e.target.getAttribute('data-filter');
+                if (categorieFiltre === 'all' || !categorieFiltre) {
+                    afficherProjets(tousLesProjets);
+                } else {
+                    const projetsFiltres = tousLesProjets.filter(p => 
+                        p.category && p.category.toLowerCase() === categorieFiltre.toLowerCase()
+                    );
+                    afficherProjets(projetsFiltres);
+                }
+            });
+        });
+    });
+
     </script>
 </body>
 </html>

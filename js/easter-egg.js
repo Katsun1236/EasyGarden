@@ -4,7 +4,7 @@ const gameHTML = `
     <button id="close-game-btn" class="absolute top-4 right-4 md:top-6 md:right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors z-[101]" aria-label="Fermer le jeu"><i class="fa-solid fa-times"></i></button>
     <div class="text-center mb-2 md:mb-4">
         <h2 class="font-serif text-3xl md:text-5xl text-white mb-1 md:mb-2" style="text-shadow: 0 0 15px rgba(114,138,100,0.8);"><span class="text-botanic-light">Super</span> Jardinier !</h2>
-        <p class="text-stone-400 text-xs md:text-sm tracking-widest">FLÈCHES: Bouger/Sauter (Double saut dispo) | ESPACE: Interagir</p>
+        <p class="text-stone-400 text-xs md:text-sm tracking-widest">FLÈCHES ou ZQSD: Bouger | ESPACE/Z/HAUT: Sauter | E: Interagir</p>
     </div>
     <div class="relative bg-stone-900 p-1 md:p-2 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-stone-700 overflow-hidden w-full max-w-4xl">
         <div class="absolute top-4 left-6 text-white font-bold tracking-widest z-10 drop-shadow-md" id="game-ui-score">TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/0</span></div>
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverScreen = document.getElementById('game-over-screen');
 
     // --- GAME ENGINE ---
-    const keys = { left: false, right: false, up: false, space: false, jumpJustPressed: false, spaceJustPressed: false };
+    const keys = { left: false, right: false, jump: false, interact: false, jumpJustPressed: false, interactJustPressed: false };
     let gameLoop;
     let gameActive = false;
     let currentLevelIdx = 0;
@@ -55,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let frameCount = 0;
     
     // Physics
-    const gravity = 0.5;
+    const gravity = 0.55;
     const friction = 0.8;
     const groundY = 450;
 
     const player = {
         x: 50, y: 200, width: 24, height: 32,
-        vx: 0, vy: 0, speed: 5.5, jumpPower: -11.5,
+        vx: 0, vy: 0, speed: 6, jumpPower: -12.5,
         grounded: false, facingRight: true,
         squash: 1, stretch: 1, hp: 5, maxHp: 5, invincibleTimer: 0,
         jumps: 0, spawnX: 50, spawnY: 200
@@ -76,126 +76,127 @@ document.addEventListener('DOMContentLoaded', () => {
     let completedTasks = 0;
     let levelData = {};
     let activeDialog = null;
+    let nearNPC = null;
 
     const clouds = Array.from({length: 15}, () => ({
         x: Math.random() * 4000, y: Math.random() * 200, s: Math.random() * 0.3 + 0.1, size: Math.random() * 15 + 20
     }));
 
-    // --- LEVELS DESIGN ---
+    // --- LEVELS DESIGN (Less holes, more enemies) ---
     const levels = [
-        {   // NIVEAU 1 : Matin (Tutoriel & Histoire)
-            name: "Le Jardin Oublié", time: "morning", width: 3000,
-            goal: { x: 2850, y: groundY - 100, w: 80, h: 100 },
-            checkpoints: [ { x: 1500, y: groundY - 60, w: 20, h: 60, active: false } ],
+        {   // NIVEAU 1 : Matin (Tutoriel, aucun trou)
+            name: "Le Jardin Paisible", time: "morning", width: 2500,
+            goal: { x: 2350, y: groundY - 100, w: 80, h: 100 },
+            checkpoints: [],
             platforms: [
-                { x: 0, y: groundY, w: 1000, h: 60 },
-                { x: 1150, y: groundY, w: 800, h: 60 }, // Trou de 150px
-                { x: 2100, y: groundY, w: 900, h: 60 }, // Trou de 150px
+                { x: 0, y: groundY, w: 2500, h: 60 }, // Sol continu
                 { x: 500, y: 340, w: 150, h: 20 },
-                { x: 1500, y: 310, w: 150, h: 20 },
-                { x: 2500, y: 340, w: 150, h: 20 },
+                { x: 1200, y: 310, w: 150, h: 20 },
+                { x: 1800, y: 340, w: 150, h: 20 },
             ],
             water: [],
             tasks: [
                 { x: 600, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
                 { x: 800, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 1550, y: 310 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 1800, y: groundY - 20, w: 80, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 2550, y: 340 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 2580, trunkY: 340, name: 'Élagage' },
+                { x: 1250, y: 310 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                { x: 1500, y: groundY - 20, w: 80, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                { x: 1850, y: 340 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1880, trunkY: 340, name: 'Élagage' },
             ],
             npcs: [
-                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#f87171', name: "Mme. Rose", dialogs: ["Bonjour ! Mon jardin est en friche...", "Utilisez les flèches pour bouger et sauter.", "Coupez les herbes (marchez dessus), taillez les haies et élaguez !", "Astuce: Sautez 2x de suite pour un double saut !"] }
+                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#f87171', name: "Mme. Rose", dialogs: ["Bonjour ! Bienvenue dans mon jardin !", "Utilisez ZQSD ou les flèches pour bouger.", "ESPACE pour sauter, et appuyez deux fois pour le DOUBLE SAUT !", "Tondez l'herbe et taillez mes haies SVP !"] }
             ],
-            enemies: [], items: []
+            enemies: [
+                { x: 900, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 1, minX: 850, maxX: 1100, dead: false }
+            ], items: []
         },
-        {   // NIVEAU 2 : Midi (Verticalité)
-            name: "Le Parcours du Combattant", time: "midday", width: 3500,
+        {   // NIVEAU 2 : Midi (Nouveaux ennemis : Grenouilles)
+            name: "L'invasion des Batraciens", time: "midday", width: 3500,
             goal: { x: 3350, y: groundY - 100, w: 80, h: 100 },
-            checkpoints: [ { x: 1100, y: groundY - 60, w: 20, h: 60, active: false }, { x: 2300, y: groundY - 60, w: 20, h: 60, active: false } ],
+            checkpoints: [ { x: 1500, y: groundY - 60, w: 20, h: 60, active: false } ],
             platforms: [
-                { x: 0, y: groundY, w: 600, h: 60 },
-                { x: 750, y: 360, w: 100, h: 20, type: 'moving', minX: 700, maxX: 1000, vx: 2.5 },
-                { x: 1150, y: groundY, w: 400, h: 60 },
-                { x: 1250, y: 290, w: 100, h: 20 },
-                { x: 1700, y: groundY, w: 500, h: 60 },
-                { x: 1800, y: groundY - 20, w: 80, h: 20, type: 'bouncy' }, // Champignon
-                { x: 1850, y: 150, w: 150, h: 20 }, // Plateforme haute
-                { x: 2400, y: groundY, w: 1100, h: 60 },
+                { x: 0, y: groundY, w: 1000, h: 60 },
+                { x: 1100, y: groundY, w: 2400, h: 60 }, // Un seul petit trou de 100px
+                { x: 600, y: 320, w: 150, h: 20, type: 'moving', minX: 550, maxX: 850, vx: 2.5 },
+                { x: 1300, y: 290, w: 100, h: 20 },
+                { x: 1800, y: groundY - 20, w: 80, h: 20, type: 'bouncy' },
+                { x: 1850, y: 150, w: 150, h: 20 },
             ],
             water: [],
             tasks: [
                 { x: 400, y: groundY - 20, w: 80, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 1300, y: 290 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                { x: 1350, y: 290 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
                 { x: 1850, y: 150 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1880, trunkY: 150, name: 'Élagage' },
                 { x: 2800, y: groundY - 45, w: 60, h: 45, type: 'hedge', done: false, name: 'Taille' }
             ],
             npcs: [
-                { x: 100, y: groundY - 36, w: 20, h: 36, color: '#60a5fa', name: "M. Tulipe", dialogs: ["Attention aux escargots !", "Sautez-leur sur la tête pour protéger le potager."] }
+                { x: 100, y: groundY - 36, w: 20, h: 36, color: '#60a5fa', name: "M. Tulipe", dialogs: ["Il y a des grenouilles partout !", "Elles sautent haut, faites très attention.", "Sautez-leur sur la tête pour vous en débarrasser."] }
             ],
             enemies: [
-                { x: 1200, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 1.5, minX: 1150, maxX: 1500, dead: false },
+                { x: 700, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 1.5, minX: 650, maxX: 950, dead: false },
+                { x: 1500, y: groundY - 24, w: 24, h: 24, type: 'frog', vx: -1.5, vy: 0, baseY: groundY - 24, minX: 1300, maxX: 1700, dead: false },
+                { x: 2200, y: groundY - 24, w: 24, h: 24, type: 'frog', vx: 2, vy: 0, baseY: groundY - 24, minX: 2000, maxX: 2500, dead: false },
                 { x: 2600, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -2, minX: 2400, maxX: 2900, dead: false }
             ],
             items: [ { x: 1900, y: 110, w: 20, h: 20, type: 'hp', collected: false } ]
         },
-        {   // NIVEAU 3 : Après-Midi (Inondation)
-            name: "Le Domaine Inondé", time: "afternoon", width: 4000,
+        {   // NIVEAU 3 : Après-Midi (Abeilles et un peu d'eau)
+            name: "Le Ruché Agité", time: "afternoon", width: 4000,
             goal: { x: 3800, y: groundY - 100, w: 80, h: 100 },
-            checkpoints: [ { x: 1250, y: groundY - 60, w: 20, h: 60, active: false }, { x: 2850, y: groundY - 60, w: 20, h: 60, active: false } ],
+            checkpoints: [ { x: 1800, y: groundY - 60, w: 20, h: 60, active: false } ],
             platforms: [
-                { x: 0, y: groundY, w: 400, h: 60 },
-                { x: 500, y: 350, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
-                { x: 750, y: 280, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
-                { x: 1000, y: 220, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
-                { x: 1200, y: groundY, w: 600, h: 60 },
-                { x: 1900, y: 300, w: 100, h: 20, type: 'moving', minX: 1900, maxX: 2300, vx: 3 },
-                { x: 2500, y: 220, w: 100, h: 20, type: 'bouncy' },
-                { x: 2800, y: groundY, w: 1200, h: 60 },
+                { x: 0, y: groundY, w: 1200, h: 60 },
+                { x: 1200, y: 350, w: 200, h: 20, type: 'fragile', timer: 0, state: 'idle' }, // Pont sur l'eau
+                { x: 1400, y: groundY, w: 2600, h: 60 },
+                { x: 800, y: 250, w: 100, h: 20 },
+                { x: 2200, y: 280, w: 100, h: 20, type: 'moving', minX: 2200, maxX: 2600, vx: 3 },
+                { x: 2900, y: 220, w: 100, h: 20, type: 'bouncy' }
             ],
-            water: [ { x: 400, y: groundY + 10, w: 800, h: 50 }, { x: 1800, y: groundY + 10, w: 1000, h: 50 } ],
+            water: [ { x: 1200, y: groundY + 10, w: 200, h: 50 } ], // Un seul bassin
             tasks: [
-                { x: 1300, y: groundY - 20, w: 80, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                { x: 1000, y: groundY - 20, w: 80, h: 20, type: 'grass', done: false, name: 'Tonte' },
                 { x: 1600, y: groundY - 45, w: 60, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 2500, y: 220 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 2530, trunkY: 220, name: 'Élagage' },
-                { x: 3200, y: groundY - 45, w: 60, h: 45, type: 'hedge', done: false, name: 'Taille' }
+                { x: 2900, y: 220 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 2930, trunkY: 220, name: 'Élagage' },
+                { x: 3400, y: groundY - 45, w: 60, h: 45, type: 'hedge', done: false, name: 'Taille' }
             ],
             npcs: [
-                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#fcd34d', name: "L'Apprenti", dialogs: ["Chef ! Le terrain est inondé !", "Attention, les planches en bois sont très fragiles.", "Ne restez pas dessus !"] }
+                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#fcd34d', name: "L'Apprenti", dialogs: ["Chef ! J'ai laissé les ruches ouvertes !", "Des abeilles géantes volent partout.", "Esquivez-les ! Et attention au petit étang."] }
             ],
             enemies: [
-                { x: 1400, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 2, minX: 1250, maxX: 1750, dead: false },
-                { x: 3000, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -2.5, minX: 2850, maxX: 3500, dead: false }
+                { x: 600, y: 200, w: 24, h: 24, type: 'bee', vx: 2, baseY: 200, minX: 500, maxX: 900, dead: false },
+                { x: 1500, y: groundY - 24, w: 24, h: 24, type: 'frog', vx: -1.5, vy: 0, baseY: groundY - 24, minX: 1450, maxX: 1900, dead: false },
+                { x: 2400, y: 150, w: 24, h: 24, type: 'bee', vx: -2.5, baseY: 150, minX: 2000, maxX: 2600, dead: false },
+                { x: 3200, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -2, minX: 3000, maxX: 3600, dead: false }
             ],
-            items: [ { x: 770, y: 240, w: 20, h: 20, type: 'hp', collected: false } ]
+            items: [ { x: 840, y: 200, w: 20, h: 20, type: 'hp', collected: false } ]
         },
         {   // NIVEAU 4 : Crépuscule (Danger)
             name: "La Lisière Sombre", time: "sunset", width: 4000,
             goal: { x: 3800, y: groundY - 100, w: 80, h: 100 },
-            checkpoints: [ { x: 1550, y: groundY - 60, w: 20, h: 60, active: false }, { x: 3050, y: groundY - 60, w: 20, h: 60, active: false } ],
+            checkpoints: [ { x: 1800, y: groundY - 60, w: 20, h: 60, active: false } ],
             platforms: [
-                { x: 0, y: groundY, w: 500, h: 60 },
+                { x: 0, y: groundY, w: 1500, h: 60 },
+                { x: 1650, y: groundY, w: 2350, h: 60 }, // Un seul saut
                 { x: 600, y: 340, w: 80, h: 20, type: 'moving', minX: 600, maxX: 900, vx: 3.5 },
-                { x: 1000, y: 250, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
-                { x: 1200, y: 180, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
-                { x: 1500, y: groundY, w: 800, h: 60 },
+                { x: 1200, y: 250, w: 80, h: 20, type: 'fragile', timer: 0, state: 'idle' },
                 { x: 2400, y: groundY - 20, w: 80, h: 20, type: 'bouncy' },
                 { x: 2600, y: 150, w: 100, h: 20 },
-                { x: 3000, y: groundY, w: 1000, h: 60 },
             ],
-            water: [ { x: 500, y: groundY + 10, w: 1000, h: 50 }, { x: 2300, y: groundY + 10, w: 700, h: 50 } ],
+            water: [], // Plus d'eau au niveau 4 !
             tasks: [
-                { x: 250, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 1600, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                { x: 400, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                { x: 1400, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
                 { x: 2000, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 2030, trunkY: groundY, name: 'Élagage' },
                 { x: 2630, y: 150 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
                 { x: 3300, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 3330, trunkY: groundY, name: 'Élagage' }
             ],
             npcs: [
-                { x: 100, y: groundY - 36, w: 20, h: 36, color: '#a78bfa', name: "Vieux Chêne", dialogs: ["La nuit tombe... Une plante mutante rôde.", "Préparez votre meilleur sécateur, artisan !"] }
+                { x: 100, y: groundY - 36, w: 20, h: 36, color: '#a78bfa', name: "Vieux Chêne", dialogs: ["La nuit tombe... Les bêtes sont nombreuses.", "Préparez votre meilleur sécateur, artisan !", "La Ronce Mutante est juste derrière."] }
             ],
             enemies: [
-                { x: 1700, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 3, minX: 1600, maxX: 2200, dead: false },
-                { x: 3200, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -3, minX: 3100, maxX: 3700, dead: false }
+                { x: 800, y: 180, w: 24, h: 24, type: 'bee', vx: 3, baseY: 180, minX: 600, maxX: 1100, dead: false },
+                { x: 1700, y: groundY - 24, w: 24, h: 24, type: 'frog', vx: 2, vy: 0, baseY: groundY - 24, minX: 1600, maxX: 2100, dead: false },
+                { x: 2800, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -3, minX: 2700, maxX: 3200, dead: false },
+                { x: 3400, y: 150, w: 24, h: 24, type: 'bee', vx: -3, baseY: 150, minX: 3000, maxX: 3600, dead: false }
             ],
             items: [ { x: 2640, y: 110, w: 20, h: 20, type: 'hp', collected: false } ]
         },
@@ -244,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player.vx = 0; player.vy = 0;
         player.facingRight = true;
         player.hp = player.maxHp; player.invincibleTimer = 0;
+        player.jumps = 0;
         
         enemies = levelData.enemies || [];
         items = levelData.items || [];
@@ -253,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         particles = [];
         floatingTexts = [];
         activeDialog = null;
+        nearNPC = null;
         
         document.getElementById('game-ui-level').innerText = "NIVEAU " + (idx + 1) + " - " + levelData.name;
         document.getElementById('game-ui-score').innerHTML = levelData.isBoss ? "BATTEZ LA RONCE !" : `TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/${levelTasks}</span>`;
@@ -322,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!gameActive) return;
         frameCount++;
 
-        // Interactions NPC
-        let nearNPC = null;
+        // Interactions NPC (Touche E)
+        nearNPC = null;
         for (let npc of npcs) {
             let dist = Math.abs((player.x + player.width/2) - (npc.x + npc.w/2));
             if (dist < 100 && Math.abs(player.y - npc.y) < 60) nearNPC = npc;
@@ -333,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!activeDialog || activeDialog.npc !== nearNPC) {
                 activeDialog = { npc: nearNPC, line: 0, showPrompt: true };
             }
-            if (keys.spaceJustPressed) {
+            if (keys.interactJustPressed) {
                 if(activeDialog.showPrompt) {
                     activeDialog.showPrompt = false;
                 } else {
@@ -344,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             activeDialog = null;
         }
-        keys.spaceJustPressed = false;
+        keys.interactJustPressed = false; // Reset immédiat
 
         // Clouds animation
         clouds.forEach(c => { c.x -= c.s; if(c.x < -200) c.x = levelData.width + 200; });
@@ -361,19 +364,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (player.grounded) player.jumps = 0;
         
-        if (keys.up && player.grounded) {
-            player.vy = player.jumpPower;
-            player.grounded = false;
-            player.jumps = 1;
-            player.squash = 0.6; player.stretch = 1.4;
-            spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 8);
-        } else if (keys.jumpJustPressed && player.jumps < 2 && !player.grounded) {
-            player.vy = player.jumpPower * 0.9;
-            player.jumps = 2;
-            player.squash = 0.7; player.stretch = 1.3;
-            spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 12);
+        // Double saut parfait via event de touche
+        if (keys.jumpJustPressed) {
+            if (player.grounded) {
+                player.vy = player.jumpPower;
+                player.grounded = false;
+                player.jumps = 1;
+                player.squash = 0.6; player.stretch = 1.4;
+                spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 8);
+            } else if (player.jumps === 1) {
+                player.vy = player.jumpPower * 0.9;
+                player.jumps = 2;
+                player.squash = 0.7; player.stretch = 1.3;
+                spawnParticles(player.x + 12, player.y + 32, '#d4d4d8', 15); // Gros nuage pour le double saut
+            }
         }
-        keys.jumpJustPressed = false;
+        keys.jumpJustPressed = false; // Reset immédiat
 
         if (player.vx > player.speed) player.vx = player.speed;
         if (player.vx < -player.speed) player.vx = -player.speed;
@@ -443,9 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let targetCamX = player.x - canvas.width / 2 + player.width / 2;
         if (targetCamX < 0) targetCamX = 0;
         if (targetCamX > levelData.width - canvas.width) targetCamX = levelData.width - canvas.width;
-        cameraX += (targetCamX - cameraX) * 0.08; // Smooth
+        cameraX += (targetCamX - cameraX) * 0.08;
 
-        // Particles & Texts Update
+        // Particles & Texts
         for (let i = particles.length - 1; i >= 0; i--) {
             let p = particles[i];
             p.x += p.vx; p.y += p.vy; p.vy += gravity * 0.5; p.rot += p.vrot; p.life -= 0.02;
@@ -480,14 +486,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Enemies (Snail)
+        // Enemies Updates
         for (let e of enemies) {
             if (e.dead) continue;
-            e.x += e.vx;
-            if (e.x < e.minX || e.x + e.w > e.maxX) e.vx *= -1;
+            
+            // Comportement
+            if (e.type === 'snail') {
+                e.x += e.vx;
+                if (e.x < e.minX || e.x + e.w > e.maxX) e.vx *= -1;
+            } else if (e.type === 'bee') {
+                e.x += e.vx;
+                e.y = e.baseY + Math.sin(frameCount * 0.05 + e.x * 0.01) * 40; // Vole en vague
+                if (e.x < e.minX || e.x + e.w > e.maxX) e.vx *= -1;
+            } else if (e.type === 'frog') {
+                e.x += e.vx;
+                e.vy += gravity;
+                e.y += e.vy;
+                if (e.y >= e.baseY) {
+                    e.y = e.baseY;
+                    e.vy = 0;
+                    if (Math.random() < 0.02) e.vy = -12; // Bond aléatoire et puissant
+                }
+                if (e.x < e.minX || e.x + e.w > e.maxX) e.vx *= -1;
+            }
 
+            // Dégats joueur
             if (player.invincibleTimer === 0 && checkCollision(player, e)) {
-                if (player.vy > 0 && player.y + player.height < e.y + e.h/2 + 8) {
+                if (player.vy > 0 && player.y + player.height < e.y + e.h/2 + 10) {
                     e.dead = true; player.vy = -10;
                     spawnParticles(e.x + e.w/2, e.y + e.h/2, '#fde047', 25);
                     spawnText(e.x, e.y - 10, "CRASH!", '#fde047', '20px');
@@ -564,13 +589,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function draw() {
         const time = levelData.time;
-        // --- 1. POST PROCESSING & SHADERS (Background) ---
+        // Background Gradient
         let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
         if (time === 'morning') { skyGrad.addColorStop(0, '#0ea5e9'); skyGrad.addColorStop(1, '#e0f2fe'); }
         else if (time === 'midday') { skyGrad.addColorStop(0, '#0284c7'); skyGrad.addColorStop(1, '#bae6fd'); }
         else if (time === 'afternoon') { skyGrad.addColorStop(0, '#ea580c'); skyGrad.addColorStop(1, '#fef08a'); }
         else if (time === 'sunset') { skyGrad.addColorStop(0, '#9f1239'); skyGrad.addColorStop(1, '#fca5a5'); }
-        else { skyGrad.addColorStop(0, '#1e1b4b'); skyGrad.addColorStop(1, '#4c1d95'); } // night
+        else { skyGrad.addColorStop(0, '#1e1b4b'); skyGrad.addColorStop(1, '#4c1d95'); }
         ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Sun / Moon Glow
@@ -579,11 +604,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 40 + Math.sin(frameCount*0.05)*10;
         ctx.fillStyle = (time === 'night') ? '#fff' : (time === 'sunset' ? '#f87171' : '#fef08a');
         ctx.beginPath(); ctx.arc(sunX, 100, 60, 0, Math.PI*2); ctx.fill();
-        ctx.shadowBlur = 0; // Reset
+        ctx.shadowBlur = 0;
 
         ctx.save();
         
-        // --- 2. PARALLAX LAYERS ---
+        // --- PARALLAX LAYERS ---
         // Layer 1: Far Mountains (0.15)
         ctx.translate(-cameraX * 0.15, 0);
         ctx.fillStyle = (time === 'sunset' || time === 'night') ? '#881337' : '#7dd3fc';
@@ -705,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Tasks (Glowing if not done)
+        // Tasks
         for (let t of levelData.tasks) {
             if (!t.done) { ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 15; }
             
@@ -744,10 +769,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Enemies
         for(let e of enemies) {
             if(e.dead) continue;
-            ctx.fillStyle = '#ca8a04'; ctx.beginPath(); ctx.arc(e.x + 12, e.y + 12, 12, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = '#854d0e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(e.x + 12, e.y + 12, 7, 0, Math.PI); ctx.stroke();
-            ctx.fillStyle = '#a3e635'; let dir = e.vx > 0 ? 1 : -1; ctx.fillRect(e.x + 12, e.y + 16, 18 * dir, 8);
-            ctx.beginPath(); ctx.moveTo(e.x + 12 + 14*dir, e.y + 16); ctx.lineTo(e.x + 12 + 18*dir, e.y + 6); ctx.stroke();
+            let dir = e.vx > 0 ? 1 : -1;
+            
+            if (e.type === 'snail') {
+                ctx.fillStyle = '#ca8a04'; ctx.beginPath(); ctx.arc(e.x + 12, e.y + 12, 12, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#854d0e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(e.x + 12, e.y + 12, 7, 0, Math.PI); ctx.stroke();
+                ctx.fillStyle = '#a3e635'; ctx.fillRect(e.x + 12, e.y + 16, 18 * dir, 8);
+                ctx.beginPath(); ctx.moveTo(e.x + 12 + 14*dir, e.y + 16); ctx.lineTo(e.x + 12 + 18*dir, e.y + 6); ctx.stroke();
+            } else if (e.type === 'frog') {
+                ctx.fillStyle = '#4ade80'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(e.x, e.y + 10, 24, 14, 4) : ctx.fillRect(e.x, e.y + 10, 24, 14); ctx.fill();
+                ctx.fillStyle = '#22c55e'; ctx.beginPath(); ctx.arc(e.x + 6, e.y + 10, 6, 0, Math.PI*2); ctx.arc(e.x + 18, e.y + 10, 6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(e.x + 6 + 2*dir, e.y + 10, 2, 0, Math.PI*2); ctx.arc(e.x + 18 + 2*dir, e.y + 10, 2, 0, Math.PI*2); ctx.fill();
+            } else if (e.type === 'bee') {
+                ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(e.x + 12, e.y + 12, 10, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000'; ctx.fillRect(e.x + 8, e.y + 2, 4, 20); ctx.fillRect(e.x + 16, e.y + 2, 4, 20);
+                ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(e.x + 12 - 5*dir, e.y + 6 - Math.sin(frameCount*0.5)*4, 6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(e.x + 12 + 10*dir, e.y + 12, 2, 0, Math.PI*2); ctx.fill();
+            }
         }
 
         // Items
@@ -813,19 +851,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.restore(); // End Camera
 
-        // Layer 5: Foreground Elements (Extremely lowered so it doesn't block view)
+        // Layer 5: Foreground Elements
         ctx.save();
         ctx.translate(-cameraX * 1.5, 0);
-        ctx.fillStyle = time === 'night' ? '#022c22' : '#064e3b'; // Buissons au TOUT premier plan
+        ctx.fillStyle = time === 'night' ? '#022c22' : '#064e3b';
         for(let i=-200; i<levelData.width*2; i+=500) {
-            ctx.beginPath(); ctx.arc(i, canvas.height + 60, 80, 0, Math.PI*2); ctx.fill(); // Abaissé de 40px
+            ctx.beginPath(); ctx.arc(i, canvas.height + 60, 80, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(i+150, canvas.height + 70, 100, 0, Math.PI*2); ctx.fill();
         }
         ctx.restore();
 
-        // --- 3. UI & POST PROCESSING (Overlay) ---
-        
-        // Vignette
+        // --- 3. UI & POST PROCESSING ---
         let vig = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.height*0.4, canvas.width/2, canvas.height/2, canvas.height);
         vig.addColorStop(0, 'rgba(0,0,0,0)');
         vig.addColorStop(1, time === 'night' ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.3)');
@@ -835,7 +871,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = 'rgba(0,0,0,0.05)';
         for(let i=0; i<canvas.height; i+=4) ctx.fillRect(0, i, canvas.width, 1);
 
-        // Floating Texts (World Space converted to Screen Space to ignore shaders if needed, but we keep it here for simplicity)
         ctx.textAlign = "center";
         for (let ft of floatingTexts) {
             ctx.font = `bold ${ft.size} 'Playfair Display', serif`; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.life;
@@ -855,7 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = '#44403c'; ctx.font = "14px Arial"; 
             
             if (activeDialog.showPrompt) {
-                ctx.fillText("Appuyez sur ESPACE", cx, cy - 10);
+                ctx.fillText("Appuyez sur 'E' pour parler", cx, cy - 10);
             } else {
                 ctx.fillText(npc.dialogs[activeDialog.line], cx, cy - 10);
                 if(frameCount % 40 < 20 && activeDialog.line < npc.dialogs.length - 1) { ctx.fillStyle = '#ef4444'; ctx.fillText("▼", cx + 100, cy + 5); }
@@ -863,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (nearNPC) {
             let cx = (nearNPC.x + nearNPC.w/2) - cameraX; let cy = nearNPC.y - 30;
             ctx.fillStyle = '#fde047'; ctx.font = "bold 13px Arial"; ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 4;
-            ctx.fillText("Espace pour parler", cx, cy); ctx.shadowBlur = 0;
+            ctx.fillText("'E' pour parler", cx, cy); ctx.shadowBlur = 0;
         }
 
         // Static UI (HP)
@@ -873,20 +908,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 0;
     }
 
-    // Keyboard
+    // Keyboard Setup (ZQSD / Arrows)
     document.addEventListener('keydown', (e) => {
         if (!gameActive) return;
-        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].indexOf(e.code) > -1) e.preventDefault();
-        if (e.code === 'ArrowLeft') keys.left = true;
-        if (e.code === 'ArrowRight') keys.right = true;
-        if (e.code === 'ArrowUp') { if (!keys.up) keys.jumpJustPressed = true; keys.up = true; }
-        if (e.code === 'Space') { if (!keys.space) keys.spaceJustPressed = true; keys.space = true; }
+        const k = e.key.toLowerCase();
+        
+        if(["arrowup","arrowdown","arrowleft","arrowright"," ","e"].includes(k) || ["z","q","s","d"].includes(k)) e.preventDefault();
+        
+        if (k === 'arrowleft' || k === 'q') keys.left = true;
+        if (k === 'arrowright' || k === 'd') keys.right = true;
+        if (k === 'arrowup' || k === 'z' || k === ' ') {
+            if (!keys.jump) keys.jumpJustPressed = true;
+            keys.jump = true;
+        }
+        if (k === 'e' || e.key === 'Enter') {
+            if (!keys.interact) keys.interactJustPressed = true;
+            keys.interact = true;
+        }
     });
 
     document.addEventListener('keyup', (e) => {
-        if (e.code === 'ArrowLeft') keys.left = false;
-        if (e.code === 'ArrowRight') keys.right = false;
-        if (e.code === 'ArrowUp') keys.up = false;
-        if (e.code === 'Space') keys.space = false;
+        const k = e.key.toLowerCase();
+        if (k === 'arrowleft' || k === 'q') keys.left = false;
+        if (k === 'arrowright' || k === 'd') keys.right = false;
+        if (k === 'arrowup' || k === 'z' || k === ' ') keys.jump = false;
+        if (k === 'e' || e.key === 'Enter') keys.interact = false;
     });
 });

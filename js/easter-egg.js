@@ -53,14 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let cameraX = 0;
     let frameCount = 0;
     
-    // Physics
-    const gravity = 0.6;
+    // Physics Improvements
+    const gravity = 0.55;
     const friction = 0.8;
     const groundY = 350;
 
     const player = {
         x: 50, y: 200, width: 24, height: 32,
-        vx: 0, vy: 0, speed: 6, jumpPower: -11.5,
+        vx: 0, vy: 0, speed: 6, jumpPower: -12.5, // Stronger jump
         grounded: false, facingRight: true,
         squash: 1, stretch: 1, hp: 3, maxHp: 3, invincibleTimer: 0
     };
@@ -79,58 +79,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
     const levels = [
-        {   // NIVEAU 1
-            width: 2000,
-            goal: { x: 1850, y: groundY - 100, w: 80, h: 100 },
+        {   // NIVEAU 1 - Tutorial
+            width: 1800,
+            goal: { x: 1650, y: groundY - 100, w: 80, h: 100 },
             platforms: [
                 { x: 0, y: groundY, w: 600, h: 60 },
-                { x: 750, y: groundY, w: 800, h: 60 },
-                { x: 1700, y: groundY, w: 300, h: 60 },
-                { x: 400, y: 240, w: 100, h: 20 },
-                { x: 650, y: 180, w: 80, h: 20, type: 'bouncy' }, // Champignon
-                { x: 1000, y: 250, w: 120, h: 20, type: 'moving', minX: 1000, maxX: 1300, vx: 2 } // Plateforme mobile
+                { x: 750, y: groundY, w: 1200, h: 60 }, // Gap of 150
+                { x: 400, y: 250, w: 100, h: 20 },
             ],
             tasks: [
                 { x: 200, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                { x: 420, y: 250 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
                 { x: 800, y: groundY - 20, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 420, y: 240 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 1400, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1430, trunkY: groundY, name: 'Élagage' },
+                { x: 1200, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1230, trunkY: groundY, name: 'Élagage' },
             ],
             enemies: [
-                { x: 900, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -1, minX: 750, maxX: 1500, dead: false }
+                { x: 900, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -1, minX: 750, maxX: 1100, dead: false }
             ],
-            items: [
-                { x: 670, y: 140, w: 20, h: 20, type: 'hp', collected: false }
-            ]
+            items: []
         },
-        {   // NIVEAU 2
+        {   // NIVEAU 2 - Verticality
             width: 2500,
-            goal: { x: 2350, y: groundY - 100, w: 80, h: 100 },
+            goal: { x: 2300, y: groundY - 100, w: 80, h: 100 },
             platforms: [
                 { x: 0, y: groundY, w: 400, h: 60 },
-                { x: 500, y: groundY - 50, w: 150, h: 110 },
-                { x: 750, y: groundY, w: 200, h: 60 },
-                { x: 1050, y: groundY, w: 300, h: 60 },
-                { x: 1450, y: groundY - 80, w: 600, h: 140 },
-                { x: 2150, y: groundY, w: 350, h: 60 },
-                { x: 250, y: 200, w: 80, h: 20, type: 'bouncy' },
-                { x: 800, y: 180, w: 80, h: 20, type: 'moving', minX: 800, maxX: 1000, vx: 1.5 },
+                { x: 500, y: 270, w: 100, h: 20, type: 'moving', minX: 450, maxX: 650, vx: 2 },
+                { x: 800, y: groundY, w: 300, h: 60 },
+                { x: 900, y: 200, w: 100, h: 20 },
+                { x: 1200, y: groundY, w: 400, h: 60 },
+                { x: 1400, y: groundY - 20, w: 80, h: 20, type: 'bouncy' }, // Champignon
+                { x: 1380, y: 150, w: 120, h: 20 }, // Accessible par le champignon
+                { x: 1750, y: groundY, w: 800, h: 60 },
             ],
             tasks: [
-                { x: 150, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 550, y: groundY - 70, w: 60, h: 20, type: 'grass', done: false, name: 'Tonte' },
-                { x: 1150, y: groundY - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 1550, y: groundY - 125, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
-                { x: 700, y: groundY - 150, w: 40, h: 20, type: 'branch', done: false, trunkX: 730, trunkY: groundY, name: 'Élagage' },
-                { x: 1800, y: groundY - 200, w: 40, h: 20, type: 'branch', done: false, trunkX: 1830, trunkY: groundY - 80, name: 'Élagage' }
+                { x: 200, y: groundY - 20, w: 50, h: 20, type: 'grass', done: false, name: 'Tonte' },
+                { x: 920, y: 200 - 45, w: 50, h: 45, type: 'hedge', done: false, name: 'Taille' },
+                { x: 1400, y: 150 - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1430, trunkY: 150, name: 'Élagage' },
+                { x: 1900, y: groundY - 45, w: 60, h: 45, type: 'hedge', done: false, name: 'Taille' }
             ],
             enemies: [
-                { x: 550, y: groundY - 74, w: 24, h: 24, type: 'snail', vx: 1, minX: 500, maxX: 650, dead: false },
-                { x: 1200, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -1.5, minX: 1050, maxX: 1350, dead: false },
-                { x: 1600, y: groundY - 104, w: 24, h: 24, type: 'snail', vx: -1, minX: 1450, maxX: 1900, dead: false }
+                { x: 850, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: 1, minX: 800, maxX: 1050, dead: false },
+                { x: 1800, y: groundY - 24, w: 24, h: 24, type: 'snail', vx: -1.5, minX: 1750, maxX: 2100, dead: false }
             ],
             items: [
-                { x: 830, y: 140, w: 20, h: 20, type: 'hp', collected: false }
+                { x: 940, y: 140, w: 20, h: 20, type: 'hp', collected: false }
             ]
         },
         {   // BOSS LEVEL
@@ -139,12 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
             isBoss: true,
             platforms: [
                 { x: 0, y: groundY, w: 1000, h: 60 },
-                { x: 150, y: 230, w: 100, h: 20 },
-                { x: 750, y: 230, w: 100, h: 20 },
+                { x: 150, y: 240, w: 100, h: 20 },
+                { x: 750, y: 240, w: 100, h: 20 },
+                { x: 450, y: 160, w: 100, h: 20 }, // Plateforme du milieu
             ],
             tasks: [], enemies: [], items: [],
             boss: {
-                x: 800, y: groundY - 120, w: 80, h: 120, hp: 5, maxHp: 5, vx: -3, state: 'move', timer: 0,
+                x: 800, y: groundY - 100, w: 80, h: 100, hp: 5, maxHp: 5, vx: -3, state: 'move', timer: 0,
                 name: "RONCE MUTANTE"
             }
         }

@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartBtn = document.getElementById('restart-game-btn');
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const scoreElement = document.getElementById('game-score');
+    let scoreElement = document.getElementById('game-score');
     const gameOverScreen = document.getElementById('game-over-screen');
 
     // --- GAME ENGINE ---

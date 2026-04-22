@@ -1,10 +1,10 @@
 [build]
-  publish = "."
+  publish = "dist"
   command = "npm run build"
 
 [[redirects]]
   from = "/blog/:slug"
-  to = "/blog/article.html?slug=:slug"
+  to = "/blog/:slug.html"
   status = 200
 
 [[redirects]]

@@ -1,0 +1,15 @@
+# Dépendances Node.js
+node_modules/
+
+# Dossier de build (Généré automatiquement, ne pas commiter)
+dist/
+public/
+
+# Fichiers de log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers système OS
+.DS_Store
+Thumbs.db

@@ -22,6 +22,6 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     </url>`).join('')}
 </urlset>`;
 
-// 3. Écraser l'ancien fichier sitemap.xml
-fs.writeFileSync('./sitemap.xml', sitemap);
+// 3. Écraser l'ancien fichier sitemap.xml dans le dist
+fs.writeFileSync('./dist/sitemap.xml', sitemap);
 console.log('Sitemap.xml mis à jour avec succès !');

@@ -1,0 +1,36 @@
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4 text-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-10 md:h-12 w-auto object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300" width="48" height="48">
+                    <div class="flex flex-col">
+                        <span class="logo-text font-serif text-xl md:text-2xl font-bold tracking-wide transition-colors duration-300">Easy Garden</span>
+                        <span class="logo-text text-[0.6rem] uppercase tracking-[0.2em] opacity-80 transition-colors duration-300">Artisan Paysagiste</span>
+                    </div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="nav-link text-sm uppercase tracking-widest hover:text-botanic transition-colors duration-300">Accueil</a>
+                    <a href="/services.html" class="nav-link text-sm uppercase tracking-widest hover:text-botanic transition-colors duration-300">Services</a>
+                    <a href="/realisations.html" class="nav-link text-sm uppercase tracking-widest hover:text-botanic transition-colors duration-300">Réalisations</a>
+                    <a href="/blog/" class="nav-link text-sm uppercase tracking-widest hover:text-botanic transition-colors duration-300">Blog</a>
+                    <a href="/contact.html" class="nav-btn glow-btn px-6 py-3 bg-white text-stone-900 text-sm uppercase tracking-widest font-bold hover:bg-botanic-dark hover:text-white transition-all duration-300 shadow-lg">Devis Gratuit</a>
+                </div>
+                <button id="mobile-menu-btn" class="burger-btn lg:hidden text-2xl transition-colors duration-300 focus:outline-none" aria-label="Ouvrir le menu" aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="fixed inset-0 bg-stone-900 z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors" aria-label="Fermer le menu">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex flex-col items-center space-y-8 text-white">
+                <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-16 w-auto object-contain mb-4 brightness-0 invert" width="64" height="64">
+                <a href="/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Accueil</a>
+                <a href="/services.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Services</a>
+                <a href="/realisations.html" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Réalisations</a>
+                <a href="/blog/" class="mobile-link font-serif text-3xl hover:text-botanic transition-colors">Blog</a>
+                <a href="/contact.html" class="mobile-link px-8 py-4 bg-botanic text-white uppercase tracking-widest text-sm font-bold mt-4 hover:bg-white hover:text-stone-900 transition-colors">Devis Gratuit</a>
+            </div>
+        </div>
+    </nav>

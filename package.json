@@ -4,15 +4,17 @@
   "description": "Site vitrine Easy Garden - Expertise Paysagère",
   "main": "index.html",
   "scripts": {
-    "build:css": "npx tailwindcss -i ./css/input.css -o ./css/main.css --minify",
+    "build:css": "npx tailwindcss -i ./css/input.css -o ./dist/css/main.css --minify",
     "build:sitemap": "node generate-sitemap.js",
     "build:images": "node convert-to-webp.js",
-    "build:cms": "node inject-cms.js",
+    "build:cms": "node build.js",
     "build": "npm run build:images && npm run build:cms && npm run build:css && npm run build:sitemap",
-    "watch": "npx tailwindcss -i ./css/input.css -o ./css/main.css --watch"
+    "watch": "npx tailwindcss -i ./css/input.css -o ./dist/css/main.css --watch"
   },
   "devDependencies": {
     "cheerio": "^1.2.0",
+    "fs-extra": "^11.3.4",
+    "marked": "^18.0.2",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.3"
   }

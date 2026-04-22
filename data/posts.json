@@ -1,28 +1,16 @@
 {
   "posts": [
     {
-      "excerpt": "L'été est une période délicate pour votre gazon. Chaleur, sécheresse et passages fréquents mettent votre pelouse à rude épreuve. Voici nos conseils d'experts pour la garder verte et dense tout l'été.",
+      "excerpt": "zeee",
       "author": "Easy Garden",
-      "slug": "entretenir-pelouse-ete",
+      "slug": "test",
       "published": true,
-      "date": "2026-04-15",
-      "title": "5 conseils pour entretenir votre pelouse en été",
-      "content": "## Pourquoi l'été est-il critique pour votre pelouse ?\n\nEntre juin et août, les pelouses belges subissent une combinaison de chaleur intense et de faibles précipitations qui peut rapidement transformer un beau gazon vert en une surface jaunâtre et sèche. En tant qu'artisans paysagistes dans le Hainaut, nous intervenons régulièrement pour sauver des pelouses négligées en plein été.\n\n## 1. Adaptez la hauteur de tonte\n\nContrairement à ce que l'on pourrait penser, **couper trop ras est l'erreur numéro un** en été. Un gazon tondu à 6-7 cm conserve mieux l'humidité du sol grâce à l'ombrage créé par les brins. Réglez votre tondeuse sur une hauteur plus élevée dès le mois de juin.\n\n## 2. Arrosez le matin, jamais le soir\n\nL'arrosage nocturne favorise le développement de maladies fongiques. Arrosez toujours tôt le matin (avant 9h) pour que l'eau pénètre en profondeur avant l'évaporation due à la chaleur. Un arrosage hebdomadaire abondant vaut mieux que des petits arrosages quotidiens.\n\n## 3. Évitez la scarification en été\n\nLa scarification est une opération traumatisante pour le gazon. En période de stress hydrique, évitez-la absolument. Attendez le retour des pluies en septembre pour procéder à la scarification et au regarnissage.\n\n## 4. Appliquez un engrais adapté\n\nChoisissez un engrais à libération lente, spécialement formulé pour l'été, avec un ratio faible en azote. Un excès d'azote en été brûle les racines et jaunit la pelouse.\n\n> \"Un beau gazon en août, ça se prépare en mai.\" — Easy Garden\n\n## 5. Laissez les rognures sur place (mulching)\n\nSi votre tondeuse le permet, activez la fonction mulching. Les rognures finement découpées restent sur la pelouse et libèrent progressivement leurs nutriments tout en retenant l'humidité du sol. C'est une pratique écologique et économique.\n\n## Notre conseil final\n\nSi votre emploi du temps ne vous permet pas de suivre ces recommandations régulièrement, n'hésitez pas à nous contacter pour un **contrat d'entretien annuel**. Nous nous occupons de tout, de la tonte à la fertilisation, dans tout le Hainaut.",
+      "date": "2026-04-22",
+      "title": "Test",
+      "content": "eee",
       "id": "1",
       "image": "/images/EasyGarden_Tonte.webp",
-      "category": "Entretien"
-    },
-    {
-      "excerpt": "La taille des haies obéit à des règles précises en Belgique, aussi bien pour la santé des végétaux que pour le respect de la réglementation. Découvrez notre guide complet.",
-      "author": "Easy Garden",
-      "slug": "tailler-haies-wallonie",
-      "published": true,
-      "date": "2026-03-28",
-      "title": "Quand et comment tailler vos haies en Wallonie ?",
-      "content": "## La réglementation belge sur la taille des haies\n\nEn Wallonie, la taille des haies est réglementée pour **protéger la nidification des oiseaux**. Il est interdit de tailler les haies entre le 1er avril et le 31 juillet inclus, sauf exceptions. Cette règle s'applique aussi bien aux particuliers qu'aux professionnels.\n\n## Les meilleures périodes de taille\n\n### De septembre à mars : la période idéale\n\nC'est la fenêtre principale pour entretenir vos haies. Les végétaux sont en dormance, les oiseaux n'y nichent plus, et les cicatrices de coupe se referment naturellement avant la reprise de végétation.\n\n**Recommandations par espèce :**\n\n- Laurier palme : septembre - novembre\n- Thuya, cyprès, if : fin août - octobre\n- Charmille, hêtre : janvier - mars\n- Ligustrum (troène) : deux fois par an, mars et octobre\n\n### Le mois de mars : l'exception bienvenue\n\nMars est souvent notre période la plus chargée. Juste avant l'interdiction de taille, nous réalisons une dernière intervention soignée qui donnera à votre haie une belle silhouette pour tout le printemps et une partie de l'été.\n\n## Nos techniques professionnelles\n\n### La taille architecturée\n\nNous utilisons des outils laser-guidés et des gabarits pour obtenir des surfaces parfaitement planes et des angles précis. Le résultat est net, élégant, et durable.\n\n### L'élagage de sécurité\n\nPour les arbres dépassant 3 mètres de hauteur ou situés à proximité de bâtiments ou de lignes électriques, nous intervenons avec un équipement de sécurité complet. Toutes les rémanentes végétales sont évacuées proprement.\n\n> \"Une haie bien taillée, c'est la première impression de votre propriété.\" — Easy Garden\n\n## Besoin d'une intervention ?\n\nNous intervenons partout dans le Hainaut (Montigny-le-Tilleul, Charleroi, Thuin, Binche...). Contactez-nous pour un devis gratuit, nous nous déplaçons sans engagement.",
-      "id": "2",
-      "image": "/images/EasyGarden_Tonte.webp",
-      "category": "Élagage"
+      "category": "Création"
     }
   ]
 }

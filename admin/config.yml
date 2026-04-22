@@ -61,3 +61,27 @@ collections:
                 name: "author"
                 widget: "string"
                 default: "Easy Garden"
+
+  - name: "gestion_site"
+    label: "Gestion du Site"
+    files:
+      - file: "data/realisations.json"
+        label: "Portfolio (Réalisations)"
+        name: "realisations"
+        fields:
+          - label: "Liste de tes chantiers"
+            name: "projets"
+            widget: "list"
+            fields:
+              - {label: "Titre du projet", name: "title", widget: "string"}
+              - {label: "Catégorie", name: "category", widget: "select", options: ["Création", "Entretien", "Abattage", "Aménagement"]}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "Description courte", name: "description", widget: "text"}
+
+      - file: "data/images_globales.json"
+        label: "Images du site"
+        name: "images_globales"
+        fields:
+          - {label: "Image d'accueil (Hero)", name: "hero_accueil", widget: "image", required: false}
+          - {label: "Image page Services", name: "hero_services", widget: "image", required: false}
+          - {label: "Image page Contact", name: "hero_contact", widget: "image", required: false}

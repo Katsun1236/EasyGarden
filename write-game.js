@@ -1,5 +1,7 @@
-// Injection de l'interface du jeu dans le body
-const gameHTML = `
+const fs = require('fs');
+
+const gameCode = `// Injection de l'interface du jeu dans le body
+const gameHTML = \`
 <div id="easter-egg-game-container" class="fixed inset-0 bg-stone-900 z-[100] hidden flex-col items-center justify-center p-4">
     <button id="close-game-btn" class="absolute top-6 right-6 text-white text-3xl focus:outline-none hover:text-botanic transition-colors z-[101]" aria-label="Fermer le jeu"><i class="fa-solid fa-times"></i></button>
     <div class="text-center mb-4">
@@ -17,7 +19,7 @@ const gameHTML = `
         <canvas id="gameCanvas" width="800" height="450" class="bg-[#87CEEB] rounded border border-botanic/30 shadow-inner" style="image-rendering: pixelated;"></canvas>
     </div>
 </div>
-`;
+\`;
 document.body.insertAdjacentHTML('beforeend', gameHTML);
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { x: 1400, y: groundY - 120, w: 40, h: 20, type: 'branch', done: false, trunkX: 1430, trunkY: groundY, name: 'Élagage' },
             ],
             npcs: [
-                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#f87171', name: "Mme. Rose", dialogs: ["Bonjour ! Mon jardin est en friche...", "Utilisez les flèches pour bouger et sauter.", "Coupez les herbes, taillez les haies et élaguez !", "Et attention à l'eau !"] }
+                { x: 200, y: groundY - 36, w: 20, h: 36, color: '#f87171', name: "Mme. Rose", dialogs: ["Bonjour ! Mon jardin est en friche...", "Utilisez les flèches pour bouger et sauter.", "Coupez les herbes, taillez les haies et élaguez !"] }
             ],
             enemies: [], items: []
         },
@@ -244,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeDialog = null;
         
         document.getElementById('game-ui-level').innerText = "NIVEAU " + (idx + 1) + " - " + levelData.name;
-        document.getElementById('game-ui-score').innerHTML = levelData.isBoss ? "BATTEZ LA RONCE !" : `TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/${levelTasks}</span>`;
+        document.getElementById('game-ui-score').innerHTML = levelData.isBoss ? "BATTEZ LA RONCE !" : \`TÂCHES: <span id="game-score" class="text-botanic-light text-xl">0/\${levelTasks}</span>\`;
         if(!levelData.isBoss) scoreElement = document.getElementById('game-score');
         
         gameOverScreen.classList.add('hidden');
@@ -281,10 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isWin) {
             restartBtn.onclick = () => {
-                const cursorSVG = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>🚜</text></svg>"), auto`;
+                const cursorSVG = \`url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>🚜</text></svg>"), auto\`;
                 document.body.style.cursor = cursorSVG;
                 document.querySelectorAll('a, button, input, .cursor-pointer').forEach(el => {
-                    el.style.cursor = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>✂️</text></svg>"), pointer`;
+                    el.style.cursor = \`url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>✂️</text></svg>"), pointer\`;
                 });
                 closeGameUI();
             };
@@ -294,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameOverScreen.classList.remove('hidden');
     }
 
+    // Gestion du bouton Espace pour lire les dialogues
     let spacePressed = false;
 
     function update() {
@@ -314,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (keys.space && !spacePressed) {
                 activeDialog.showPrompt = false;
                 activeDialog.line++;
-                if (activeDialog.line >= nearNPC.dialogs.length) activeDialog.line = 0;
+                if (activeDialog.line >= nearNPC.dialogs.length) activeDialog.line = 0; // Loop or close
             }
         } else {
             activeDialog = null;
@@ -356,10 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let w of (levelData.water || [])) {
             if (player.y + player.height > w.y + 20 && player.x + player.width > w.x && player.x < w.x + w.w) {
                 spawnParticles(player.x+12, w.y+10, '#3b82f6', 20);
-                return showGameOver("Plouf !", "Vous êtes tombé à l'eau.", "Recommencer");
+                return showGameOver("Plouf !", "Vous êtes tombé dans l'eau boueuse.", "Recommencer");
             }
         }
-        
         // Fall Death
         if (player.y > 600) return showGameOver("Tombé !", "Attention où vous mettez les pieds.", "Recommencer");
 
@@ -451,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     player.hp--; player.invincibleTimer = 60;
                     player.vx = (player.x < e.x) ? -10 : 10; player.vy = -6;
                     spawnParticles(player.x, player.y, '#ef4444', 10);
-                    if (player.hp <= 0) return showGameOver("Game Over", "Les nuisibles ont gagné.", "Réessayer");
+                    if (player.hp <= 0) return showGameOver("Game Over", "Les nuisibles ont ruiné le jardin.", "Réessayer");
                 }
             }
         }
@@ -460,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let t of levelData.tasks) {
             if (!t.done && checkCollision(player, t)) {
                 t.done = true; completedTasks++;
-                if (scoreElement) scoreElement.innerText = `${completedTasks}/${levelTasks}`;
+                if (scoreElement) scoreElement.innerText = \`\${completedTasks}/\${levelTasks}\`;
                 spawnParticles(t.x + t.w/2, t.y + t.h/2, '#22c55e', 30);
                 spawnText(t.x + t.w/2, t.y - 15, t.name, '#4ade80', '20px');
             }
@@ -471,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (completedTasks >= levelTasks) {
                 if (currentLevelIdx < levels.length - 1) return loadLevel(currentLevelIdx + 1);
             } else {
-                if (frameCount % 60 === 0) spawnText(player.x, player.y - 30, "Finissez les tâches !", '#ef4444');
+                if (frameCount % 60 === 0) spawnText(player.x, player.y - 30, "Il reste des tâches !", '#ef4444');
             }
         }
 
@@ -501,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         player.hp--; player.invincibleTimer = 60;
                         player.vx = (player.x < boss.x) ? -14 : 14; player.vy = -8;
                         spawnText(player.x, player.y - 20, "Aïe!", '#ef4444');
-                        if (player.hp <= 0) return showGameOver("Game Over", "La Ronce vous a écrasé.", "Réessayer");
+                        if (player.hp <= 0) return showGameOver("Game Over", "La Ronce Mutante vous a écrasé.", "Réessayer");
                     }
                 }
             } else {
@@ -544,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.save();
         
-        // --- PARALLAX 4 LAYERS ---
+        // 4 Layers of Parallax
 
         // Layer 1: Far Mountains (0.2)
         ctx.translate(-cameraX * 0.2, 0);
@@ -554,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.beginPath(); ctx.moveTo(1000, groundY); ctx.lineTo(1400, 100); ctx.lineTo(1800, groundY); ctx.fill();
         
         // Layer 2: Near Hills (0.4)
-        ctx.translate(cameraX * 0.2 - cameraX * 0.4, 0);
+        ctx.translate(cameraX * 0.2 - cameraX * 0.4, 0); // Ajustement
         ctx.fillStyle = (time === 'sunset' || time === 'night') ? '#4c0519' : '#7dd3fc';
         ctx.beginPath(); ctx.moveTo(-200, groundY); ctx.lineTo(100, 150); ctx.lineTo(500, groundY); ctx.fill();
         ctx.beginPath(); ctx.moveTo(400, groundY); ctx.lineTo(750, 180); ctx.lineTo(1100, groundY); ctx.fill();
@@ -563,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Layer 3: Background Trees (0.6)
         ctx.translate(cameraX * 0.4 - cameraX * 0.6, 0);
-        let treeColor = (time === 'sunset' || time === 'night') ? '#1e3a8a' : '#0ea5e9';
+        let treeColor = (time === 'sunset' || time === 'night') ? '#1e3a8a' : '#0ea5e9'; // Silhouettes bleutées
         for(let i=0; i<3000; i+=300) {
             ctx.fillStyle = '#1e3a8a'; ctx.fillRect(i+140, groundY-80, 20, 80);
             ctx.fillStyle = treeColor; 
@@ -606,8 +608,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if(p.type === 'fragile' && p.state === 'falling') ctx.globalAlpha = 0.5;
 
             if (p.type === 'bouncy') {
-                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(p.x + p.w/2, p.y + p.h, p.w/2, Math.PI, 0); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x + p.w*0.3, p.y + p.h*0.5, 4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(p.x + p.w/2, p.y + p.h, p.w/2, Math.PI, 0); ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(p.x + p.w*0.3, p.y + p.h*0.5, 4, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(p.x + p.w*0.7, p.y + p.h*0.7, 5, 0, Math.PI*2); ctx.fill();
             } else if (p.type === 'moving') {
                 ctx.fillStyle = '#b45309'; ctx.fillRect(p.x, p.y, p.w, p.h);
@@ -618,6 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (p.type === 'fragile') {
                 ctx.fillStyle = '#d97706'; ctx.fillRect(p.x, p.y, p.w, p.h);
                 ctx.fillStyle = '#fde047'; ctx.fillRect(p.x, p.y, p.w, 3);
+                // Planks texture
                 ctx.strokeStyle = '#78350f'; ctx.lineWidth = 1;
                 for(let i=10; i<p.w; i+=20) { ctx.beginPath(); ctx.moveTo(p.x+i, p.y); ctx.lineTo(p.x+i, p.y+p.h); ctx.stroke(); }
                 if(p.state === 'shaking') { ctx.fillStyle = 'rgba(239, 68, 68, 0.3)'; ctx.fillRect(p.x, p.y, p.w, p.h); }
@@ -626,10 +631,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
                 ctx.fillStyle = levelData.isBoss ? '#290f02' : '#451a03';
                 for(let i=0; i<p.w; i+=40) { ctx.fillRect(p.x + i + (p.y%20), p.y + 20 + (i%20), 8, 4); }
-
                 ctx.fillStyle = levelData.isBoss ? '#7c2d12' : '#22c55e';
                 ctx.beginPath();
-                if (ctx.roundRect) ctx.roundRect(p.x - 5, p.y, p.w + 10, 15, 8); else ctx.fillRect(p.x - 5, p.y, p.w + 10, 15);
+                if (ctx.roundRect) ctx.roundRect(p.x - 5, p.y, p.w + 10, 15, 8);
+                else ctx.fillRect(p.x - 5, p.y, p.w + 10, 15);
                 ctx.fill();
                 ctx.fillStyle = levelData.isBoss ? '#9a3412' : '#4ade80';
                 ctx.fillRect(p.x - 2, p.y + 2, p.w + 4, 4);
@@ -656,7 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(npc.x + 6, npc.y + 8, 2, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(npc.x + 14, npc.y + 8, 2, 0, Math.PI*2); ctx.fill();
             
-            // Highlight
+            // Highlight if near
             if(activeDialog && activeDialog.npc === npc) {
                 ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(npc.x + npc.w/2, npc.y - 15 + Math.sin(frameCount*0.1)*3, 4, 0, Math.PI*2); ctx.fill();
             }
@@ -725,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = '#ef4444'; ctx.fillRect(b.x+1, b.y - 29, (b.w-2) * (b.hp/b.maxHp), 8);
         }
 
-        // Player Drawing
+        // Player (Advanced Drawing)
         if (player.invincibleTimer % 4 < 2) { 
             ctx.save();
             ctx.translate(player.x + player.width/2, player.y + player.height);
@@ -762,7 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Floating Texts
         ctx.textAlign = "center";
         for (let ft of floatingTexts) {
-            ctx.font = `bold ${ft.size} 'Playfair Display', serif`; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.life;
+            ctx.font = \`bold \${ft.size} 'Playfair Display', serif\`; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.life;
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4; ctx.fillText(ft.text, ft.x, ft.y); ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
         }
 
@@ -781,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillText("Appuyez sur ESPACE", cx, cy - 10);
             } else {
                 ctx.fillText(npc.dialogs[activeDialog.line], cx, cy - 10);
+                // Arrow down to show more dialogs
                 if(frameCount % 40 < 20) { ctx.fillStyle = '#ef4444'; ctx.fillText("▼", cx + 80, cy + 5); }
             }
         }
@@ -790,8 +796,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Layer 5: Foreground Elements (Parallax fast 1.5)
         ctx.save();
         ctx.translate(-cameraX * 1.5, 0);
-        ctx.fillStyle = '#064e3b'; // Buissons sombres au premier plan
-        for(let i=-200; i<4000; i+=600) {
+        ctx.fillStyle = '#064e3b'; // Buissons très sombres
+        for(let i=0; i<3000; i+=600) {
             ctx.beginPath(); ctx.arc(i, canvas.height + 20, 80, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(i+100, canvas.height + 40, 100, 0, Math.PI*2); ctx.fill();
         }
@@ -803,17 +809,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Keyboard
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') keys.left = true;
-        if (e.key === 'ArrowRight') keys.right = true;
-        if (e.key === 'ArrowUp') keys.up = true;
-        if (e.key === ' ') keys.space = true;
+    window.addEventListener('keydown', e => {
+        if (!gameActive) return;
+        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].indexOf(e.code) > -1) e.preventDefault();
+        if (e.code === 'ArrowLeft') keys.left = true;
+        if (e.code === 'ArrowRight') keys.right = true;
+        if (e.code === 'ArrowUp') keys.up = true;
+        if (e.code === 'Space') keys.space = true;
     });
 
-    document.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowLeft') keys.left = false;
-        if (e.key === 'ArrowRight') keys.right = false;
-        if (e.key === 'ArrowUp') keys.up = false;
-        if (e.key === ' ') keys.space = false;
+    window.addEventListener('keyup', e => {
+        if (e.code === 'ArrowLeft') keys.left = false;
+        if (e.code === 'ArrowRight') keys.right = false;
+        if (e.code === 'ArrowUp') keys.up = false;
+        if (e.code === 'Space') keys.space = false;
     });
 });
+`;
+
+fs.writeFileSync('js/easter-egg.js', gameCode);
+console.log("Fichier js/easter-egg.js généré avec succès !");

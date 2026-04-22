@@ -1,0 +1,42 @@
+{
+  "page_title": "Notre <br><span class=\"italic font-light text-botanic-light\">Savoir-Faire</span>",
+  "page_subtitle": "De la conception à l'entretien, nous vous accompagnons dans tous vos projets paysagers.",
+  "services_list": [
+    {
+      "number": "01",
+      "title": "Création & <br><span class=\"italic text-botanic-dark\">Aménagement</span>",
+      "image": "/images/EasyGarden_Tonte.webp",
+      "description": "Nous concevons des jardins sur-mesure qui reflètent votre style de vie. De la pose de gazon en rouleau aux plantations spécifiques, nous transformons votre terrain en un véritable havre de paix.",
+      "features": [
+        "Semis et pose de gazon en rouleaux",
+        "Plantations (arbres, arbustes, massifs floraux)",
+        "Création de bordures et allées",
+        "Aménagement de parterres"
+      ]
+    },
+    {
+      "number": "02",
+      "title": "Entretien <br><span class=\"italic text-botanic-dark\">Régulier</span>",
+      "image": "/images/EasyGarden_Tonte.webp",
+      "description": "Un beau jardin demande une attention constante. Nous prenons soin de vos espaces verts tout au long de l'année pour qu'ils conservent leur éclat, saison après saison.",
+      "features": [
+        "Tonte de pelouse et finitions",
+        "Scarification et fertilisation",
+        "Taille de haies et arbustes",
+        "Nettoyage de parterres et ramassage de feuilles"
+      ]
+    },
+    {
+      "number": "03",
+      "title": "Élagage & <br><span class=\"italic text-botanic-dark\">Abattage</span>",
+      "image": "/images/EasyGarden_Tonte.webp",
+      "description": "Nous intervenons en toute sécurité pour maîtriser la croissance de vos arbres, aérer vos espaces ou abattre des sujets devenus dangereux ou malades.",
+      "features": [
+        "Élagage de sécurité et de taille",
+        "Abattage délicat par démontage",
+        "Taille d'arbres fruitiers",
+        "Broyage et évacuation des déchets verts"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "hero_image": "/images/EasyGarden_Tonte.webp",
+  "hero_sur_title": "Création & Entretien dans le Hainaut",
+  "hero_title": "L'élégance <br><span class=\"italic font-light text-botanic-light\">au naturel.</span>",
+  "hero_subtitle": "Intervention dans <strong class=\"font-bold\">tout le Hainaut</strong> pour sublimer vos espaces extérieurs.",
+  "vision_quote": "\"Nous concevons des jardins qui évoluent avec le temps, des espaces où la nature et l'architecture s'accordent en parfaite harmonie.\"",
+  "vision_text": "Situés à Montigny-le-Tilleul, nous mettons notre passion et notre exigence au service de vos espaces extérieurs dans <strong class=\"text-stone-900\">l'ensemble de la province du Hainaut</strong>. De l'idée initiale à l'entretien régulier, chaque détail compte.",
+  "services_accueil": {
+    "img_creation": "/images/EasyGarden_Tonte.webp",
+    "img_entretien": "/images/EasyGarden_Tonte.webp",
+    "img_elagage": "/images/EasyGarden_Tonte.webp"
+  },
+  "portfolio_accueil": {
+    "bg_image": "/images/easygarden_fond.webp",
+    "img_1": "/images/EasyGarden_Tonte.webp",
+    "img_2": "/images/EasyGarden_Tonte.webp",
+    "img_3": "/images/EasyGarden_Tonte.webp"
+  }
+}

@@ -69,6 +69,65 @@ collections:
     label: "Gestion du Site"
     files:
 
+      - file: "data/accueil.json"
+        label: "Page : Accueil"
+        name: "accueil"
+        fields:
+          - {label: "Image d'en-tête (Hero)", name: "hero_image", widget: "image"}
+          - {label: "Surtitre", name: "hero_sur_title", widget: "string", default: "Création & Entretien dans le Hainaut"}
+          - {label: "Titre principal", name: "hero_title", widget: "string", hint: "Vous pouvez utiliser la balise <br> pour un retour à la ligne."}
+          - {label: "Sous-titre", name: "hero_subtitle", widget: "text"}
+          - {label: "Citation (Vision)", name: "vision_quote", widget: "text"}
+          - {label: "Texte de la vision", name: "vision_text", widget: "text", hint: "Vous pouvez utiliser <strong>texte</strong> pour mettre en gras."}
+
+          - label: "Section Services (Accueil)"
+            name: "services_accueil"
+            widget: "object"
+            fields:
+              - {label: "Image Création", name: "img_creation", widget: "image"}
+              - {label: "Image Entretien", name: "img_entretien", widget: "image"}
+              - {label: "Image Élagage", name: "img_elagage", widget: "image"}
+
+          - label: "Section Portfolio (Accueil)"
+            name: "portfolio_accueil"
+            widget: "object"
+            fields:
+              - {label: "Image de fond portfolio", name: "bg_image", widget: "image"}
+              - {label: "Miniature 1", name: "img_1", widget: "image"}
+              - {label: "Miniature 2", name: "img_2", widget: "image"}
+              - {label: "Miniature 3", name: "img_3", widget: "image"}
+
+      - file: "data/services.json"
+        label: "Page : Services"
+        name: "services_page"
+        fields:
+          - {label: "Titre principal de la page", name: "page_title", widget: "string"}
+          - {label: "Sous-titre de la page", name: "page_subtitle", widget: "text"}
+          - label: "Liste des services détaillés"
+            name: "services_list"
+            widget: "list"
+            fields:
+              - {label: "Numéro", name: "number", widget: "string", hint: "Ex: 01, 02"}
+              - {label: "Titre du service", name: "title", widget: "string"}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "Description courte", name: "description", widget: "text"}
+              - label: "Points forts (liste à puces)"
+                name: "features"
+                widget: "list"
+                field: {label: "Point", name: "point", widget: "string"}
+
+      - file: "data/contact.json"
+        label: "Page : Contact"
+        name: "contact"
+        fields:
+          - {label: "Titre principal", name: "page_title", widget: "string"}
+          - {label: "Texte d'introduction", name: "intro_text", widget: "text"}
+          - {label: "Numéro de téléphone", name: "phone", widget: "string"}
+          - {label: "Adresse Email", name: "email", widget: "string"}
+          - {label: "Localité", name: "address", widget: "string"}
+          - {label: "Zone d'intervention", name: "zone", widget: "string"}
+          - {label: "Lien Facebook", name: "facebook_url", widget: "string"}
+
       - file: "data/realisations.json"
         label: "Portfolio (Réalisations)"
         name: "realisations"
@@ -85,11 +144,13 @@ collections:
               - {label: "Description courte", name: "description", widget: "text"}
 
       - file: "data/images_globales.json"
-        label: "Images du site"
+        label: "Paramètres Globaux & Logo"
         name: "images_globales"
         media_folder: "images/globales"
         public_folder: "/images/globales"
         fields:
-          - {label: "Image d'accueil (Hero)", name: "hero_accueil", widget: "image", required: false}
-          - {label: "Image page Services", name: "hero_services", widget: "image", required: false}
-          - {label: "Image page Contact", name: "hero_contact", widget: "image", required: false}
+          - {label: "Logo du site", name: "logo", widget: "image"}
+          - {label: "Email global de contact", name: "global_email", widget: "string", default: "easygarden.devis@gmail.com"}
+          - {label: "Téléphone global", name: "global_phone", widget: "string", default: "+32493824581"}
+          - {label: "Image page Services (Hero)", name: "hero_services", widget: "image", required: false}
+          - {label: "Image page Contact (Hero)", name: "hero_contact", widget: "image", required: false}

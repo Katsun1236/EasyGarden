@@ -1,9 +1,12 @@
 const fs = require('fs');
+const path = require('path');
+
+const ROOT_DIR = path.join(__dirname, '..');
 
 // 1. Charger les données du blog
-const postsData = JSON.parse(fs.readFileSync('./data/posts.json', 'utf8'));
+const postsData = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'src/data/posts.json'), 'utf8'));
 
-const baseUrl = 'https://easy.garden.eu/';
+const baseUrl = 'https://easy-garden.eu';
 const date = new Date().toISOString().split('T')[0];
 
 // 2. Générer le contenu du sitemap
@@ -23,5 +26,5 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 </urlset>`;
 
 // 3. Écraser l'ancien fichier sitemap.xml dans le dist
-fs.writeFileSync('./dist/sitemap.xml', sitemap);
+fs.writeFileSync(path.join(ROOT_DIR, 'dist/sitemap.xml'), sitemap);
 console.log('Sitemap.xml mis à jour avec succès !');

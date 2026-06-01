@@ -4,13 +4,14 @@ const cheerio = require('cheerio');
 const { marked } = require('marked');
 
 // Configuration
-const DIST_DIR = path.join(__dirname, 'dist');
+const ROOT_DIR = path.join(__dirname, '..');
+const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const PAGES = ['index.html', 'services.html', 'contact.html', 'realisations.html', 'stats.html'];
-const ASSETS_DIRS = ['images', 'js', 'css', 'data', 'admin', 'static'];
+const ASSETS_DIRS = ['css', 'js', 'images'];
 
 // Utility
 function getJsonData(fileName) {
-  const filePath = path.join(__dirname, 'data', fileName);
+  const filePath = path.join(ROOT_DIR, 'src/data', fileName);
   if (fs.existsSync(filePath)) {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   }
@@ -21,23 +22,28 @@ function getJsonData(fileName) {
 console.log('🧹 Cleaning dist directory...');
 fs.emptyDirSync(DIST_DIR);
 
-// 2. Copier les assets (sauf html)
+// 2. Copier les assets (sauf html) et dossiers
 console.log('📁 Copying assets...');
 for (const dir of ASSETS_DIRS) {
-    if (fs.existsSync(path.join(__dirname, dir))) {
-        fs.copySync(path.join(__dirname, dir), path.join(DIST_DIR, dir));
+    if (fs.existsSync(path.join(ROOT_DIR, 'src/assets', dir))) {
+        fs.copySync(path.join(ROOT_DIR, 'src/assets', dir), path.join(DIST_DIR, dir));
     }
 }
-// Copy favicon, robots, netlify admin things if needed that are in root
-['robots.txt', '_redirects'].forEach(file => {
-    if(fs.existsSync(path.join(__dirname, file))) {
-        fs.copySync(path.join(__dirname, file), path.join(DIST_DIR, file));
-    }
-});
+if (fs.existsSync(path.join(ROOT_DIR, 'src/data'))) {
+    fs.copySync(path.join(ROOT_DIR, 'src/data'), path.join(DIST_DIR, 'data'));
+}
+if (fs.existsSync(path.join(ROOT_DIR, 'src/admin'))) {
+    fs.copySync(path.join(ROOT_DIR, 'src/admin'), path.join(DIST_DIR, 'admin'));
+}
+
+// Copy public files
+if (fs.existsSync(path.join(ROOT_DIR, 'public'))) {
+    fs.copySync(path.join(ROOT_DIR, 'public'), DIST_DIR);
+}
 
 // 3. Charger les Components (DRY)
-const headerHtml = fs.readFileSync(path.join(__dirname, 'components', 'header.html'), 'utf8');
-const footerHtml = fs.readFileSync(path.join(__dirname, 'components', 'footer.html'), 'utf8');
+const headerHtml = fs.readFileSync(path.join(ROOT_DIR, 'src/components', 'header.html'), 'utf8');
+const footerHtml = fs.readFileSync(path.join(ROOT_DIR, 'src/components', 'footer.html'), 'utf8');
 
 // Données CMS
 const accueilData = getJsonData('accueil.json');
@@ -65,9 +71,9 @@ function injectComponentsAndSEO(html, fileName, pageName, jsonData) {
             "@context": "https://schema.org",
             "@type": "HomeAndConstructionBusiness",
             "name": "Easy Garden",
-            "image": "https://easy-garden.netlify.app/images/easygarden_logo.webp",
-            "@id": "https://easy-garden.netlify.app/",
-            "url": "https://easy-garden.netlify.app/",
+            "image": "https://easy-garden.eu/images/easygarden_logo.webp",
+            "@id": "https://easy-garden.eu/",
+            "url": "https://easy-garden.eu/",
             "telephone": contactData.phone || "+32493824581",
             "email": contactData.email || "easygarden.devis@gmail.com",
             "address": {
@@ -85,7 +91,7 @@ function injectComponentsAndSEO(html, fileName, pageName, jsonData) {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": jsonData.title,
-            "image": jsonData.image ? `https://easy-garden.netlify.app${jsonData.image}` : "https://easy-garden.netlify.app/images/easygarden_logo.webp",
+            "image": jsonData.image ? `https://easy-garden.eu${jsonData.image}` : "https://easy-garden.eu/images/easygarden_logo.webp",
             "datePublished": jsonData.date,
             "dateModified": jsonData.date,
             "author": {
@@ -97,7 +103,7 @@ function injectComponentsAndSEO(html, fileName, pageName, jsonData) {
                 "name": "Easy Garden",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://easy-garden.netlify.app/images/easygarden_logo.webp"
+                    "url": "https://easy-garden.eu/images/easygarden_logo.webp"
                 }
             },
             "description": jsonData.excerpt
@@ -125,10 +131,11 @@ function injectComponentsAndSEO(html, fileName, pageName, jsonData) {
 }
 
 function processPage(htmlFile, jsonData, pageName) {
-    const srcPath = path.join(__dirname, htmlFile);
+    const srcPath = path.join(ROOT_DIR, 'src/pages', htmlFile);
     if (!fs.existsSync(srcPath)) return;
 
     let html = fs.readFileSync(srcPath, 'utf8');
+
     
     // Inject Components and SEO
     html = injectComponentsAndSEO(html, htmlFile, pageName, jsonData);
@@ -214,18 +221,18 @@ processPage('realisations.html', null, 'realisations');
 processPage('stats.html', null, 'stats');
 
 // Construction du blog (blog/index.html & blog/article.html)
-if (fs.existsSync(path.join(__dirname, 'blog'))) {
+if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {
     fs.ensureDirSync(path.join(DIST_DIR, 'blog'));
     
     // Copier l'index du blog avec header/footer
-    let blogIndexHtml = fs.readFileSync(path.join(__dirname, 'blog', 'index.html'), 'utf8');
+    let blogIndexHtml = fs.readFileSync(path.join(ROOT_DIR, 'src/pages/blog', 'index.html'), 'utf8');
     blogIndexHtml = injectComponentsAndSEO(blogIndexHtml, 'blog/', 'blog', null);
     fs.writeFileSync(path.join(DIST_DIR, 'blog', 'index.html'), blogIndexHtml);
     console.log(`✅ blog/index.html builded!`);
 
     // Pour chaque article de blog, générer la page article.html dynamiquement
-    if (fs.existsSync(path.join(__dirname, 'blog', 'article.html')) && postsData && postsData.posts) {
-        const articleTemplate = fs.readFileSync(path.join(__dirname, 'blog', 'article.html'), 'utf8');
+    if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog', 'article.html')) && postsData && postsData.posts) {
+        const articleTemplate = fs.readFileSync(path.join(ROOT_DIR, 'src/pages/blog', 'article.html'), 'utf8');
         
         postsData.posts.filter(p => p.published).forEach(post => {
             // Créer le HTML avec header, footer et JSON-LD spécifique au post
@@ -247,8 +254,8 @@ if (fs.existsSync(path.join(__dirname, 'blog'))) {
             $('meta[name="description"]').attr('content', post.excerpt);
             $('meta[property="og:title"]').attr('content', post.title);
             $('meta[property="og:description"]').attr('content', post.excerpt);
-            $('meta[property="og:url"]').attr('content', `https://easy-garden.netlify.app/blog/${post.slug}`);
-            if (post.image) $('meta[property="og:image"]').attr('content', `https://easy-garden.netlify.app${post.image}`);
+            $('meta[property="og:url"]').attr('content', `https://easy-garden.eu/blog/${post.slug}`);
+            if (post.image) $('meta[property="og:image"]').attr('content', `https://easy-garden.eu${post.image}`);
             
             // Sauvegarder dans dist/blog/article-slug.html 
             // Note: netlify redirige /blog/:slug vers /blog/article.html?slug=:slug actuellement.

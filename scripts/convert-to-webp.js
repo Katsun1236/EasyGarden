@@ -2,23 +2,25 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
+const ROOT_DIR = path.join(__dirname, '..');
+
 const directories = [
-  'images/realisations',
-  'images/blog',
-  'images/globales'
+  'src/assets/images/realisations',
+  'src/assets/images/blog',
+  'src/assets/images/globales'
 ];
 
 const dataFiles = [
-  'data/posts.json',
-  'data/realisations.json',
-  'data/images_globales.json'
+  'src/data/posts.json',
+  'src/data/realisations.json',
+  'src/data/images_globales.json'
 ];
 
 async function convertImagesToWebP() {
   let fileChanges = 0;
 
   for (const dir of directories) {
-    const dirPath = path.join(__dirname, dir);
+    const dirPath = path.join(ROOT_DIR, dir);
     if (!fs.existsSync(dirPath)) continue;
 
     const files = fs.readdirSync(dirPath);
@@ -56,7 +58,7 @@ async function convertImagesToWebP() {
 
 function updateJsonFiles(oldName, newName) {
   for (const dataFile of dataFiles) {
-    const dataPath = path.join(__dirname, dataFile);
+    const dataPath = path.join(ROOT_DIR, dataFile);
     if (!fs.existsSync(dataPath)) continue;
 
     let content = fs.readFileSync(dataPath, 'utf8');
@@ -64,6 +66,7 @@ function updateJsonFiles(oldName, newName) {
     const regex = new RegExp(`(/images/[a-zA-Z0-9_-]+)?/${oldNameEscaped}`, 'g');
     
     if (content.match(regex)) {
+      // Find the folder path prefix to preserve it, or just replace the filename
       content = content.replace(regex, (match) => {
           return match.replace(oldName, newName);
       });

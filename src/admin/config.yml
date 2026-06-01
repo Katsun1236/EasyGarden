@@ -5,18 +5,18 @@ backend:
 locale: fr
 
 # Dossier global pour les médias (images)
-media_folder: "images"
+media_folder: "src/assets/images"
 public_folder: "/images"
 
 collections:
   - name: "blog"
     label: "Articles de Blog"
-    media_folder: "images/blog"
+    media_folder: "src/assets/images/blog"
     public_folder: "/images/blog"
     files:
       - label: "Gérer tous les articles"
         name: "posts"
-        file: "data/posts.json"
+        file: "src/data/posts.json"
         fields:
           - label: "Articles"
             name: "posts"
@@ -69,7 +69,7 @@ collections:
     label: "Gestion du Site"
     files:
 
-      - file: "data/accueil.json"
+      - file: "src/data/accueil.json"
         label: "Page : Accueil"
         name: "accueil"
         fields:
@@ -97,7 +97,7 @@ collections:
               - {label: "Miniature 2", name: "img_2", widget: "image"}
               - {label: "Miniature 3", name: "img_3", widget: "image"}
 
-      - file: "data/services.json"
+      - file: "src/data/services.json"
         label: "Page : Services"
         name: "services_page"
         fields:
@@ -116,7 +116,7 @@ collections:
                 widget: "list"
                 field: {label: "Point", name: "point", widget: "string"}
 
-      - file: "data/contact.json"
+      - file: "src/data/contact.json"
         label: "Page : Contact"
         name: "contact"
         fields:
@@ -128,10 +128,10 @@ collections:
           - {label: "Zone d'intervention", name: "zone", widget: "string"}
           - {label: "Lien Facebook", name: "facebook_url", widget: "string"}
 
-      - file: "data/realisations.json"
+      - file: "src/data/realisations.json"
         label: "Portfolio (Réalisations)"
         name: "realisations"
-        media_folder: "images/realisations"
+        media_folder: "src/assets/images/realisations"
         public_folder: "/images/realisations"
         fields:
           - label: "Liste de tes chantiers"
@@ -143,10 +143,10 @@ collections:
               - {label: "Image", name: "image", widget: "image"}
               - {label: "Description courte", name: "description", widget: "text"}
 
-      - file: "data/images_globales.json"
+      - file: "src/data/images_globales.json"
         label: "Paramètres Globaux & Logo"
         name: "images_globales"
-        media_folder: "images/globales"
+        media_folder: "src/assets/images/globales"
         public_folder: "/images/globales"
         fields:
           - {label: "Logo du site", name: "logo", widget: "image"}

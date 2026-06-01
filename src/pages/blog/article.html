@@ -132,7 +132,10 @@ if (!slug) {
     const pathParts = window.location.pathname.split('/').filter(p => p !== "");
     slug = pathParts[pathParts.length - 1];
 }
-if (!slug || slug === 'article.html' || slug === 'blog') { 
+if (slug && slug.endsWith('.html')) {
+    slug = slug.replace('.html', '');
+}
+if (!slug || slug === 'article' || slug === 'blog') { 
     window.location.href = '/blog/'; 
 }
 

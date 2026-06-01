@@ -243,11 +243,15 @@ if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {
             $('#article-title').html(post.title);
             $('#article-category').html(post.category);
             $('#article-date').html(new Date(post.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' }));
-            if(post.image) $('#article-image').attr('src', post.image);
+            if(post.image) $('#hero-img').attr('src', post.image);
             
             // Convertir le markdown en HTML
             const htmlContent = marked.parse(post.content || "");
-            $('#article-content').html(htmlContent);
+            $('#article-body').html(htmlContent);
+            
+            // Retirer le loading state
+            $('#loading-state').remove();
+            $('#article-content').removeClass('hidden');
             
             // Modifier les meta tags SEO (Title, Description, OG)
             $('title').html(`${post.title} | Blog Easy Garden`);

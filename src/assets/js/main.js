@@ -1,9 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const navbar = document.getElementById('navbar');
+    const navBtn = document.getElementById('nav-btn');
     if (navbar) {
         window.addEventListener('scroll', () => {
-            navbar.classList.toggle('nav-scrolled', window.scrollY > 50);
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled', 'text-stone-900');
+                navbar.classList.remove('text-white');
+                if(navBtn) {
+                    navBtn.classList.remove('bg-white', 'text-stone-900');
+                    navBtn.classList.add('bg-botanic-dark', 'text-white');
+                }
+            } else {
+                navbar.classList.remove('nav-scrolled', 'text-stone-900');
+                navbar.classList.add('text-white');
+                if(navBtn) {
+                    navBtn.classList.add('bg-white', 'text-stone-900');
+                    navBtn.classList.remove('bg-botanic-dark', 'text-white');
+                }
+            }
         });
     }
 

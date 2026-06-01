@@ -18,7 +18,7 @@ const randomCategory = categories[Math.floor(Math.random() * categories.length)]
 async function generateBlogPost() {
     console.log(`🤖 Demande de génération à Gemini (Thème: ${randomCategory})...`);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
     const prompt = `
         Tu es un expert paysagiste basé dans la province du Hainaut en Belgique.
         Ton entreprise s'appelle "Easy Garden". Tu t'adresses à des particuliers qui ont un jardin ou veulent en créer un.

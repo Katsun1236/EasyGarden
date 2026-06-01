@@ -3,7 +3,6 @@ node_modules/
 
 # Dossier de build (Généré automatiquement, ne pas commiter)
 dist/
-public/
 
 # Fichiers de log
 npm-debug.log*

@@ -1,0 +1,42 @@
+name: Weekly Automated Blog Post
+
+on:
+  schedule:
+    # S'exécute tous les samedis à 17:00 (Attention à l'heure locale, l'heure du serveur est UTC. 15:00 UTC = 17:00 heure d'été belge)
+    - cron: '0 15 * * 6'
+  workflow_dispatch: # Permet de lancer le script manuellement depuis GitHub
+
+jobs:
+  generate-blog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Nécessaire pour faire le commit des nouveaux fichiers
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Blog Post with AI
+        run: node scripts/generate-blog.js
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+
+      - name: Convert new image to WebP
+        run: npm run build:images
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/data/posts.json src/assets/images/blog/
+          git commit -m "feat: 📝 nouvel article généré automatiquement par l'IA" || echo "No changes to commit"
+          git push

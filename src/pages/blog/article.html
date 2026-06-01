@@ -128,18 +128,33 @@ function copyLink() {
 
 const params = new URLSearchParams(window.location.search);
 let slug = params.get('slug');
-if (!slug) {
-    const pathParts = window.location.pathname.split('/').filter(p => p !== "");
-    slug = pathParts[pathParts.length - 1];
-}
-if (slug && slug.endsWith('.html')) {
-    slug = slug.replace('.html', '');
-}
-if (!slug || slug === 'article' || slug === 'blog') { 
-    window.location.href = '/blog/'; 
-}
 
-fetch('/data/posts.json')
+// Si la page a été générée statiquement (le loading-state a été retiré par le build),
+// on calcule juste le temps de lecture et on s'arrête là (pas de fetch inutile).
+if (!document.getElementById('loading-state')) {
+    const articleBody = document.getElementById('article-body');
+    if (articleBody) {
+        const wordCount = articleBody.textContent.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / 200);
+        const rtElem = document.getElementById('reading-time');
+        if(rtElem) rtElem.innerHTML = `<i class="fa-regular fa-clock" aria-hidden="true"></i> ${readingTime} min de lecture`;
+    }
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    const fbBtn = document.getElementById('share-fb');
+    if(fbBtn) fbBtn.href = fbUrl;
+} else {
+    if (!slug) {
+        const pathParts = window.location.pathname.split('/').filter(p => p !== "");
+        slug = pathParts[pathParts.length - 1];
+    }
+    if (slug && slug.endsWith('.html')) {
+        slug = slug.replace('.html', '');
+    }
+    if (!slug || slug === 'article' || slug === 'blog') { 
+        window.location.href = '/blog/'; 
+    }
+
+    fetch('/data/posts.json')
     .then(r => { if (!r.ok) throw new Error(); return r.json(); })
     .then(data => {
         const post = data.posts.find(p => p.slug === slug && p.published);
@@ -241,9 +256,12 @@ fetch('/data/posts.json')
         document.getElementById('article-content').classList.remove('hidden');
     })
     .catch(() => {
-        document.getElementById('loading-state').classList.add('hidden');
-        document.getElementById('error-state').classList.remove('hidden');
+        if(document.getElementById('loading-state')) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+        }
     });
+}
     </script>
 </body>
 </html>

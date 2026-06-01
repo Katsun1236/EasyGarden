@@ -1,16 +1,3 @@
 {
-  "posts": [
-    {
-      "excerpt": "zeee",
-      "author": "Easy Garden",
-      "slug": "test",
-      "published": true,
-      "date": "2026-04-22",
-      "title": "Test",
-      "content": "eee",
-      "id": "1",
-      "image": "/images/EasyGarden_Tonte.webp",
-      "category": "Création"
-    }
-  ]
+  "posts": []
 }

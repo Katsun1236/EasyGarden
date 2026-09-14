@@ -37,18 +37,24 @@
 <!-- HEADER -->
 
 
-    <section class="page-hero pt-36 pb-20 px-6 relative">
+    <section class="page-hero pt-40 pb-24 px-6 relative overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img data-cms-src="images_globales.hero_contact" src="/images/EasyGarden_Tonte.webp" alt="Background" class="w-full h-full object-cover" width="1920" height="1080" fetchpriority="high">
-            <div class="absolute inset-0 bg-stone-900/70"></div>
+            <img data-cms-src="images_globales.hero_contact" src="/images/EasyGarden_Tonte.webp" alt="Contact paysagiste Hainaut" class="w-full h-full object-cover object-center" width="1920" height="1080" fetchpriority="high">
+            <div class="absolute inset-0 bg-stone-950/75"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/80 to-stone-950/50"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-black/30"></div>
         </div>
         <div class="max-w-7xl mx-auto relative z-10">
-            <nav class="breadcrumb mb-6" aria-label="Fil d'Ariane">
-                <a href="/">Accueil</a><span>/</span><span class="current">Contact</span>
+            <nav class="breadcrumb mb-6 text-xs uppercase tracking-widest text-stone-300 flex items-center gap-2" aria-label="Fil d'Ariane">
+                <a href="/" class="hover:text-white transition-colors">Accueil</a>
+                <span class="text-stone-500">/</span>
+                <span class="text-emerald-400 font-medium" aria-current="page">Contact &amp; Devis</span>
             </nav>
-            <span class="uppercase tracking-[0.2em] text-sm text-botanic font-bold block mb-4">Nous contacter</span>
-            <h1 data-cms="contact.page_title" class="font-serif text-5xl md:text-7xl text-white leading-tight">Discutons de votre <br><span class="italic font-light text-botanic-light">Projet</span></h1>
-            <p data-cms="contact.intro_text" class="text-white/70 mt-6 text-lg font-light max-w-xl">Que vous ayez une idée précise ou besoin de conseils pour aménager votre jardin, nous sommes à votre écoute. Demandez votre devis gratuit et sans engagement.</p>
+            <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-5 shadow-sm">
+                <i class="fa-solid fa-comments text-xs"></i> Devis 100% Gratuit sous 48h
+            </span>
+            <h1 data-cms="contact.page_title" class="font-serif text-4xl sm:text-6xl md:text-7xl text-white font-bold leading-tight mb-4 drop-shadow-sm">Discutons de votre <br><span class="italic font-light text-emerald-300">Projet</span></h1>
+            <p data-cms="contact.intro_text" class="text-stone-200 text-base sm:text-lg font-light max-w-xl leading-relaxed">Que vous ayez une idée précise ou besoin de conseils pour aménager votre jardin, nous sommes à votre écoute dans tout le Hainaut.</p>
         </div>
     </section>
 

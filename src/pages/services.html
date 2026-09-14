@@ -31,20 +31,24 @@
 
 <!-- HEADER -->
 
-    <section class="page-hero pt-36 pb-20 px-6 relative">
+    <section class="page-hero pt-40 pb-24 px-6 relative overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img data-cms-src="images_globales.hero_services" src="/images/EasyGarden_Tonte.webp" alt="Background" class="w-full h-full object-cover" width="1920" height="1080" fetchpriority="high">
-            <div class="absolute inset-0 bg-stone-900/70"></div>
+            <img data-cms-src="images_globales.hero_services" src="/images/EasyGarden_Tonte.webp" alt="Prestations paysagères Hainaut" class="w-full h-full object-cover object-center" width="1920" height="1080" fetchpriority="high">
+            <div class="absolute inset-0 bg-stone-950/75"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/80 to-stone-950/50"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-black/30"></div>
         </div>
         <div class="max-w-7xl mx-auto relative z-10">
-            <nav class="breadcrumb mb-6" aria-label="Fil d'Ariane">
-                <a href="/">Accueil</a>
-                <span aria-hidden="true">/</span>
-                <span class="current">Services</span>
+            <nav class="breadcrumb mb-6 text-xs uppercase tracking-widest text-stone-300 flex items-center gap-2" aria-label="Fil d'Ariane">
+                <a href="/" class="hover:text-white transition-colors">Accueil</a>
+                <span class="text-stone-500">/</span>
+                <span class="text-emerald-400 font-medium" aria-current="page">Services</span>
             </nav>
-            <span class="uppercase tracking-[0.2em] text-sm text-botanic font-bold block mb-4">Nos Prestations</span>
-            <h1 data-cms="services.page_title" class="font-serif text-5xl md:text-7xl text-white leading-tight">Notre <br><span class="italic font-light text-botanic-light">Savoir-Faire</span></h1>
-            <p data-cms="services.page_subtitle" class="text-white/70 mt-6 text-lg font-light max-w-xl">De la conception à l'entretien, nous vous accompagnons dans tous vos projets paysagers.</p>
+            <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-semibold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-5 shadow-sm">
+                <i class="fa-solid fa-seedling text-xs"></i> Nos Prestations Artisanes
+            </span>
+            <h1 data-cms="services.page_title" class="font-serif text-4xl sm:text-6xl md:text-7xl text-white font-bold leading-tight mb-4 drop-shadow-sm">Notre <br><span class="italic font-light text-emerald-300">Savoir-Faire</span></h1>
+            <p data-cms="services.page_subtitle" class="text-stone-200 text-base sm:text-lg font-light max-w-xl leading-relaxed">De la conception à l'entretien, nous vous accompagnons dans tous vos projets paysagers dans le Hainaut.</p>
         </div>
     </section>
 

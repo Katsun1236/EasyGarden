@@ -92,6 +92,25 @@ function injectComponentsAndSEO(html, fileName, pageName, jsonData) {
         $('head').append(`    <link rel="alternate" hreflang="fr-BE" href="${pageUrl}">\n`);
     }
 
+    // Geo Meta Tags (Local SEO Wallonie / Hainaut)
+    if (!$('meta[name="geo.region"]').length) {
+        $('head').append(`    <meta name="geo.region" content="BE-WHT">\n`);
+    }
+    if (!$('meta[name="geo.placename"]').length) {
+        $('head').append(`    <meta name="geo.placename" content="Montigny-le-Tilleul, Hainaut">\n`);
+    }
+    if (!$('meta[name="geo.position"]').length) {
+        $('head').append(`    <meta name="geo.position" content="50.3803;4.3828">\n`);
+    }
+    if (!$('meta[name="ICBM"]').length) {
+        $('head').append(`    <meta name="ICBM" content="50.3803, 4.3828">\n`);
+    }
+
+    // RSS Feed auto-discovery
+    if (!$('link[rel="alternate"][type="application/rss+xml"]').length) {
+        $('head').append(`    <link rel="alternate" type="application/rss+xml" title="Easy Garden — Blog Jardinage &amp; Paysagisme" href="${BASE_URL}/blog/feed.xml">\n`);
+    }
+
     // SEO: JSON-LD Schemas Non-destructive merging
     let existingSchemas = [];
     $('script[type="application/ld+json"]').each(function() {
@@ -322,6 +341,32 @@ function processPage(htmlFile, jsonData, pageName) {
         }
     }
 
+    // 4. Pre-render blog preview on index.html
+    if (htmlFile === 'index.html' && $('#blog-preview').length) {
+        const published = (postsData && postsData.posts) ? postsData.posts.filter(p => p.published).slice(0, 2) : [];
+        if (published.length > 0) {
+            const previewHtml = published.map(p => {
+                const dateStr = new Date(p.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
+                return `
+                <a href="/blog/${p.slug}" class="blog-card group block">
+                    <div class="img-zoom h-52">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    </div>
+                    <div class="p-6">
+                        <span class="category-badge mb-3 inline-block">${p.category}</span>
+                        <h3 class="font-serif text-xl text-stone-900 mb-3 group-hover:text-botanic-dark transition-colors leading-snug">${p.title}</h3>
+                        <p class="text-stone-500 text-sm font-light line-clamp-2 mb-4 leading-relaxed">${p.excerpt}</p>
+                        <div class="flex items-center justify-between text-xs text-stone-400">
+                            <span class="uppercase tracking-widest">${dateStr}</span>
+                            <span class="text-botanic-dark font-semibold flex items-center gap-1">Lire l'article <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </a>`;
+            }).join('\n');
+            $('#blog-preview').html(previewHtml);
+        }
+    }
+
     // Save to dist/
     fs.writeFileSync(path.join(DIST_DIR, htmlFile), $.html());
     console.log(`✅ ${htmlFile} built successfully!`);
@@ -387,17 +432,53 @@ if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {
             let articleHtml = injectComponentsAndSEO(articleTemplate, `blog/${post.slug}`, 'article', post);
             const $art = cheerio.load(articleHtml, { decodeEntities: false });
             
+            const words = (post.content || '').split(/\s+/).filter(Boolean).length;
+            const readTimeMin = Math.max(2, Math.ceil(words / 200));
+
+            $art('#breadcrumb-title').text(post.title);
             $art('#article-title').html(post.title);
             $art('#article-category').html(post.category);
             $art('#article-date').html(new Date(post.date).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' }));
+            $art('#article-author').html(post.author || 'Easy Garden');
+            $art('#reading-time').html(`<i class="fa-regular fa-clock" aria-hidden="true"></i> ${readTimeMin} min de lecture`);
+            $art('#article-excerpt').html(post.excerpt);
+
             if (post.image) {
                 $art('#hero-img').attr('src', post.image).attr('alt', post.title);
             }
             
             // Convertir le markdown en HTML
-            const htmlContent = marked.parse(post.content || "");
-            $art('#article-body').html(htmlContent);
+            let htmlContent = marked.parse(post.content || "");
             
+            // Boîte d'autorité auteur paysagiste
+            const authorBoxHtml = `
+            <div class="mt-14 p-6 bg-stone-100 rounded-xl flex items-center gap-5 border border-stone-200/80 shadow-sm not-prose">
+                <img src="/images/easygarden_logo.webp" alt="Artisans Easy Garden" class="w-16 h-16 rounded-full object-contain bg-white p-1.5 border border-stone-200 shrink-0" width="64" height="64" loading="lazy" decoding="async">
+                <div>
+                    <h4 class="font-serif font-bold text-stone-900 text-base mb-1">Rédigé par l'équipe Easy Garden</h4>
+                    <p class="text-xs text-stone-600 font-light leading-relaxed">
+                        Artisans paysagistes passionnés et certifiés dans la province du Hainaut. Nous partageons nos guides saisonniers pour vous aider à préserver la santé et la beauté de vos jardins.
+                    </p>
+                </div>
+            </div>`;
+            
+            $art('#article-body').html(htmlContent + authorBoxHtml);
+
+            // Related posts
+            const otherPosts = publishedPosts.filter(p => p.slug !== post.slug).slice(0, 3);
+            if (otherPosts.length > 0) {
+                const relatedHtml = otherPosts.map(op => `
+                    <a href="/blog/${op.slug}" class="block group p-3 bg-stone-50 rounded border border-stone-200/60 hover:border-botanic transition-colors">
+                        <p class="text-[10px] text-botanic font-semibold uppercase tracking-wider mb-1">${op.category}</p>
+                        <h4 class="font-serif text-xs text-stone-900 group-hover:text-botanic-dark transition-colors line-clamp-2 leading-snug">${op.title}</h4>
+                    </a>
+                `).join('\n');
+                $art('#related-posts').html(relatedHtml);
+            }
+
+            // Share FB link
+            $art('#share-fb').attr('href', `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(BASE_URL + '/blog/' + post.slug)}`);
+
             // Retirer le loading state
             $art('#loading-state').remove();
             $art('#article-content').removeClass('hidden');
@@ -416,7 +497,7 @@ if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {
             $art('meta[name="twitter:title"]').attr('content', post.title);
             $art('meta[name="twitter:description"]').attr('content', post.excerpt);
             
-            // Fichiers statiques : à la fois slug.html et slug/index.html pour compatibilité maximale
+            // Fichiers statiques : à la fois slug.html et slug/index.html
             fs.writeFileSync(path.join(DIST_DIR, 'blog', `${post.slug}.html`), $art.html());
             
             const postDir = path.join(DIST_DIR, 'blog', post.slug);

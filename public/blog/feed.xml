@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Easy Garden — Blog Jardinage &amp; Paysagisme Hainaut</title>
+    <link>https://easy-garden.eu/blog/</link>
+    <description>Conseils d'experts paysagistes pour aménager, entretenir et sublimer vos espaces extérieurs en Wallonie et dans le Hainaut.</description>
+    <language>fr-be</language>
+    <lastBuildDate>Mon, 14 Sep 2026 19:07:32 GMT</lastBuildDate>
+    <atom:link href="https://easy-garden.eu/blog/feed.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>https://easy-garden.eu/images/easygarden_logo.webp</url>
+      <title>Easy Garden</title>
+      <link>https://easy-garden.eu/blog/</link>
+    </image>
+    <item>
+      <title><![CDATA[Comment Créer un Jardin Sans Arrosage : Le Guide Pratique]]></title>
+      <link>https://easy-garden.eu/blog/comment-creer-un-jardin-sans-arrosage-guide</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/comment-creer-un-jardin-sans-arrosage-guide</guid>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Création]]></category>
+      <description><![CDATA[Marre de voir votre pelouse jaunir chaque été ? Découvrez comment aménager un jardin sec, écologique et sans arrosage dans le Hainaut avec nos conseils paysagistes.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/blog/1000011916.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Quand et Comment Tailler sa Haie en Belgique : Calendrier et Réglementation]]></title>
+      <link>https://easy-garden.eu/blog/taille-haie-belgique-calendrier-reglementation</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/taille-haie-belgique-calendrier-reglementation</guid>
+      <pubDate>Mon, 15 Jun 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Élagage]]></category>
+      <description><![CDATA[Quelles sont les dates d'interdiction de taille de haies en Wallonie ? Quand tailler lauriers, thuyas et charmilles ? Découvrez le calendrier complet et la réglementation belge.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/1000016685.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Scarification et Entretien de Pelouse au Printemps dans le Hainaut]]></title>
+      <link>https://easy-garden.eu/blog/scarification-entretien-pelouse-printemps-hainaut</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/scarification-entretien-pelouse-printemps-hainaut</guid>
+      <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Entretien]]></category>
+      <description><![CDATA[Comment éliminer la mousse et revitaliser son gazon après l'hiver belge ? Guide étape par étape de la scarification, aération et sursemis pour un jardin impeccable.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/EasyGarden_Tonte.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Élagage et Abattage d'Arbres dans le Hainaut : Règles, Permis et Sécurité]]></title>
+      <link>https://easy-garden.eu/blog/elagage-abattage-arbres-regles-securite-hainaut</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/elagage-abattage-arbres-regles-securite-hainaut</guid>
+      <pubDate>Mon, 10 Aug 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Élagage]]></category>
+      <description><![CDATA[Un arbre menace votre toiture ou la propriété de vos voisins ? Tout savoir sur les permis communaux d'abattage en Wallonie et les techniques d'élagage sécurisées.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/1000008561.webp" type="image/webp" length="50000" />
+    </item>
+  </channel>
+</rss>

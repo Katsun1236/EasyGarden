@@ -6,9 +6,10 @@
   "scripts": {
     "build:css": "npx tailwindcss -i ./src/assets/css/input.css -o ./dist/css/main.css --minify",
     "build:sitemap": "node scripts/generate-sitemap.js",
+    "build:rss": "node scripts/generate-rss.js",
     "build:images": "node scripts/convert-to-webp.js",
     "build:cms": "node scripts/build.js",
-    "build": "npm run build:images && npm run build:cms && npm run build:css && npm run build:sitemap",
+    "build": "npm run build:images && npm run build:cms && npm run build:css && npm run build:sitemap && npm run build:rss",
     "watch": "npx tailwindcss -i ./src/assets/css/input.css -o ./dist/css/main.css --watch"
   },
   "devDependencies": {

@@ -1,43 +1,104 @@
-    <footer class="bg-stone-900 text-stone-400 pt-16 pb-8 border-t border-white/5">
+    <footer class="bg-stone-950 text-stone-400 pt-20 pb-12 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
+                <!-- Col 1: Branding & Intro -->
                 <div>
                     <div class="flex items-center gap-3 mb-6">
-                        <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-12 w-auto object-contain rounded-sm" width="48" height="48" loading="lazy">
-                        <span class="font-serif text-2xl text-white">Easy Garden</span>
+                        <img src="/images/easygarden_logo.webp" alt="Logo Easy Garden" class="h-12 w-auto object-contain rounded-sm" width="48" height="48" loading="lazy" decoding="async">
+                        <div class="flex flex-col">
+                            <span class="font-serif text-2xl text-white font-bold">Easy Garden</span>
+                            <span class="text-xs text-botanic uppercase tracking-[0.2em]">Artisan Paysagiste</span>
+                        </div>
                     </div>
-                    <p class="text-sm font-light leading-relaxed mb-6 max-w-sm">
-                        Création, aménagement et entretien de vos espaces verts dans tout le Hainaut. Nos devis sont 100% gratuits et sans engagement.
+                    <p class="text-sm font-light leading-relaxed mb-6 text-stone-300">
+                        Votre partenaire de confiance pour la création paysagère, l'entretien régulier de pelouses, la taille de haies et l'élagage dans toute la province du Hainaut.
                     </p>
+                    <div class="flex items-center gap-2 text-xs text-stone-400">
+                        <i class="fa-regular fa-clock text-botanic" aria-hidden="true"></i>
+                        <span>Lun - Sam : 07h30 - 19h00 (Devis 48h)</span>
+                    </div>
                 </div>
+
+                <!-- Col 2: Navigation Silo -->
                 <div>
-                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Nous contacter</h3>
-                    <ul class="space-y-4 text-sm font-light">
-                        <li><a href="tel:+32493824581" class="hover:text-botanic transition-colors flex items-center gap-3"><i class="fa-solid fa-phone w-4" aria-hidden="true"></i> 0493 82 45 81</a></li>
-                        <li><a href="mailto:easygarden.devis@gmail.com" class="hover:text-botanic transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope w-4" aria-hidden="true"></i> easygarden.devis@gmail.com</a></li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot w-4" aria-hidden="true"></i> Province du Hainaut</li>
+                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Navigation</h3>
+                    <ul class="space-y-3 text-sm font-light">
+                        <li><a href="/" class="hover:text-botanic transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs text-botanic" aria-hidden="true"></i> Accueil</a></li>
+                        <li><a href="/services.html" class="hover:text-botanic transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs text-botanic" aria-hidden="true"></i> Services Paysagers</a></li>
+                        <li><a href="/realisations.html" class="hover:text-botanic transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs text-botanic" aria-hidden="true"></i> Galerie Réalisations</a></li>
+                        <li><a href="/blog/" class="hover:text-botanic transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs text-botanic" aria-hidden="true"></i> Blog &amp; Conseils</a></li>
+                        <li><a href="/contact.html" class="hover:text-botanic transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs text-botanic" aria-hidden="true"></i> Demande de Devis Gratuit</a></li>
                     </ul>
                 </div>
+
+                <!-- Col 3: Zone d'intervention Locale (SEO Silo) -->
                 <div>
-                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Suivez-nous</h3>
-                    <p class="text-sm font-light mb-4">Découvrez nos dernières réalisations sur nos réseaux sociaux.</p>
-                    <div class="flex gap-4">
-                        <a href="https://www.facebook.com/share/18K4bjzwpv/" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-white hover:bg-[#1877F2] hover:-translate-y-1 transition-all duration-300" aria-label="Page Facebook Easy Garden">
-                            <i class="fa-brands fa-facebook-f text-lg" aria-hidden="true"></i>
+                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Zone d'intervention</h3>
+                    <p class="text-xs text-stone-400 mb-4 font-light">Déplacement gratuit pour étude et devis dans le Hainaut :</p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Montigny-le-Tilleul</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Charleroi</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Thuin</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Gerpinnes</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Ham-sur-Heure</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Binche</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">Courcelles</span>
+                        <span class="px-2.5 py-1 bg-stone-900 text-stone-300 rounded border border-stone-800">La Louvière</span>
+                    </div>
+                </div>
+
+                <!-- Col 4: Contact & Réseaux Sociaux -->
+                <div>
+                    <h3 class="text-white uppercase tracking-widest text-sm font-bold mb-6">Contact direct</h3>
+                    <ul class="space-y-4 text-sm font-light mb-6">
+                        <li>
+                            <a href="tel:+32493824581" class="hover:text-botanic transition-colors flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-full bg-botanic-dark/30 text-botanic flex items-center justify-center"><i class="fa-solid fa-phone text-xs" aria-hidden="true"></i></span>
+                                <span class="font-medium text-white">0493 82 45 81</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:easygarden.devis@gmail.com" class="hover:text-botanic transition-colors flex items-center gap-3 text-stone-300">
+                                <span class="w-8 h-8 rounded-full bg-botanic-dark/30 text-botanic flex items-center justify-center"><i class="fa-solid fa-envelope text-xs" aria-hidden="true"></i></span>
+                                <span>easygarden.devis@gmail.com</span>
+                            </a>
+                        </li>
+                        <li class="flex items-center gap-3 text-stone-300">
+                            <span class="w-8 h-8 rounded-full bg-botanic-dark/30 text-botanic flex items-center justify-center"><i class="fa-solid fa-location-dot text-xs" aria-hidden="true"></i></span>
+                            <span>Province du Hainaut, Belgique</span>
+                        </li>
+                    </ul>
+                    <div class="flex gap-3">
+                        <a href="https://www.facebook.com/share/18K4bjzwpv/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-all duration-300" aria-label="Page Facebook Easy Garden">
+                            <i class="fa-brands fa-facebook-f text-sm" aria-hidden="true"></i>
                         </a>
-                        <a href="https://www.instagram.com/easyxgarden" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-white hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#e6683c] hover:to-[#bc1888] hover:-translate-y-1 transition-all duration-300" aria-label="Compte Instagram Easy Garden">
-                            <i class="fa-brands fa-instagram text-lg" aria-hidden="true"></i>
+                        <a href="https://www.instagram.com/easyxgarden" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-white hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#e6683c] hover:to-[#bc1888] hover:border-transparent transition-all duration-300" aria-label="Compte Instagram Easy Garden">
+                            <i class="fa-brands fa-instagram text-sm" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://wa.me/32493824581?text=Bonjour%20Easy%20Garden,%20je%20souhaiterais%20un%20devis%20gratuit" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-white hover:bg-[#25D366] hover:border-[#25D366] transition-all duration-300" aria-label="WhatsApp Easy Garden">
+                            <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light tracking-wider uppercase gap-4 text-stone-500">
-                <p>© 2026 Easy Garden. Artisan paysagiste. Tous droits réservés.</p>
-                <div class="flex gap-6">
+
+            <!-- Bottom bar -->
+            <div class="border-t border-stone-900 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light tracking-wider text-stone-500 gap-4">
+                <p>© 2026 Easy Garden. Artisan Paysagiste dans le Hainaut. Tous droits réservés.</p>
+                <div class="flex flex-wrap gap-6 uppercase">
                     <a href="/" class="hover:text-botanic transition-colors">Accueil</a>
                     <a href="/services.html" class="hover:text-botanic transition-colors">Services</a>
+                    <a href="/realisations.html" class="hover:text-botanic transition-colors">Réalisations</a>
+                    <a href="/blog/" class="hover:text-botanic transition-colors">Blog</a>
                     <a href="/contact.html" class="hover:text-botanic transition-colors">Contact</a>
                 </div>
             </div>
         </div>
+
+        <!-- Floating Mobile Quick Call Button -->
+        <aside aria-label="Contact rapide" class="fixed bottom-5 right-5 z-40 md:hidden flex flex-col gap-2">
+            <a href="tel:+32493824581" class="w-14 h-14 bg-botanic-dark hover:bg-botanic text-white rounded-full shadow-2xl flex items-center justify-center text-xl transition-transform active:scale-95 border-2 border-white/20" aria-label="Appeler Easy Garden au 0493 82 45 81">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            </a>
+        </aside>
     </footer>

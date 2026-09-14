@@ -171,11 +171,11 @@
             </div>
             <h2 data-cms="accueil.hero_title" class="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8 reveal reveal-delay-1 drop-shadow-2xl">L'élégance <br><span class="italic font-light text-botanic-light">au naturel.</span></h2>
             <p data-cms="accueil.hero_subtitle" class="text-white/90 font-light text-lg md:text-xl mb-10 max-w-xl mx-auto reveal reveal-delay-1">Intervention experte dans <strong class="font-bold text-white">tout le Hainaut</strong> pour magnifier vos espaces extérieurs.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal reveal-delay-2">
-                <a href="/contact.html" class="glow-btn inline-block bg-botanic text-white px-9 py-4 uppercase tracking-widest text-xs md:text-sm font-bold hover:bg-botanic-dark transition-colors duration-300 shadow-2xl w-full sm:w-auto">
+            <div class="flex flex-col sm:flex-row gap-5 justify-center items-center reveal reveal-delay-2">
+                <a href="/contact.html" class="btn btn-primary rounded-full px-10 py-4 uppercase tracking-widest text-xs font-bold shadow-2xl hover:scale-105 transition-all text-white border-none w-full sm:w-auto">
                     Demander un devis gratuit
                 </a>
-                <a href="/services.html" class="inline-block border border-white/40 bg-white/10 backdrop-blur-md text-white px-9 py-4 uppercase tracking-widest text-xs md:text-sm hover:bg-white hover:text-stone-900 transition-colors duration-300 w-full sm:w-auto">
+                <a href="/services.html" class="btn btn-outline rounded-full px-9 py-4 uppercase tracking-widest text-xs font-semibold backdrop-blur-md border-white/40 text-white hover:bg-white hover:text-stone-950 transition-all w-full sm:w-auto">
                     Notre Savoir-Faire
                 </a>
             </div>
@@ -191,20 +191,20 @@
             <span class="uppercase tracking-[0.25em] text-xs text-botanic-dark font-bold mb-4 block">Notre Philosophie</span>
             <h2 data-cms="accueil.vision_quote" class="font-serif text-3xl md:text-5xl text-stone-900 leading-snug mb-10">"Nous concevons des jardins qui évoluent avec le temps, des espaces où la nature et l'architecture s'accordent en parfaite harmonie."</h2>
             <p data-cms="accueil.vision_text" class="text-stone-600 max-w-2xl mx-auto text-lg leading-relaxed font-light">Situés à Montigny-le-Tilleul, nous mettons notre passion et notre exigence au service de vos espaces extérieurs dans <strong class="text-stone-900">l'ensemble de la province du Hainaut</strong>. De l'idée initiale à l'entretien régulier, chaque détail compte.</p>
-            <div class="flex flex-wrap justify-center gap-8 mt-16">
-                <div class="text-center px-4">
-                    <p class="font-serif text-5xl text-botanic-dark font-bold">100%</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Devis gratuits</p>
+            
+            <!-- DaisyUI Stats Luxury Component -->
+            <div class="stats stats-vertical sm:stats-horizontal bg-white/80 backdrop-blur-xl border border-stone-200/80 shadow-2xl rounded-3xl p-4 mt-16 max-w-2xl mx-auto divide-y sm:divide-y-0 sm:divide-x divide-stone-200/60">
+                <div class="stat text-center px-6 py-4">
+                    <div class="stat-value font-serif text-4xl lg:text-5xl text-botanic-dark font-bold">100%</div>
+                    <div class="stat-title uppercase tracking-widest text-[11px] text-stone-500 font-semibold mt-2">Devis Gratuits</div>
                 </div>
-                <div class="w-px bg-stone-200 hidden md:block"></div>
-                <div class="text-center px-4">
-                    <p class="font-serif text-5xl text-botanic-dark font-bold">Hainaut</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Zone d'intervention</p>
+                <div class="stat text-center px-6 py-4">
+                    <div class="stat-value font-serif text-4xl lg:text-5xl text-botanic-dark font-bold">Hainaut</div>
+                    <div class="stat-title uppercase tracking-widest text-[11px] text-stone-500 font-semibold mt-2">Zone d'intervention</div>
                 </div>
-                <div class="w-px bg-stone-200 hidden md:block"></div>
-                <div class="text-center px-4">
-                    <p class="font-serif text-5xl text-botanic-dark font-bold">48h</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Délai de réponse max</p>
+                <div class="stat text-center px-6 py-4">
+                    <div class="stat-value font-serif text-4xl lg:text-5xl text-botanic-dark font-bold">48h</div>
+                    <div class="stat-title uppercase tracking-widest text-[11px] text-stone-500 font-semibold mt-2">Délai Réponse Max</div>
                 </div>
             </div>
         </div>
@@ -396,41 +396,48 @@
                 <h2 class="font-serif text-4xl md:text-5xl mt-4 text-stone-900">Vos questions,<br>nos réponses.</h2>
                 <div class="w-16 h-px bg-botanic mx-auto mt-6"></div>
             </div>
-            <div class="space-y-0 reveal">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Easy Garden intervient dans quelles communes ?
-                        <i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Nous intervenons dans toute la province du Hainaut : Montigny-le-Tilleul, Charleroi, Thuin, Binche, La Louvière, Mons et leurs alentours. N'hésitez pas à nous contacter pour confirmer votre commune.
+            <div class="space-y-4 reveal">
+                <!-- FAQ 1 -->
+                <div class="collapse collapse-plus bg-stone-50 border border-stone-200/80 rounded-2xl hover:border-botanic/50 transition-all shadow-sm">
+                    <input type="radio" name="faq-accordion" checked="checked">
+                    <div class="collapse-title text-base sm:text-lg font-serif font-bold text-stone-900 pr-12 py-5">
+                        Easy Garden intervient dans quelles communes du Hainaut ?
+                    </div>
+                    <div class="collapse-content text-sm sm:text-base font-light text-stone-600 leading-relaxed pb-6">
+                        <p>Nous intervenons dans l'ensemble de la province du Hainaut : Montigny-le-Tilleul, Charleroi (Marcinelle, Gosselies, Gilly, Mont-sur-Marchienne), Thuin, Gerpinnes, Ham-sur-Heure-Nalinnes, Binche, Courcelles, La Louvière et toutes les entités avoisinantes.</p>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Le devis est-il vraiment gratuit et sans engagement ?
-                        <i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Absolument. Nous nous déplaçons gratuitement chez vous pour évaluer votre projet, analyser votre terrain et vous remettre une estimation détaillée. Aucun engagement de votre part n'est requis.
+
+                <!-- FAQ 2 -->
+                <div class="collapse collapse-plus bg-stone-50 border border-stone-200/80 rounded-2xl hover:border-botanic/50 transition-all shadow-sm">
+                    <input type="radio" name="faq-accordion">
+                    <div class="collapse-title text-base sm:text-lg font-serif font-bold text-stone-900 pr-12 py-5">
+                        Le devis et le déplacement sont-ils vraiment 100% gratuits ?
+                    </div>
+                    <div class="collapse-content text-sm sm:text-base font-light text-stone-600 leading-relaxed pb-6">
+                        <p>Absolument. Nous nous déplaçons gratuitement sur votre terrain pour évaluer l'état des sols, les métrés de haies ou l'accessibilité des arbres. Une estimation détaillée et transparente vous est transmise sous 48h sans aucun engagement de votre part.</p>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Proposez-vous des contrats d'entretien annuels ?
-                        <i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Oui ! Nous proposons des formules d'entretien sur mesure (mensuel, bimensuel ou selon vos besoins) pour que votre jardin soit toujours impeccable, quelle que soit la saison. Contactez-nous pour établir un programme adapté.
+
+                <!-- FAQ 3 -->
+                <div class="collapse collapse-plus bg-stone-50 border border-stone-200/80 rounded-2xl hover:border-botanic/50 transition-all shadow-sm">
+                    <input type="radio" name="faq-accordion">
+                    <div class="collapse-title text-base sm:text-lg font-serif font-bold text-stone-900 pr-12 py-5">
+                        Proposez-vous des formules d'abonnement ou contrats annuels ?
+                    </div>
+                    <div class="collapse-content text-sm sm:text-base font-light text-stone-600 leading-relaxed pb-6">
+                        <p>Oui ! Nos contrats d'entretien annuel vous permettent de déléguer l'ensemble des soins saisonniers (tontes régulières, 2 tailles de haies par an, scarification de printemps, ramassage des feuilles) avec un budget mensualisé prévisible et sans surprise.</p>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        En quelle saison peut-on tailler les haies en Belgique ?
-                        <i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i>
-                    </button>
-                    <div class="faq-answer">
-                        En Wallonie, la taille des haies est interdite entre le 1er avril et le 31 juillet pour protéger les oiseaux nicheurs. La période idéale se situe entre septembre et mars. Consultez notre blog pour un guide complet sur ce sujet.
+
+                <!-- FAQ 4 -->
+                <div class="collapse collapse-plus bg-stone-50 border border-stone-200/80 rounded-2xl hover:border-botanic/50 transition-all shadow-sm">
+                    <input type="radio" name="faq-accordion">
+                    <div class="collapse-title text-base sm:text-lg font-serif font-bold text-stone-900 pr-12 py-5">
+                        En quelle saison peut-on tailler les haies en Wallonie ?
+                    </div>
+                    <div class="collapse-content text-sm sm:text-base font-light text-stone-600 leading-relaxed pb-6">
+                        <p>En Wallonie, la réglementation interdit généralement la taille des haies entre le 1er avril et le 31 juillet afin de préserver la nidification des oiseaux. La période optimale s'étend de septembre à mars. Nous vous conseillons sur les dates idéales selon vos essences végétales.</p>
                     </div>
                 </div>
             </div>
@@ -447,35 +454,23 @@
                 <div class="w-16 h-px bg-botanic mx-auto mt-6"></div>
             </div>
 
-            <div id="devis-wizard" class="bg-white rounded-3xl shadow-xl border border-stone-200/80 p-6 sm:p-10 reveal">
-                <!-- Stepper Progress Bar -->
-                <div class="flex items-center justify-between mb-10 relative">
-                    <div class="w-full absolute top-1/2 -translate-y-1/2 h-1 bg-stone-200 z-0"></div>
-                    <div id="step-line" class="absolute top-1/2 -translate-y-1/2 h-1 bg-botanic transition-all duration-500 z-0" style="width: 0%;"></div>
-                    
-                    <div class="step-badge z-10 flex flex-col items-center gap-2" data-step="1">
-                        <span class="w-10 h-10 rounded-full bg-botanic text-white font-bold flex items-center justify-center shadow-md text-sm transition-colors">1</span>
-                        <span class="text-xs font-semibold text-stone-700 hidden sm:inline">Prestation</span>
-                    </div>
-                    <div class="step-badge z-10 flex flex-col items-center gap-2" data-step="2">
-                        <span class="w-10 h-10 rounded-full bg-stone-200 text-stone-600 font-bold flex items-center justify-center text-sm transition-colors">2</span>
-                        <span class="text-xs font-semibold text-stone-500 hidden sm:inline">Votre Terrain</span>
-                    </div>
-                    <div class="step-badge z-10 flex flex-col items-center gap-2" data-step="3">
-                        <span class="w-10 h-10 rounded-full bg-stone-200 text-stone-600 font-bold flex items-center justify-center text-sm transition-colors">3</span>
-                        <span class="text-xs font-semibold text-stone-500 hidden sm:inline">Coordonnées</span>
-                    </div>
-                </div>
+            <div id="devis-wizard" class="bg-white rounded-3xl shadow-2xl border border-stone-200/80 p-6 sm:p-12 reveal">
+                <!-- Stepper DaisyUI Progress -->
+                <ul class="steps steps-horizontal w-full mb-12 font-sans">
+                    <li id="step-node-1" class="step step-primary text-xs sm:text-sm font-semibold text-stone-900" data-content="1">Prestation</li>
+                    <li id="step-node-2" class="step text-xs sm:text-sm font-semibold text-stone-400" data-content="2">Votre Terrain</li>
+                    <li id="step-node-3" class="step text-xs sm:text-sm font-semibold text-stone-400" data-content="3">Coordonnées</li>
+                </ul>
 
                 <!-- Étape 1 : Choix de la prestation -->
                 <div class="wizard-step" id="wizard-step-1">
-                    <h3 class="font-serif text-2xl text-stone-900 mb-2 text-center">Quel service recherchez-vous ?</h3>
+                    <h3 class="font-serif text-2xl sm:text-3xl text-stone-900 mb-2 text-center">Quel service recherchez-vous ?</h3>
                     <p class="text-stone-500 text-xs sm:text-sm font-light text-center mb-8">Sélectionnez la catégorie principale correspondant à votre besoin</p>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-botanic bg-botanic/5 cursor-pointer transition-all">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-botanic bg-botanic/5 cursor-pointer transition-all hover:scale-[1.01]">
                             <input type="radio" name="wizard_service" value="Tonte &amp; Soin de Pelouse" class="hidden" checked>
-                            <div class="w-12 h-12 rounded-xl bg-botanic/10 text-botanic flex items-center justify-center text-xl shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-botanic/15 text-botanic flex items-center justify-center text-xl shrink-0">
                                 <i class="fa-solid fa-leaf" aria-hidden="true"></i>
                             </div>
                             <div>
@@ -483,9 +478,9 @@
                                 <span class="text-xs text-stone-500 font-light">Tonte de précision, scarification printanière</span>
                             </div>
                         </label>
-                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all">
+                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all hover:scale-[1.01]">
                             <input type="radio" name="wizard_service" value="Taille de Haies &amp; Arbustes" class="hidden">
-                            <div class="w-12 h-12 rounded-xl bg-botanic/10 text-botanic flex items-center justify-center text-xl shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-botanic/15 text-botanic flex items-center justify-center text-xl shrink-0">
                                 <i class="fa-solid fa-scissors" aria-hidden="true"></i>
                             </div>
                             <div>
@@ -493,9 +488,9 @@
                                 <span class="text-xs text-stone-500 font-light">Taille au cordeau, lauriers, charmilles</span>
                             </div>
                         </label>
-                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all">
+                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all hover:scale-[1.01]">
                             <input type="radio" name="wizard_service" value="Élagage &amp; Abattage Délicat" class="hidden">
-                            <div class="w-12 h-12 rounded-xl bg-botanic/10 text-botanic flex items-center justify-center text-xl shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-botanic/15 text-botanic flex items-center justify-center text-xl shrink-0">
                                 <i class="fa-solid fa-tree" aria-hidden="true"></i>
                             </div>
                             <div>
@@ -503,9 +498,9 @@
                                 <span class="text-xs text-stone-500 font-light">Démontage sécurisé par rétention de branches</span>
                             </div>
                         </label>
-                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all">
+                        <label class="wizard-option flex items-center gap-4 p-5 rounded-2xl border-2 border-stone-200 hover:border-botanic cursor-pointer transition-all hover:scale-[1.01]">
                             <input type="radio" name="wizard_service" value="Création &amp; Aménagement" class="hidden">
-                            <div class="w-12 h-12 rounded-xl bg-botanic/10 text-botanic flex items-center justify-center text-xl shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-botanic/15 text-botanic flex items-center justify-center text-xl shrink-0">
                                 <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
                             </div>
                             <div>
@@ -516,7 +511,7 @@
                     </div>
 
                     <div class="text-right">
-                        <button type="button" onclick="goToStep(2)" class="glow-btn bg-botanic hover:bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-xs font-bold transition-all shadow-md">
+                        <button type="button" onclick="goToStep(2)" class="btn btn-primary rounded-full px-8 py-3.5 uppercase tracking-widest text-xs font-bold text-white border-none shadow-xl hover:scale-105 transition-transform">
                             Étape suivante <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -524,30 +519,30 @@
 
                 <!-- Étape 2 : Caractéristiques du terrain -->
                 <div class="wizard-step hidden" id="wizard-step-2">
-                    <h3 class="font-serif text-2xl text-stone-900 mb-2 text-center">Votre terrain dans le Hainaut</h3>
+                    <h3 class="font-serif text-2xl sm:text-3xl text-stone-900 mb-2 text-center">Votre terrain dans le Hainaut</h3>
                     <p class="text-stone-500 text-xs sm:text-sm font-light text-center mb-8">Indiquez la surface approximative et le type d'intervention</p>
                     
                     <div class="mb-8">
                         <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-3">Superficie approximative du jardin :</label>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            <button type="button" class="surface-btn p-3.5 rounded-xl border-2 border-botanic bg-botanic/5 text-botanic font-bold text-xs transition-all" data-surface="Moins de 300 m²">Moins de 300 m²</button>
-                            <button type="button" class="surface-btn p-3.5 rounded-xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="300 à 700 m²">300 à 700 m²</button>
-                            <button type="button" class="surface-btn p-3.5 rounded-xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="700 à 1500 m²">700 à 1500 m²</button>
-                            <button type="button" class="surface-btn p-3.5 rounded-xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="Plus de 1500 m²">Plus de 1500 m²</button>
+                            <button type="button" class="surface-btn p-4 rounded-2xl border-2 border-botanic bg-botanic/5 text-botanic font-bold text-xs transition-all" data-surface="Moins de 300 m²">Moins de 300 m²</button>
+                            <button type="button" class="surface-btn p-4 rounded-2xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="300 à 700 m²">300 à 700 m²</button>
+                            <button type="button" class="surface-btn p-4 rounded-2xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="700 à 1500 m²">700 à 1500 m²</button>
+                            <button type="button" class="surface-btn p-4 rounded-2xl border-2 border-stone-200 text-stone-700 text-xs font-semibold hover:border-botanic transition-all" data-surface="Plus de 1500 m²">Plus de 1500 m²</button>
                         </div>
                     </div>
 
                     <div class="mb-8">
                         <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-3">Fréquence souhaitée :</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <label class="frequency-option flex items-center gap-3 p-4 rounded-xl border-2 border-botanic bg-botanic/5 cursor-pointer">
+                            <label class="frequency-option flex items-center gap-3 p-4 rounded-2xl border-2 border-botanic bg-botanic/5 cursor-pointer">
                                 <input type="radio" name="wizard_frequency" value="Intervention ponctuelle" checked class="text-botanic">
                                 <div>
                                     <span class="font-bold text-xs text-stone-900 block">Intervention ponctuelle</span>
                                     <span class="text-[11px] text-stone-500">Taille de haie, remise à neuf ou abattage</span>
                                 </div>
                             </label>
-                            <label class="frequency-option flex items-center gap-3 p-4 rounded-xl border-2 border-stone-200 cursor-pointer">
+                            <label class="frequency-option flex items-center gap-3 p-4 rounded-2xl border-2 border-stone-200 cursor-pointer">
                                 <input type="radio" name="wizard_frequency" value="Contrat d'entretien régulier" class="text-botanic">
                                 <div>
                                     <span class="font-bold text-xs text-stone-900 block">Contrat annuel régulier</span>
@@ -558,10 +553,10 @@
                     </div>
 
                     <div class="flex justify-between items-center pt-2">
-                        <button type="button" onclick="goToStep(1)" class="text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest">
+                        <button type="button" onclick="goToStep(1)" class="btn btn-ghost rounded-full text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest">
                             <i class="fa-solid fa-arrow-left mr-2" aria-hidden="true"></i> Précédent
                         </button>
-                        <button type="button" onclick="goToStep(3)" class="glow-btn bg-botanic hover:bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-xs font-bold transition-all shadow-md">
+                        <button type="button" onclick="goToStep(3)" class="btn btn-primary rounded-full px-8 py-3.5 uppercase tracking-widest text-xs font-bold text-white border-none shadow-xl hover:scale-105 transition-transform">
                             Étape suivante <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -569,47 +564,47 @@
 
                 <!-- Étape 3 : Coordonnées pour rappel sous 24h -->
                 <div class="wizard-step hidden" id="wizard-step-3">
-                    <h3 class="font-serif text-2xl text-stone-900 mb-2 text-center">Où pouvons-nous vous joindre ?</h3>
+                    <h3 class="font-serif text-2xl sm:text-3xl text-stone-900 mb-2 text-center">Où pouvons-nous vous joindre ?</h3>
                     <p class="text-stone-500 text-xs sm:text-sm font-light text-center mb-8">Nous vous contactons sous 24h avec un créneau de visite gratuite</p>
                     
                     <form id="wizard-form" class="space-y-4 mb-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1">Votre Nom &amp; Prénom *</label>
-                                <input type="text" id="w-name" required placeholder="Ex: Jean Dupont" class="w-full p-3.5 border border-stone-300 rounded-xl text-sm focus:border-botanic focus:ring-1 focus:ring-botanic outline-none">
+                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1.5">Votre Nom &amp; Prénom *</label>
+                                <input type="text" id="w-name" required placeholder="Ex: Jean Dupont" class="input input-bordered w-full rounded-2xl bg-stone-50 border-stone-200 text-sm focus:input-primary">
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1">Commune d'intervention (Hainaut) *</label>
-                                <input type="text" id="w-city" required placeholder="Ex: Montigny-le-Tilleul, Charleroi..." class="w-full p-3.5 border border-stone-300 rounded-xl text-sm focus:border-botanic focus:ring-1 focus:ring-botanic outline-none">
+                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1.5">Commune d'intervention (Hainaut) *</label>
+                                <input type="text" id="w-city" required placeholder="Ex: Montigny-le-Tilleul, Charleroi..." class="input input-bordered w-full rounded-2xl bg-stone-50 border-stone-200 text-sm focus:input-primary">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1">Numéro de Téléphone *</label>
-                                <input type="tel" id="w-phone" required placeholder="Ex: 0493 82 45 81" class="w-full p-3.5 border border-stone-300 rounded-xl text-sm focus:border-botanic focus:ring-1 focus:ring-botanic outline-none">
+                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1.5">Numéro de Téléphone *</label>
+                                <input type="tel" id="w-phone" required placeholder="Ex: 0493 82 45 81" class="input input-bordered w-full rounded-2xl bg-stone-50 border-stone-200 text-sm focus:input-primary">
                             </div>
                             <div>
-                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1">Adresse Email (optionnel)</label>
-                                <input type="email" id="w-email" placeholder="votre.email@exemple.be" class="w-full p-3.5 border border-stone-300 rounded-xl text-sm focus:border-botanic focus:ring-1 focus:ring-botanic outline-none">
+                                <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1.5">Adresse Email (optionnel)</label>
+                                <input type="email" id="w-email" placeholder="votre.email@exemple.be" class="input input-bordered w-full rounded-2xl bg-stone-50 border-stone-200 text-sm focus:input-primary">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1">Précisions éventuelles</label>
-                            <textarea id="w-message" rows="2" placeholder="Hauteur des haies, accès machine, urgence..." class="w-full p-3.5 border border-stone-300 rounded-xl text-sm focus:border-botanic focus:ring-1 focus:ring-botanic outline-none"></textarea>
+                            <label class="block text-xs uppercase tracking-widest text-stone-500 font-bold mb-1.5">Précisions éventuelles</label>
+                            <textarea id="w-message" rows="3" placeholder="Hauteur des haies, accès machine, urgence..." class="textarea textarea-bordered w-full rounded-2xl bg-stone-50 border-stone-200 text-sm focus:textarea-primary"></textarea>
                         </div>
                         
                         <div class="flex justify-between items-center pt-4">
-                            <button type="button" onclick="goToStep(2)" class="text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest">
+                            <button type="button" onclick="goToStep(2)" class="btn btn-ghost rounded-full text-stone-500 hover:text-stone-800 text-xs font-bold uppercase tracking-widest">
                                 <i class="fa-solid fa-arrow-left mr-2" aria-hidden="true"></i> Précédent
                             </button>
-                            <button type="submit" class="glow-btn bg-botanic hover:bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-xs font-bold transition-all shadow-xl">
-                                <i class="fa-solid fa-paper-plane mr-2" aria-hidden="true"></i> Valider &amp; recevoir mon devis gratuit
+                            <button type="submit" class="btn btn-primary rounded-full px-10 py-4 uppercase tracking-widest text-xs font-bold text-white border-none shadow-2xl hover:scale-105 transition-transform">
+                                <i class="fa-solid fa-paper-plane mr-2" aria-hidden="true"></i> Recevoir mon devis gratuit
                             </button>
                         </div>
                     </form>
 
-                    <div id="wizard-success" class="hidden p-8 bg-botanic/10 border-2 border-botanic rounded-2xl text-center">
-                        <i class="fa-solid fa-circle-check text-botanic text-5xl mb-4" aria-hidden="true"></i>
+                    <div id="wizard-success" class="hidden p-8 bg-emerald-50 border border-emerald-200 rounded-3xl text-center">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-5xl mb-4" aria-hidden="true"></i>
                         <h4 class="font-serif text-2xl text-stone-900 font-bold mb-2">Demande envoyée avec succès !</h4>
                         <p class="text-sm text-stone-600 font-light max-w-md mx-auto leading-relaxed">
                             Merci de votre confiance. Notre paysagiste analyse vos besoins et vous recontactera sous 24h ouvrées pour fixer un rendez-vous sur place.
@@ -681,49 +676,70 @@
             </div>
 
             <!-- Grille 3 avis -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 reveal">
-                <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200/80 shadow-sm flex flex-col justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 reveal">
+                <!-- Avis 1 -->
+                <div class="bg-stone-50 p-8 rounded-3xl border border-stone-200/80 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between">
                     <div>
-                        <div class="flex text-amber-400 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="badge badge-sm border-emerald-600/30 text-emerald-800 bg-emerald-100/60 font-medium text-[10px] uppercase tracking-wider">Avis Vérifié</span>
                         </div>
-                        <p class="text-stone-700 text-xs sm:text-sm font-light leading-relaxed mb-4 italic">
+                        <p class="text-stone-700 text-sm font-light leading-relaxed mb-6 font-serif italic">
                             "Travail irréprochable pour la taille de nos 60m de haies et la scarification de notre pelouse. Chantier propre, équipe ponctuelle et de très bon conseil !"
                         </p>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs">
-                        <span class="font-bold text-stone-900">Stéphane R.</span>
-                        <span class="text-stone-400">Montigny-le-Tilleul</span>
+                    <div class="flex items-center gap-3 pt-4 border-t border-stone-200/60">
+                        <div class="w-10 h-10 rounded-full bg-botanic/20 text-botanic-dark font-bold text-sm flex items-center justify-center font-serif">SR</div>
+                        <div>
+                            <span class="font-bold text-stone-900 text-xs block">Stéphane R.</span>
+                            <span class="text-stone-400 text-[11px]">Montigny-le-Tilleul</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200/80 shadow-sm flex flex-col justify-between">
+                <!-- Avis 2 -->
+                <div class="bg-stone-50 p-8 rounded-3xl border border-stone-200/80 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between">
                     <div>
-                        <div class="flex text-amber-400 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="badge badge-sm border-emerald-600/30 text-emerald-800 bg-emerald-100/60 font-medium text-[10px] uppercase tracking-wider">Avis Vérifié</span>
                         </div>
-                        <p class="text-stone-700 text-xs sm:text-sm font-light leading-relaxed mb-4 italic">
+                        <p class="text-stone-700 text-sm font-light leading-relaxed mb-6 font-serif italic">
                             "Élagage délicat de deux grands chênes centenaires à proximité de notre toiture. Démontage maîtrisé avec cordages sans aucun impact. Devis respecté au centime près."
                         </p>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs">
-                        <span class="font-bold text-stone-900">Claire M.</span>
-                        <span class="text-stone-400">Thuin</span>
+                    <div class="flex items-center gap-3 pt-4 border-t border-stone-200/60">
+                        <div class="w-10 h-10 rounded-full bg-botanic/20 text-botanic-dark font-bold text-sm flex items-center justify-center font-serif">CM</div>
+                        <div>
+                            <span class="font-bold text-stone-900 text-xs block">Claire M.</span>
+                            <span class="text-stone-400 text-[11px]">Thuin</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200/80 shadow-sm flex flex-col justify-between">
+                <!-- Avis 3 -->
+                <div class="bg-stone-50 p-8 rounded-3xl border border-stone-200/80 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between">
                     <div>
-                        <div class="flex text-amber-400 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex text-amber-400 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="badge badge-sm border-emerald-600/30 text-emerald-800 bg-emerald-100/60 font-medium text-[10px] uppercase tracking-wider">Avis Vérifié</span>
                         </div>
-                        <p class="text-stone-700 text-xs sm:text-sm font-light leading-relaxed mb-4 italic">
+                        <p class="text-stone-700 text-sm font-light leading-relaxed mb-6 font-serif italic">
                             "Création complète d'un parterre paysager et pose de gazon de placage. Notre jardin a été métamorphosé en 3 jours seulement. Un grand merci à Easy Garden !"
                         </p>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs">
-                        <span class="font-bold text-stone-900">Marc D.</span>
-                        <span class="text-stone-400">Charleroi</span>
+                    <div class="flex items-center gap-3 pt-4 border-t border-stone-200/60">
+                        <div class="w-10 h-10 rounded-full bg-botanic/20 text-botanic-dark font-bold text-sm flex items-center justify-center font-serif">MD</div>
+                        <div>
+                            <span class="font-bold text-stone-900 text-xs block">Marc D.</span>
+                            <span class="text-stone-400 text-[11px]">Charleroi</span>
+                        </div>
                     </div>
                 </div>
             </div>

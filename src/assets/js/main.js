@@ -239,20 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetStep = document.getElementById(`wizard-step-${stepNum}`);
             if (targetStep) targetStep.classList.remove('hidden');
 
-            if (stepLine) {
-                stepLine.style.width = stepNum === 1 ? '0%' : stepNum === 2 ? '50%' : '100%';
-            }
-
-            badges.forEach((b, idx) => {
-                const circle = b.querySelector('span:first-child');
-                if (idx + 1 <= stepNum) {
-                    circle.classList.add('bg-botanic', 'text-white');
-                    circle.classList.remove('bg-stone-200', 'text-stone-600');
-                } else {
-                    circle.classList.remove('bg-botanic', 'text-white');
-                    circle.classList.add('bg-stone-200', 'text-stone-600');
+            for (let i = 1; i <= 3; i++) {
+                const node = document.getElementById(`step-node-${i}`);
+                if (node) {
+                    if (i <= stepNum) {
+                        node.classList.add('step-primary', 'text-stone-900');
+                        node.classList.remove('text-stone-400');
+                    } else {
+                        node.classList.remove('step-primary', 'text-stone-900');
+                        node.classList.add('text-stone-400');
+                    }
                 }
-            });
+            }
         };
 
         // Option cards selection styling

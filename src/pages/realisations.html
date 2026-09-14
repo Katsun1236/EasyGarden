@@ -111,10 +111,14 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative" id="gallery"></div> 
 
-            <div class="mt-16 p-8 bg-white border border-stone-200 text-center reveal">
-                <p class="text-stone-600 font-light mb-4">Retrouvez encore plus de réalisations sur notre page Facebook</p>
-                <a href="https://www.facebook.com/share/18K4bjzwpv/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-[#1877F2] font-bold hover:underline">
-                    <i class="fa-brands fa-facebook text-xl" aria-hidden="true"></i> Easy Garden sur Facebook
+            <div class="mt-20 p-8 sm:p-12 bg-white/80 backdrop-blur-xl border border-stone-200/80 rounded-3xl text-center shadow-xl reveal max-w-2xl mx-auto">
+                <div class="w-14 h-14 rounded-2xl bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm">
+                    <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-stone-900 mb-2">Suivez nos chantiers en direct</h3>
+                <p class="text-stone-600 font-light text-sm mb-6 max-w-md mx-auto">Photos d'interventions, vidéos avant/après et actualités régulières de nos paysagistes sur le terrain.</p>
+                <a href="https://www.facebook.com/share/18K4bjzwpv/" target="_blank" rel="noopener noreferrer" class="btn bg-[#1877F2] hover:bg-[#1877F2]/90 text-white rounded-full px-8 py-3 text-xs font-bold uppercase tracking-widest shadow-lg shadow-[#1877F2]/20 border-none transition-all">
+                    Rejoindre la communauté Facebook
                 </a>
             </div>
         </div>
@@ -122,7 +126,7 @@
 
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement photo">
         <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl hover:text-botanic transition-colors focus:outline-none" aria-label="Fermer"><i class="fa-solid fa-times"></i></button>
-        <img id="lightbox-img" src="" alt="" class="rounded-sm shadow-2xl">
+        <img id="lightbox-img" src="" alt="" class="rounded-3xl shadow-2xl border border-white/10">
     </div>
 
 <!-- FOOTER -->
@@ -222,16 +226,16 @@
                 const delay = index % 3 === 0 ? '' : (index % 3 === 1 ? 'reveal-delay-1' : 'reveal-delay-2');
                 
                 const cardHTML = `
-                    <div class="blog-card group reveal ${delay}">
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-xl border border-stone-100/80 group hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 flex flex-col reveal ${delay}">
                         <div class="relative h-64 overflow-hidden">
-                            <img src="${projet.image}" alt="${projet.title}" class="img-zoom" loading="lazy">
+                            <img src="${projet.image}" alt="${projet.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" loading="lazy">
                             <div class="absolute top-4 right-4">
-                                <span class="category-badge bg-primary text-white shadow-sm">${projet.category}</span>
+                                <span class="badge badge-primary text-white font-semibold text-xs px-3.5 py-2.5 rounded-full shadow-md">${projet.category}</span>
                             </div>
                         </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-playfair font-bold text-secondary mb-3">${projet.title}</h3>
-                            <p class="text-gray-600 flex-grow">${projet.description}</p>
+                        <div class="p-7 flex flex-col flex-grow">
+                            <h3 class="font-serif text-xl font-bold text-stone-900 mb-3 group-hover:text-botanic transition-colors">${projet.title}</h3>
+                            <p class="text-stone-600 font-light text-sm leading-relaxed flex-grow">${projet.description}</p>
                         </div>
                     </div>
                 `;

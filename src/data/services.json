@@ -4,6 +4,7 @@
   "services_list": [
     {
       "number": "01",
+      "slug": "amenagement-creation-jardin",
       "title": "Création & <br><span class=\"italic text-botanic-dark\">Aménagement</span>",
       "image": "/images/1000007687.webp",
       "description": "Nous concevons des jardins sur-mesure qui reflètent votre style de vie. De la pose de gazon en rouleau aux plantations spécifiques, nous transformons votre terrain en un véritable havre de paix.",
@@ -16,6 +17,7 @@
     },
     {
       "number": "02",
+      "slug": "entretien-pelouse-jardin",
       "title": "Entretien <br><span class=\"italic text-botanic-dark\">Régulier</span>",
       "image": "/images/1000008561.webp",
       "description": "Un beau jardin demande une attention constante. Nous prenons soin de vos espaces verts tout au long de l'année pour qu'ils conservent leur éclat, saison après saison.",
@@ -28,6 +30,7 @@
     },
     {
       "number": "03",
+      "slug": "elagage-abattage-arbres",
       "title": "Élagage & <br><span class=\"italic text-botanic-dark\">Abattage</span>",
       "image": "/images/1000016685.webp",
       "description": "Nous intervenons en toute sécurité pour maîtriser la croissance de vos arbres, aérer vos espaces ou abattre des sujets devenus dangereux ou malades.",

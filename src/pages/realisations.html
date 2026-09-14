@@ -58,6 +58,37 @@
 
     <section class="py-24 px-6 bg-stone-50">
         <div class="max-w-7xl mx-auto">
+            <!-- MODULE AVANT / APRÈS INTERACTIF -->
+            <div class="mb-20 reveal">
+                <div class="text-center max-w-2xl mx-auto mb-8">
+                    <span class="inline-block bg-botanic/10 border border-botanic/30 text-botanic text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Focus Métamorphose</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl text-stone-900 leading-tight">Comparatif Avant / Après</h2>
+                    <p class="text-stone-500 text-xs sm:text-sm font-light mt-2">Déplacez le curseur pour apprécier le travail de nos artisans paysagistes sur le terrain.</p>
+                </div>
+                
+                <div class="before-after-slider relative w-full max-w-4xl mx-auto h-72 sm:h-[420px] md:h-[480px] rounded-2xl overflow-hidden shadow-2xl select-none group border border-stone-200">
+                    <!-- Image Après (Fond) -->
+                    <img src="/images/EasyGarden_Tonte.webp" alt="Après : Aménagement paysager finalisé par Easy Garden" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
+                    <span class="absolute top-4 right-4 bg-botanic text-white text-xs uppercase tracking-widest font-bold px-3 py-1.5 rounded-md shadow z-10">Après : Easy Garden</span>
+
+                    <!-- Image Avant (Recouvrement découpé) -->
+                    <div class="before-layer absolute inset-0 overflow-hidden" style="width: 50%;">
+                        <img src="/images/1000007687.webp" alt="Avant : Terrain brut et végétation dense" class="absolute inset-0 w-full h-full object-cover max-w-none" loading="lazy" decoding="async">
+                        <span class="absolute top-4 left-4 bg-stone-900/85 backdrop-blur-sm text-stone-200 text-xs uppercase tracking-widest font-bold px-3 py-1.5 rounded-md shadow z-10">Avant : Terrain brut</span>
+                    </div>
+
+                    <!-- Poignée de séparation -->
+                    <div class="slider-handle absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_12px_rgba(0,0,0,0.8)] z-20 pointer-events-none" style="left: 50%;">
+                        <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white text-stone-900 shadow-2xl flex items-center justify-center border-2 border-botanic text-xs">
+                            <i class="fa-solid fa-arrows-left-right text-botanic-dark"></i>
+                        </div>
+                    </div>
+
+                    <!-- Contrôle Range accessible -->
+                    <input type="range" min="0" max="100" value="50" aria-label="Curseur comparatif Avant Après" class="slider-range absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 m-0">
+                </div>
+            </div>
+
             <div class="flex flex-wrap justify-center gap-4 mb-12">
                 <button class="filter-btn active" data-filter="all">Tous</button>
                 <button class="filter-btn" data-filter="Création">Création</button>

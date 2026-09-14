@@ -23,7 +23,7 @@
     <url>
         <loc>https://easy-garden.eu/services.html</loc>
         <lastmod>2026-09-14</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.9</priority>
         <image:image>
             <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
@@ -40,6 +40,48 @@
         <image:image>
             <image:loc>https://easy-garden.eu/images/1000016685.webp</image:loc>
             <image:title><![CDATA[Élagage et taille de haies professionnelles]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/services/amenagement-creation-jardin</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000007687.webp</image:loc>
+            <image:title><![CDATA[Création et aménagement de jardin Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Pose de pelouse en rouleaux et parterres]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/services/entretien-pelouse-jardin</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Entretien de jardin et tonte de pelouse Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Scarification et soins de pelouse]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/services/elagage-abattage-arbres</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000016685.webp</image:loc>
+            <image:title><![CDATA[Élagage et abattage d'arbres délicat Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Démontage sécurisé et rétention de branches]]></image:title>
         </image:image>
     </url>
     <url>

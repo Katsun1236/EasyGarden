@@ -24,7 +24,7 @@ const staticPages = [
   },
   {
     loc: `${baseUrl}/services.html`,
-    changefreq: 'monthly',
+    changefreq: 'weekly',
     priority: '0.9',
     lastmod: today,
     images: [
@@ -32,6 +32,36 @@ const staticPages = [
       { loc: `${baseUrl}/images/1000007687.webp`, title: 'Création de jardin et aménagement sur mesure' },
       { loc: `${baseUrl}/images/1000008561.webp`, title: 'Entretien des espaces verts et tonte' },
       { loc: `${baseUrl}/images/1000016685.webp`, title: 'Élagage et taille de haies professionnelles' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/services/amenagement-creation-jardin`,
+    changefreq: 'weekly',
+    priority: '0.9',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000007687.webp`, title: 'Création et aménagement de jardin Hainaut' },
+      { loc: `${baseUrl}/images/EasyGarden_Tonte.webp`, title: 'Pose de pelouse en rouleaux et parterres' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/services/entretien-pelouse-jardin`,
+    changefreq: 'weekly',
+    priority: '0.9',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000008561.webp`, title: 'Entretien de jardin et tonte de pelouse Hainaut' },
+      { loc: `${baseUrl}/images/EasyGarden_Tonte.webp`, title: 'Scarification et soins de pelouse' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/services/elagage-abattage-arbres`,
+    changefreq: 'weekly',
+    priority: '0.9',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000016685.webp`, title: 'Élagage et abattage d\'arbres délicat Hainaut' },
+      { loc: `${baseUrl}/images/1000008561.webp`, title: 'Démontage sécurisé et rétention de branches' }
     ]
   },
   {

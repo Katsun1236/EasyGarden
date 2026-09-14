@@ -332,8 +332,14 @@ function processPage(htmlFile, jsonData, pageName) {
                         <h2 class="text-3xl md:text-4xl font-serif text-stone-900 mb-4 -mt-10 relative z-10">${service.title}</h2>
                         <div class="w-10 h-px bg-botanic mb-6"></div>
                         <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">${service.description}</p>
-                        <ul class="space-y-4 mb-8">${featuresHtml}</ul>
-                        <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic transition-colors duration-300">Demander un devis gratuit</a>
+                        <div class="flex flex-wrap gap-4 items-center mt-8">
+                            <a href="/services/${service.slug || 'amenagement-creation-jardin'}" class="inline-flex items-center gap-2 border border-botanic text-botanic hover:bg-botanic hover:text-white px-6 py-3.5 uppercase tracking-widest text-xs font-bold transition-all duration-300">
+                                Découvrir cette prestation <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                            </a>
+                            <a href="/contact.html" class="glow-btn inline-block bg-botanic-dark text-white px-6 py-3.5 uppercase tracking-widest text-xs font-bold hover:bg-botanic transition-colors duration-300">
+                                Demander un devis
+                            </a>
+                        </div>
                     </div>
                 </article>`;
             });
@@ -368,7 +374,16 @@ function processPage(htmlFile, jsonData, pageName) {
     }
 
     // Save to dist/
-    fs.writeFileSync(path.join(DIST_DIR, htmlFile), $.html());
+    const targetPath = path.join(DIST_DIR, htmlFile);
+    fs.ensureDirSync(path.dirname(targetPath));
+    fs.writeFileSync(targetPath, $.html());
+    
+    // Also save index.html in subfolder for clean URL routing (e.g. /services/amenagement-creation-jardin/)
+    if (htmlFile.includes('/') && htmlFile.endsWith('.html') && !htmlFile.endsWith('index.html')) {
+        const cleanDir = path.join(DIST_DIR, htmlFile.replace(/\.html$/, ''));
+        fs.ensureDirSync(cleanDir);
+        fs.writeFileSync(path.join(cleanDir, 'index.html'), $.html());
+    }
     console.log(`✅ ${htmlFile} built successfully!`);
 }
 
@@ -378,6 +393,16 @@ processPage('services.html', servicesData, 'services');
 processPage('contact.html', contactData, 'contact');
 processPage('realisations.html', null, 'realisations');
 processPage('stats.html', null, 'stats');
+
+// Construction des pages de services dédiées (Silos thématiques)
+const servicesPagesDir = path.join(ROOT_DIR, 'src/pages/services');
+if (fs.existsSync(servicesPagesDir)) {
+    fs.ensureDirSync(path.join(DIST_DIR, 'services'));
+    const serviceFiles = fs.readdirSync(servicesPagesDir).filter(f => f.endsWith('.html'));
+    serviceFiles.forEach(file => {
+        processPage(`services/${file}`, null, 'service-detail');
+    });
+}
 
 // Construction du blog (blog/index.html & blog/article.html)
 if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {

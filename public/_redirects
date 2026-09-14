@@ -1,3 +1,5 @@
-/blog/:slug   /blog/:slug.html   200
-/admin        /admin/index.html  200
-/stats        /stats.html        200
+/blog/:slug       /blog/:slug.html       200
+/services/:slug   /services/:slug.html   200
+/admin            /admin/index.html      200
+/stats            /stats.html            200
+

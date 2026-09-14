@@ -497,6 +497,40 @@ if (fs.existsSync(path.join(ROOT_DIR, 'src/pages/blog'))) {
             $art('meta[name="twitter:title"]').attr('content', post.title);
             $art('meta[name="twitter:description"]').attr('content', post.excerpt);
             
+            // Canonical & Hreflang
+            $art('#page-canonical, link[rel="canonical"]').attr('href', `${BASE_URL}/blog/${post.slug}`);
+            $art('link[hreflang="fr-BE"]').attr('href', `${BASE_URL}/blog/${post.slug}`);
+            
+            // BlogPosting Schema.org JSON-LD
+            const articleSchema = {
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": `${BASE_URL}/blog/${post.slug}`
+                },
+                "headline": post.title,
+                "description": post.excerpt,
+                "image": post.image ? (post.image.startsWith('http') ? post.image : `${BASE_URL}${post.image}`) : `${BASE_URL}/images/easygarden_logo.webp`,
+                "author": {
+                    "@type": "Organization",
+                    "name": "Easy Garden",
+                    "url": BASE_URL
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Easy Garden",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": `${BASE_URL}/images/easygarden_logo.webp`
+                    }
+                },
+                "datePublished": post.date,
+                "dateModified": post.date,
+                "inLanguage": "fr-BE"
+            };
+            $art('#article-schema').text(JSON.stringify(articleSchema, null, 2));
+            
             // Fichiers statiques : à la fois slug.html et slug/index.html
             fs.writeFileSync(path.join(DIST_DIR, 'blog', `${post.slug}.html`), $art.html());
             

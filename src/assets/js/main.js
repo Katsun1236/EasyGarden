@@ -97,6 +97,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- MOTEUR DE PARALLAXE GÉANT (GPU-ACCÉLÉRÉ & 60FPS) ---
+    function initParallaxEngine() {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        const parallaxBgs = Array.from(document.querySelectorAll('[data-parallax]'));
+        const parallaxFloats = Array.from(document.querySelectorAll('[data-parallax-float]'));
+
+        if (parallaxBgs.length === 0 && parallaxFloats.length === 0) return;
+
+        // Suivre uniquement les éléments visibles pour des performances optimales (0 lag)
+        const visibleElements = new Set();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    visibleElements.add(entry.target);
+                } else {
+                    visibleElements.delete(entry.target);
+                }
+            });
+        }, { rootMargin: '100px 0px 100px 0px' });
+
+        parallaxBgs.forEach(el => observer.observe(el));
+        parallaxFloats.forEach(el => observer.observe(el));
+
+        let ticking = false;
+
+        function updateParallax() {
+            const vh = window.innerHeight;
+            const vhCenter = vh / 2;
+
+            visibleElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const centerDelta = (rect.top + rect.height / 2) - vhCenter;
+
+                if (el.hasAttribute('data-parallax')) {
+                    const speed = parseFloat(el.getAttribute('data-parallax')) || 0.25;
+                    const y = (centerDelta * speed).toFixed(1);
+                    el.style.transform = `translate3d(0, ${y}px, 0) scale(1.15)`;
+                } else if (el.hasAttribute('data-parallax-float')) {
+                    const speed = parseFloat(el.getAttribute('data-parallax-float')) || -0.15;
+                    const y = (centerDelta * speed).toFixed(1);
+                    el.style.transform = `translate3d(0, ${y}px, 0)`;
+                }
+            });
+
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Calcul initial
+        requestAnimationFrame(updateParallax);
+    }
+    initParallaxEngine();
+
     // --- MODULE AVANT / APRÈS (IMAGE COMPARISON SLIDER) ---
     function initBeforeAfterSliders() {
         document.querySelectorAll('.before-after-slider').forEach(slider => {
@@ -108,8 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!range || !beforeLayer || !handle || !beforeImg) return;
 
             function updateSlider(val) {
-                beforeLayer.style.width = val + '%';
-                handle.style.left = val + '%';
+                const clamped = Math.max(0, Math.min(100, val));
+                beforeLayer.style.width = clamped + '%';
+                handle.style.left = clamped + '%';
             }
 
             function updateImgWidth() {

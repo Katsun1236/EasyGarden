@@ -151,120 +151,135 @@
 <!-- HEADER -->
 
 
-    <header class="relative h-screen min-h-[600px] flex items-center justify-center">
-        <div class="absolute inset-0 z-0">
-            <img data-cms-src="accueil.hero_image" src="/images/EasyGarden_Tonte.webp" alt="Superbe aménagement paysager réalisé par Easy Garden dans le Hainaut" class="w-full h-full object-cover" width="1920" height="1080" fetchpriority="high">
-            <div class="absolute inset-0 bg-stone-950/60"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-stone-950/80 via-stone-950/40 to-stone-950/90"></div>
+    <header class="relative h-screen min-h-[650px] flex items-center justify-center parallax-viewport">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img data-cms-src="accueil.hero_image" src="/images/EasyGarden_Tonte.webp" alt="Superbe aménagement paysager réalisé par Easy Garden dans le Hainaut" class="parallax-bg" data-parallax="0.3" width="1920" height="1080" fetchpriority="high">
+            <div class="absolute inset-0 bg-stone-950/65"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/50 to-stone-950/95"></div>
+            <!-- Halo lumineux d'ambiance vert émeraude -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         </div>
-        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-16">
-            <div class="text-white uppercase tracking-[0.3em] text-sm md:text-base mb-6 reveal font-semibold flex justify-center items-center gap-3">
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-12">
+            <div data-parallax-float="-0.1" class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-panel-dark text-white/90 text-xs tracking-wider uppercase font-semibold mb-6 border border-emerald-500/30 shadow-2xl reveal">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Artisan Paysagiste de Référence · Hainaut & Wallonie</span>
+            </div>
+            <div class="text-white uppercase tracking-[0.3em] text-xs md:text-sm mb-4 reveal font-semibold flex justify-center items-center gap-3">
                 <span class="w-8 h-px bg-botanic"></span>
-                <h1 data-cms="accueil.hero_sur_title">Création &amp; Entretien dans le Hainaut</h1>
+                <h1 data-cms="accueil.hero_sur_title">Création &amp; Entretien de Jardins</h1>
                 <span class="w-8 h-px bg-botanic"></span>
             </div>
-            <h2 data-cms="accueil.hero_title" class="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8 reveal reveal-delay-1 drop-shadow-lg">L'élégance <br><span class="italic font-light text-botanic-light">au naturel.</span></h2>
-            <p data-cms="accueil.hero_subtitle" class="text-white/90 font-light text-lg mb-10 max-w-xl mx-auto reveal reveal-delay-1">Intervention dans <strong class="font-bold">tout le Hainaut</strong> pour sublimer vos espaces extérieurs.</p>
+            <h2 data-cms="accueil.hero_title" class="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8 reveal reveal-delay-1 drop-shadow-2xl">L'élégance <br><span class="italic font-light text-botanic-light">au naturel.</span></h2>
+            <p data-cms="accueil.hero_subtitle" class="text-white/90 font-light text-lg md:text-xl mb-10 max-w-xl mx-auto reveal reveal-delay-1">Intervention experte dans <strong class="font-bold text-white">tout le Hainaut</strong> pour magnifier vos espaces extérieurs.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal reveal-delay-2">
-                <a href="/contact.html" class="glow-btn inline-block bg-botanic text-white px-8 py-4 uppercase tracking-widest text-sm font-bold hover:bg-botanic-dark transition-colors duration-300 shadow-xl w-full sm:w-auto">
+                <a href="/contact.html" class="glow-btn inline-block bg-botanic text-white px-9 py-4 uppercase tracking-widest text-xs md:text-sm font-bold hover:bg-botanic-dark transition-colors duration-300 shadow-2xl w-full sm:w-auto">
                     Demander un devis gratuit
                 </a>
-                <a href="/services.html" class="inline-block border border-white/50 bg-white/10 backdrop-blur-sm text-white px-8 py-4 uppercase tracking-widest text-sm hover:bg-white hover:text-stone-900 transition-colors duration-300 w-full sm:w-auto">
+                <a href="/services.html" class="inline-block border border-white/40 bg-white/10 backdrop-blur-md text-white px-9 py-4 uppercase tracking-widest text-xs md:text-sm hover:bg-white hover:text-stone-900 transition-colors duration-300 w-full sm:w-auto">
                     Notre Savoir-Faire
                 </a>
             </div>
         </div>
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 reveal reveal-delay-2 opacity-70 cursor-pointer" onclick="document.getElementById('vision').scrollIntoView({behavior:'smooth'})">
-            <span class="text-white text-[10px] tracking-[0.2em] uppercase">Découvrir</span>
-            <i class="fa-solid fa-chevron-down text-white animate-bounce-slow text-sm"></i>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 reveal reveal-delay-2 opacity-80 cursor-pointer hover:opacity-100 transition-opacity" onclick="document.getElementById('vision').scrollIntoView({behavior:'smooth'})">
+            <span class="text-white text-[10px] tracking-[0.25em] uppercase font-light">Découvrir l'univers</span>
+            <i class="fa-solid fa-chevron-down text-emerald-400 animate-bounce-slow text-sm"></i>
         </div>
     </header>
 
-    <section id="vision" class="py-24 md:py-32 px-6 bg-stone-50">
-        <div class="max-w-4xl mx-auto text-center reveal">
+    <section id="vision" class="py-24 md:py-32 px-6 bg-stone-50 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center reveal relative z-10">
+            <span class="uppercase tracking-[0.25em] text-xs text-botanic-dark font-bold mb-4 block">Notre Philosophie</span>
             <h2 data-cms="accueil.vision_quote" class="font-serif text-3xl md:text-5xl text-stone-900 leading-snug mb-10">"Nous concevons des jardins qui évoluent avec le temps, des espaces où la nature et l'architecture s'accordent en parfaite harmonie."</h2>
-            <p data-cms="accueil.vision_text" class="text-stone-600 max-w-2xl mx-auto text-lg leading-relaxed">Situés à Montigny-le-Tilleul, nous mettons notre passion et notre exigence au service de vos espaces extérieurs dans <strong class="text-stone-900">l'ensemble de la province du Hainaut</strong>. De l'idée initiale à l'entretien régulier, chaque détail compte.</p>
+            <p data-cms="accueil.vision_text" class="text-stone-600 max-w-2xl mx-auto text-lg leading-relaxed font-light">Situés à Montigny-le-Tilleul, nous mettons notre passion et notre exigence au service de vos espaces extérieurs dans <strong class="text-stone-900">l'ensemble de la province du Hainaut</strong>. De l'idée initiale à l'entretien régulier, chaque détail compte.</p>
             <div class="flex flex-wrap justify-center gap-8 mt-16">
-                <div class="text-center">
+                <div class="text-center px-4">
                     <p class="font-serif text-5xl text-botanic-dark font-bold">100%</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2">Devis gratuits</p>
+                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Devis gratuits</p>
                 </div>
                 <div class="w-px bg-stone-200 hidden md:block"></div>
-                <div class="text-center">
+                <div class="text-center px-4">
                     <p class="font-serif text-5xl text-botanic-dark font-bold">Hainaut</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2">Zone d'intervention</p>
+                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Zone d'intervention</p>
                 </div>
                 <div class="w-px bg-stone-200 hidden md:block"></div>
-                <div class="text-center">
+                <div class="text-center px-4">
                     <p class="font-serif text-5xl text-botanic-dark font-bold">48h</p>
-                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2">Délai de réponse max</p>
+                    <p class="text-stone-500 uppercase tracking-widest text-xs mt-2 font-medium">Délai de réponse max</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="services" class="py-20 px-6 bg-white border-t border-stone-100">
+    <section id="services" class="py-24 px-6 bg-white border-t border-stone-100 relative">
         <div class="max-w-7xl mx-auto">
             <div class="mb-20 text-center reveal">
-                <span class="uppercase tracking-[0.2em] text-sm text-botanic-dark font-bold">Nos Services Paysagers</span>
-                <h2 class="font-serif text-4xl md:text-5xl mt-4 text-stone-900">Expertise Paysagère</h2>
+                <span class="uppercase tracking-[0.25em] text-xs text-botanic-dark font-bold">Prestations Sur Mesure</span>
+                <h2 class="font-serif text-4xl md:text-5xl mt-3 text-stone-900">Expertise Paysagère</h2>
                 <div class="w-16 h-px bg-botanic mx-auto mt-6"></div>
             </div>
-            <div class="space-y-24 md:space-y-32">
+            <div class="space-y-28 md:space-y-36">
+                <!-- Service 1 : Création & Aménagement -->
                 <div class="flex flex-col md:flex-row items-center gap-10 lg:gap-20 reveal">
-                    <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl">
-                        <img data-cms-src="accueil.services_accueil.img_creation" src="/images/EasyGarden_Tonte.webp" alt="Création et aménagement de jardin sur mesure avec pelouse et plantations dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover" width="800" height="600" loading="lazy">
+                    <div class="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-2xl group relative">
+                        <img data-cms-src="accueil.services_accueil.img_creation" src="/images/1000007687.webp" alt="Création et aménagement de jardin sur mesure avec pelouse et plantations dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105" width="800" height="600" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
-                    <div class="w-full md:w-1/2 pl-0 md:pl-10">
-                        <span class="text-7xl font-serif text-stone-100 block mb-2 -ml-4">01</span>
-                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-10">Création &amp; <br><span class="italic text-botanic-dark">Aménagement</span></h3>
+                    <div class="w-full md:w-1/2 pl-0 md:pl-6 relative">
+                        <span data-parallax-float="-0.12" class="text-8xl md:text-9xl font-serif text-stone-100 block mb-2 -ml-4 select-none pointer-events-none font-bold">01</span>
+                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-12">Création &amp; <br><span class="italic text-botanic-dark">Aménagement</span></h3>
                         <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
                             Nous transformons vos idées en réalité. Choix des végétaux, création de massifs, pose de pelouse en rouleaux ou semis : nous composons des tableaux vivants adaptés à votre sol et à votre terrain en Wallonie.
                         </p>
-                        <ul class="space-y-3 text-stone-800 mb-8">
-                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Plantations sur-mesure</li>
-                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Engazonnement professionnel</li>
+                        <ul class="space-y-3 text-stone-800 mb-8 font-medium">
+                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Plantations & massifs sur-mesure</li>
+                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Engazonnement professionnel (semis & rouleaux)</li>
                         </ul>
-                        <a href="/services.html" class="inline-flex items-center gap-2 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b border-botanic-dark pb-1 hover:text-botanic transition-colors">
-                            Découvrir ce service <i class="fa-solid fa-arrow-right text-xs"></i>
+                        <a href="/services/amenagement-creation-jardin.html" class="inline-flex items-center gap-3 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b-2 border-botanic-dark pb-1 hover:text-botanic hover:border-botanic transition-all">
+                            Découvrir la création paysagère <i class="fa-solid fa-arrow-right text-xs"></i>
                         </a>
                     </div>
                 </div>
+
+                <!-- Service 2 : Entretien & Sublimation -->
                 <div class="flex flex-col md:flex-row items-center gap-10 lg:gap-20 reveal">
-                    <div class="w-full md:w-1/2 pr-0 md:pr-10 order-2 md:order-1 text-left md:text-right">
-                        <span class="text-7xl font-serif text-stone-100 block mb-2 md:-mr-4">02</span>
-                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-10">Entretien &amp; <br><span class="italic text-botanic-dark">Sublimation</span></h3>
+                    <div class="w-full md:w-1/2 pr-0 md:pr-6 order-2 md:order-1 text-left md:text-right relative">
+                        <span data-parallax-float="-0.12" class="text-8xl md:text-9xl font-serif text-stone-100 block mb-2 md:-mr-4 select-none pointer-events-none font-bold">02</span>
+                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-12">Entretien &amp; <br><span class="italic text-botanic-dark">Sublimation</span></h3>
                         <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
-                            Un beau jardin nécessite une attention constante. Tontes soignées, gestion des bordures, scarification et traitements naturels pour un écrin toujours parfait.
+                            Un beau jardin nécessite une attention constante et minutieuse. Tontes au cordeau, gestion des bordures, scarification et traitements écologiques pour un écrin verdoyant en toute saison.
                         </p>
-                        <ul class="space-y-3 text-stone-800 flex flex-col md:items-end mb-8">
-                            <li class="flex items-center gap-4 flex-row-reverse md:flex-row">Tonte et soin du gazon <span class="w-6 h-px bg-botanic"></span></li>
-                            <li class="flex items-center gap-4 flex-row-reverse md:flex-row">Désherbage et fertilisation <span class="w-6 h-px bg-botanic"></span></li>
+                        <ul class="space-y-3 text-stone-800 flex flex-col md:items-end mb-8 font-medium">
+                            <li class="flex items-center gap-4 flex-row-reverse md:flex-row">Tonte millimétrée et soin du gazon <span class="w-6 h-px bg-botanic"></span></li>
+                            <li class="flex items-center gap-4 flex-row-reverse md:flex-row">Désherbage et fertilisation naturelle <span class="w-6 h-px bg-botanic"></span></li>
                         </ul>
-                        <a href="/services.html" class="inline-flex items-center gap-2 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b border-botanic-dark pb-1 hover:text-botanic transition-colors">
-                            Découvrir ce service <i class="fa-solid fa-arrow-right text-xs"></i>
+                        <a href="/services/entretien-pelouse-jardin.html" class="inline-flex items-center gap-3 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b-2 border-botanic-dark pb-1 hover:text-botanic hover:border-botanic transition-all">
+                            Découvrir l'entretien régulier <i class="fa-solid fa-arrow-right text-xs"></i>
                         </a>
                     </div>
-                    <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl order-1 md:order-2">
-                        <img data-cms-src="accueil.services_accueil.img_entretien" src="/images/EasyGarden_Tonte.webp" alt="Entretien de pelouse, tonte et scarification par un artisan jardinier dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover" width="800" height="600" loading="lazy">
+                    <div class="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-2xl group relative order-1 md:order-2">
+                        <img data-cms-src="accueil.services_accueil.img_entretien" src="/images/EasyGarden_Tonte.webp" alt="Entretien de pelouse, tonte et scarification par un artisan jardinier dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105" width="800" height="600" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                 </div>
+
+                <!-- Service 3 : Taille & Élagage -->
                 <div class="flex flex-col md:flex-row items-center gap-10 lg:gap-20 reveal">
-                    <div class="w-full md:w-1/2 img-zoom rounded-sm shadow-2xl">
-                        <img data-cms-src="accueil.services_accueil.img_elagage" src="/images/EasyGarden_Tonte.webp" alt="Élagage d'arbre et taille de haie professionnelle dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover" width="800" height="600" loading="lazy">
+                    <div class="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-2xl group relative">
+                        <img data-cms-src="accueil.services_accueil.img_elagage" src="/images/1000016685.webp" alt="Élagage d'arbre et taille de haie professionnelle dans le Hainaut" class="w-full h-[50vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105" width="800" height="600" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
-                    <div class="w-full md:w-1/2 pl-0 md:pl-10">
-                        <span class="text-7xl font-serif text-stone-100 block mb-2 -ml-4">03</span>
-                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-10">Taille &amp; <br><span class="italic text-botanic-dark">Élagage</span></h3>
+                    <div class="w-full md:w-1/2 pl-0 md:pl-6 relative">
+                        <span data-parallax-float="-0.12" class="text-8xl md:text-9xl font-serif text-stone-100 block mb-2 -ml-4 select-none pointer-events-none font-bold">03</span>
+                        <h3 class="text-3xl md:text-4xl font-serif text-stone-900 mb-6 relative z-10 -mt-12">Taille &amp; <br><span class="italic text-botanic-dark">Élagage</span></h3>
                         <p class="text-stone-600 leading-relaxed mb-6 font-light text-lg">
-                            Maîtriser les volumes tout en respectant la physiologie de la plante. Taille de haies, entretien d'arbustes et élagage sécurisé de vos arbres, avec évacuation complète des rémanents.
+                            Maîtriser les volumes tout en respectant la physiologie de la plante. Taille de haies, entretien d'arbustes et élagage sécurisé de vos arbres, avec évacuation complète des rémanents et broyage.
                         </p>
-                        <ul class="space-y-3 text-stone-800 mb-8">
-                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Taille architecturée</li>
-                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Élagage de sécurité</li>
+                        <ul class="space-y-3 text-stone-800 mb-8 font-medium">
+                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Taille architecturée & haies denses</li>
+                            <li class="flex items-center gap-4"><span class="w-6 h-px bg-botanic"></span> Élagage en hauteur & démontage sécurisé</li>
                         </ul>
-                        <a href="/services.html" class="inline-flex items-center gap-2 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b border-botanic-dark pb-1 hover:text-botanic transition-colors">
-                            Découvrir ce service <i class="fa-solid fa-arrow-right text-xs"></i>
+                        <a href="/services/elagage-abattage-arbres.html" class="inline-flex items-center gap-3 text-botanic-dark font-bold uppercase tracking-widest text-xs border-b-2 border-botanic-dark pb-1 hover:text-botanic hover:border-botanic transition-all">
+                            Découvrir l'élagage d'arbres <i class="fa-solid fa-arrow-right text-xs"></i>
                         </a>
                     </div>
                 </div>
@@ -272,29 +287,73 @@
         </div>
     </section>
 
-    <section class="py-32 relative bg-stone-900">
-        <div class="absolute inset-0 z-0 opacity-20">
-            <img data-cms-src="accueil.portfolio_accueil.bg_image" src="/images/easygarden_fond.webp" alt="" class="w-full h-full object-cover mix-blend-overlay" loading="lazy" aria-hidden="true">
+    <!-- SECTION PARALLAXE GÉANT (BREAK PLEIN ÉCRAN CINÉMATIQUE) -->
+    <section class="relative min-h-[580px] lg:h-[70vh] flex items-center justify-center overflow-hidden parallax-viewport">
+        <img src="/images/1000010574.webp" alt="Artisan paysagiste d'excellence dans le Hainaut" class="parallax-bg" data-parallax="0.35" loading="lazy">
+        <div class="absolute inset-0 bg-stone-950/75"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/60 to-stone-950/95"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/80"></div>
+        <div class="relative z-10 max-w-4xl mx-auto text-center px-6 reveal">
+            <span class="inline-block uppercase tracking-[0.3em] text-xs md:text-sm text-emerald-400 font-bold mb-4">L'Art Paysager en Wallonie</span>
+            <h2 class="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
+                Chaque jardin est une pièce unique. <br><span class="italic font-light text-botanic-light">Nous lui donnons vie.</span>
+            </h2>
+            <p class="text-stone-300 max-w-2xl mx-auto text-base md:text-lg mb-10 font-light leading-relaxed">
+                Allier la rigueur technique du nivellement au raffinement des essences végétales. Devis 100% gratuit avec déplacement sur votre terrain sous 48h.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-5">
+                <a href="/contact.html" class="glow-btn bg-botanic text-white px-9 py-4 uppercase tracking-widest text-xs md:text-sm font-bold hover:bg-botanic-dark transition-all duration-300 shadow-2xl">
+                    Demander mon devis offert
+                </a>
+                <a href="tel:+32493824581" class="border border-white/40 bg-white/10 backdrop-blur-md text-white px-8 py-4 uppercase tracking-widest text-xs md:text-sm font-semibold hover:bg-white hover:text-stone-900 transition-all duration-300">
+                    <i class="fa-solid fa-phone mr-2 text-emerald-400"></i> +32 493 82 45 81
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 relative bg-stone-900 parallax-viewport overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-25 overflow-hidden">
+            <img data-cms-src="accueil.portfolio_accueil.bg_image" src="/images/easygarden_fond.webp" alt="" class="parallax-bg" data-parallax="0.2" loading="lazy" aria-hidden="true">
         </div>
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
                 <div>
-                    <span class="uppercase tracking-[0.2em] text-sm text-botanic-light font-bold">Galerie Photos</span>
-                    <h2 class="font-serif text-4xl md:text-5xl mt-4 text-white">Nos Réalisations</h2>
+                    <span class="uppercase tracking-[0.25em] text-xs text-botanic-light font-bold">Galerie Photos</span>
+                    <h2 class="font-serif text-4xl md:text-5xl mt-3 text-white">Nos Réalisations Récentes</h2>
                 </div>
-                <a href="/realisations.html" class="mt-6 md:mt-0 pb-1 border-b border-stone-600 text-stone-300 hover:text-botanic-light hover:border-botanic transition-colors uppercase tracking-widest text-sm flex items-center gap-2">
-                    Voir toutes les réalisations <i class="fa-solid fa-arrow-right text-xs"></i>
+                <a href="/realisations.html" class="mt-6 md:mt-0 pb-1 border-b-2 border-botanic-light text-stone-200 hover:text-white hover:border-white transition-all uppercase tracking-widest text-xs font-semibold flex items-center gap-2">
+                    Voir tout le portfolio <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <div class="img-zoom rounded-sm shadow-2xl h-80 reveal">
-                    <img data-cms-src="accueil.portfolio_accueil.img_1" src="/images/EasyGarden_Tonte.webp" alt="Aménagement paysager avec terrasse et parterres fleuris par Easy Garden" class="w-full h-full object-cover" width="600" height="400" loading="lazy">
+                <!-- Réalisation 1 -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-2xl h-88 reveal">
+                    <img data-cms-src="accueil.portfolio_accueil.img_1" src="/images/1000008561.webp" alt="Aménagement paysager avec terrasse et parterres fleuris par Easy Garden" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" width="600" height="400" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent"></div>
+                    <div class="absolute bottom-5 left-5 right-5">
+                        <span class="text-[11px] uppercase tracking-wider font-semibold text-emerald-400 block mb-1">Montigny-le-Tilleul</span>
+                        <h3 class="text-lg font-serif text-white font-medium">Création de massifs & pavage</h3>
+                    </div>
                 </div>
-                <div class="img-zoom rounded-sm shadow-2xl h-80 reveal reveal-delay-1 mt-0 md:mt-12">
-                    <img data-cms-src="accueil.portfolio_accueil.img_2" src="/images/EasyGarden_Tonte.webp" alt="Création d'un espace vert avec pelouse et plantations décoratives dans le Hainaut" class="w-full h-full object-cover" width="600" height="400" loading="lazy">
+                <!-- Réalisation 2 -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-2xl h-88 reveal reveal-delay-1 mt-0 md:mt-10">
+                    <img data-cms-src="accueil.portfolio_accueil.img_2" src="/images/whatsapp-image-2026-05-07-at-18.25.31-5-.webp" alt="Création d'un espace vert avec pelouse et plantations décoratives dans le Hainaut" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" width="600" height="400" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent"></div>
+                    <div class="absolute bottom-5 left-5 right-5">
+                        <span class="text-[11px] uppercase tracking-wider font-semibold text-emerald-400 block mb-1">Thuin & Environs</span>
+                        <h3 class="text-lg font-serif text-white font-medium">Remise à neuf & Engazonnement</h3>
+                    </div>
                 </div>
-                <div class="img-zoom rounded-sm shadow-2xl h-80 reveal reveal-delay-2 mt-0 md:-mt-12">
-                    <img data-cms-src="accueil.portfolio_accueil.img_3" src="/images/EasyGarden_Tonte.webp" alt="Entretien rigoureux d'un grand jardin de domaine en Wallonie" class="w-full h-full object-cover" width="600" height="400" loading="lazy">
+                <!-- Réalisation 3 -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-2xl h-88 reveal reveal-delay-2 mt-0 md:-mt-8">
+                    <img data-cms-src="accueil.portfolio_accueil.img_3" src="/images/1000007688.webp" alt="Entretien rigoureux d'un grand jardin de domaine en Wallonie" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" width="600" height="400" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent"></div>
+                    <div class="absolute bottom-5 left-5 right-5">
+                        <span class="text-[11px] uppercase tracking-wider font-semibold text-emerald-400 block mb-1">Gerpinnes & Charleroi</span>
+                        <h3 class="text-lg font-serif text-white font-medium">Taille architecturée & Élagage</h3>
+                    </div>
+                </div>
             </div>
 
             <!-- MODULE AVANT / APRÈS INTERACTIF -->

@@ -1,7 +1,37 @@
+# Robots.txt pour Easy Garden (https://easy-garden.eu)
+# Optimisé pour l'indexation maximale des pages publiques, du blog et de Google Images
+
 User-agent: *
 Allow: /
- 
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /stats.html
+Disallow: /stats
+Disallow: /data/
+Disallow: /*.json$
+
+# Directives spécifiques pour Googlebot
+User-agent: Googlebot
+Allow: /
 Disallow: /admin/
 Disallow: /stats.html
- 
+Disallow: /data/
+
+# Permettre l'indexation de toutes les images pour Google Images
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /
+
+# Directives pour Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /stats.html
+Disallow: /data/
+
+# Sitemap officiel
 Sitemap: https://easy-garden.eu/sitemap.xml
+Host: https://easy-garden.eu

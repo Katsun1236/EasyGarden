@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://easy-garden.eu/</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/easygarden_logo.webp</image:loc>
+            <image:title><![CDATA[Easy Garden - Artisan Paysagiste Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/easygarden_fond.webp</image:loc>
+            <image:title><![CDATA[Aménagement et entretien de jardin Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Tonte de pelouse et entretien régulier]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/services.html</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Services paysagers Easy Garden Hainaut]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000007687.webp</image:loc>
+            <image:title><![CDATA[Création de jardin et aménagement sur mesure]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Entretien des espaces verts et tonte]]></image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000016685.webp</image:loc>
+            <image:title><![CDATA[Élagage et taille de haies professionnelles]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/realisations.html</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/easygarden_logo.webp</image:loc>
+            <image:title><![CDATA[Réalisations paysagères Easy Garden]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/contact.html</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/easygarden_logo.webp</image:loc>
+            <image:title><![CDATA[Contactez Easy Garden pour un devis gratuit]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/easygarden_logo.webp</image:loc>
+            <image:title><![CDATA[Blog Jardinage et Paysagisme Easy Garden]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/comment-creer-un-jardin-sans-arrosage-guide</loc>
+        <lastmod>2026-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/blog/1000011916.webp</image:loc>
+            <image:title><![CDATA[Comment Créer un Jardin Sans Arrosage : Le Guide Pratique]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/taille-haie-belgique-calendrier-reglementation</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000016685.webp</image:loc>
+            <image:title><![CDATA[Quand et Comment Tailler sa Haie en Belgique : Calendrier et Réglementation]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/scarification-entretien-pelouse-printemps-hainaut</loc>
+        <lastmod>2026-07-02</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Scarification et Entretien de Pelouse au Printemps dans le Hainaut]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/elagage-abattage-arbres-regles-securite-hainaut</loc>
+        <lastmod>2026-08-10</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Élagage et Abattage d'Arbres dans le Hainaut : Règles, Permis et Sécurité]]></image:title>
+        </image:image>
+    </url>
+</urlset>

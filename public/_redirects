@@ -1,5 +1,9 @@
-/blog/:slug       /blog/:slug.html       200
-/services/:slug   /services/:slug.html   200
-/admin            /admin/index.html      200
-/stats            /stats.html            200
-
+/blog/:slug                   /blog/:slug.html                   200
+/services/:slug               /services/:slug.html               200
+/jardinier-charleroi          /jardinier-charleroi.html          200
+/paysagiste-thuin             /paysagiste-thuin.html             200
+/taille-haie-gerpinnes        /taille-haie-gerpinnes.html        200
+/elagage-montigny-le-tilleul  /elagage-montigny-le-tilleul.html  200
+/plan-du-site                 /plan-du-site.html                 200
+/admin                        /admin/index.html                  200
+/stats                        /stats.html                        200

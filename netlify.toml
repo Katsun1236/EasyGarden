@@ -13,6 +13,31 @@
   status = 200
 
 [[redirects]]
+  from = "/jardinier-charleroi"
+  to = "/jardinier-charleroi.html"
+  status = 200
+
+[[redirects]]
+  from = "/paysagiste-thuin"
+  to = "/paysagiste-thuin.html"
+  status = 200
+
+[[redirects]]
+  from = "/taille-haie-gerpinnes"
+  to = "/taille-haie-gerpinnes.html"
+  status = 200
+
+[[redirects]]
+  from = "/elagage-montigny-le-tilleul"
+  to = "/elagage-montigny-le-tilleul.html"
+  status = 200
+
+[[redirects]]
+  from = "/plan-du-site"
+  to = "/plan-du-site.html"
+  status = 200
+
+[[redirects]]
   from = "/admin"
   to = "/admin/index.html"
   status = 200
@@ -20,4 +45,4 @@
 [[redirects]]
   from = "/stats"
   to = "/stats.html"
-  status = 200
+  status = 200

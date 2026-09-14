@@ -115,6 +115,52 @@
         </image:image>
     </url>
     <url>
+        <loc>https://easy-garden.eu/jardinier-charleroi</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Jardinier Paysagiste à Charleroi - Easy Garden]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/paysagiste-thuin</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000007687.webp</image:loc>
+            <image:title><![CDATA[Paysagiste à Thuin et Haute-Sambre - Easy Garden]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/taille-haie-gerpinnes</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000016685.webp</image:loc>
+            <image:title><![CDATA[Taille de haies et pelouse à Gerpinnes - Easy Garden]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/elagage-montigny-le-tilleul</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Élagage et soins du jardin à Montigny-le-Tilleul]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/plan-du-site</loc>
+        <lastmod>2026-09-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
         <loc>https://easy-garden.eu/blog/comment-creer-un-jardin-sans-arrosage-guide</loc>
         <lastmod>2026-06-01</lastmod>
         <changefreq>monthly</changefreq>
@@ -152,6 +198,36 @@
         <image:image>
             <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
             <image:title><![CDATA[Élagage et Abattage d'Arbres dans le Hainaut : Règles, Permis et Sécurité]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/prix-tarif-jardinier-paysagiste-belgique-guide</loc>
+        <lastmod>2026-08-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000007687.webp</image:loc>
+            <image:title><![CDATA[Tarif Paysagiste Belgique 2026 : Prix au m², Taux Horaire & TVA 6%]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/prime-plantation-haies-subventions-wallonie</loc>
+        <lastmod>2026-08-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/1000008561.webp</image:loc>
+            <image:title><![CDATA[Primes et Subventions pour la Plantation de Haies en Wallonie (Yes We Plant)]]></image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://easy-garden.eu/blog/comparatif-semis-gazon-rouleaux-belgique</loc>
+        <lastmod>2026-09-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://easy-garden.eu/images/EasyGarden_Tonte.webp</image:loc>
+            <image:title><![CDATA[Gazon en Rouleaux ou Semis : Que Choisir pour son Jardin en Belgique ?]]></image:title>
         </image:image>
     </url>
 </urlset>

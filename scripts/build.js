@@ -378,8 +378,8 @@ function processPage(htmlFile, jsonData, pageName) {
     fs.ensureDirSync(path.dirname(targetPath));
     fs.writeFileSync(targetPath, $.html());
     
-    // Also save index.html in subfolder for clean URL routing (e.g. /services/amenagement-creation-jardin/)
-    if (htmlFile.includes('/') && htmlFile.endsWith('.html') && !htmlFile.endsWith('index.html')) {
+    // Also save index.html in subfolder for clean URL routing (e.g. /jardinier-charleroi/ or /services/amenagement-creation-jardin/)
+    if (htmlFile.endsWith('.html') && !htmlFile.endsWith('index.html') && htmlFile !== '404.html') {
         const cleanDir = path.join(DIST_DIR, htmlFile.replace(/\.html$/, ''));
         fs.ensureDirSync(cleanDir);
         fs.writeFileSync(path.join(cleanDir, 'index.html'), $.html());
@@ -393,6 +393,14 @@ processPage('services.html', servicesData, 'services');
 processPage('contact.html', contactData, 'contact');
 processPage('realisations.html', null, 'realisations');
 processPage('stats.html', null, 'stats');
+processPage('plan-du-site.html', null, 'plan-du-site');
+processPage('404.html', null, '404');
+
+// Construction des pages locales géociblées (SEO Local Hainaut)
+processPage('jardinier-charleroi.html', null, 'local-city');
+processPage('paysagiste-thuin.html', null, 'local-city');
+processPage('taille-haie-gerpinnes.html', null, 'local-city');
+processPage('elagage-montigny-le-tilleul.html', null, 'local-city');
 
 // Construction des pages de services dédiées (Silos thématiques)
 const servicesPagesDir = path.join(ROOT_DIR, 'src/pages/services');

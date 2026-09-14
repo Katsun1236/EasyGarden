@@ -7,7 +7,7 @@
     <link>https://easy-garden.eu/blog/</link>
     <description>Conseils d'experts paysagistes pour aménager, entretenir et sublimer vos espaces extérieurs en Wallonie et dans le Hainaut.</description>
     <language>fr-be</language>
-    <lastBuildDate>Mon, 14 Sep 2026 19:43:42 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 14 Sep 2026 19:52:07 GMT</lastBuildDate>
     <atom:link href="https://easy-garden.eu/blog/feed.xml" rel="self" type="application/rss+xml" />
     <image>
       <url>https://easy-garden.eu/images/easygarden_logo.webp</url>
@@ -53,6 +53,36 @@
       <description><![CDATA[Un arbre menace votre toiture ou la propriété de vos voisins ? Tout savoir sur les permis communaux d'abattage en Wallonie et les techniques d'élagage sécurisées.]]></description>
       <author>easygarden.devis@gmail.com (Easy Garden)</author>
       <enclosure url="https://easy-garden.eu/images/1000008561.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Tarif Paysagiste Belgique 2026 : Prix au m², Taux Horaire & TVA 6%]]></title>
+      <link>https://easy-garden.eu/blog/prix-tarif-jardinier-paysagiste-belgique-guide</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/prix-tarif-jardinier-paysagiste-belgique-guide</guid>
+      <pubDate>Thu, 20 Aug 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Tarifs & Conseils]]></category>
+      <description><![CDATA[Combien coûte un jardinier paysagiste en Belgique en 2026 ? Taux horaire, prix au m² pour la tonte, la taille de haie et l'élagage, et conditions pour bénéficier de la TVA réduite à 6%.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/1000007687.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Primes et Subventions pour la Plantation de Haies en Wallonie (Yes We Plant)]]></title>
+      <link>https://easy-garden.eu/blog/prime-plantation-haies-subventions-wallonie</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/prime-plantation-haies-subventions-wallonie</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Réglementation]]></category>
+      <description><![CDATA[Bénéficiez jusqu'à 5 € à 9 € par mètre linéaire de prime régionale pour planter une haie vive en Wallonie. Conditions, espèces indigènes éligibles et démarches pas-à-pas.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/1000008561.webp" type="image/webp" length="50000" />
+    </item>
+    <item>
+      <title><![CDATA[Gazon en Rouleaux ou Semis : Que Choisir pour son Jardin en Belgique ?]]></title>
+      <link>https://easy-garden.eu/blog/comparatif-semis-gazon-rouleaux-belgique</link>
+      <guid isPermaLink="true">https://easy-garden.eu/blog/comparatif-semis-gazon-rouleaux-belgique</guid>
+      <pubDate>Tue, 01 Sep 2026 00:00:00 GMT</pubDate>
+      <category><![CDATA[Création]]></category>
+      <description><![CDATA[Faut-il opter pour la pose de gazon de placage immédiat ou le semis traditionnel de graines ? Comparatif complet des coûts, délais et résistance aux intempéries hainuyères.]]></description>
+      <author>easygarden.devis@gmail.com (Easy Garden)</author>
+      <enclosure url="https://easy-garden.eu/images/EasyGarden_Tonte.webp" type="image/webp" length="50000" />
     </item>
   </channel>
 </rss>

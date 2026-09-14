@@ -90,6 +90,48 @@ const staticPages = [
     images: [
       { loc: `${baseUrl}/images/easygarden_logo.webp`, title: 'Blog Jardinage et Paysagisme Easy Garden' }
     ]
+  },
+  {
+    loc: `${baseUrl}/jardinier-charleroi`,
+    changefreq: 'weekly',
+    priority: '0.85',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/EasyGarden_Tonte.webp`, title: 'Jardinier Paysagiste à Charleroi - Easy Garden' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/paysagiste-thuin`,
+    changefreq: 'weekly',
+    priority: '0.85',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000007687.webp`, title: 'Paysagiste à Thuin et Haute-Sambre - Easy Garden' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/taille-haie-gerpinnes`,
+    changefreq: 'weekly',
+    priority: '0.85',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000016685.webp`, title: 'Taille de haies et pelouse à Gerpinnes - Easy Garden' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/elagage-montigny-le-tilleul`,
+    changefreq: 'weekly',
+    priority: '0.85',
+    lastmod: today,
+    images: [
+      { loc: `${baseUrl}/images/1000008561.webp`, title: 'Élagage et soins du jardin à Montigny-le-Tilleul' }
+    ]
+  },
+  {
+    loc: `${baseUrl}/plan-du-site`,
+    changefreq: 'weekly',
+    priority: '0.7',
+    lastmod: today
   }
 ];
 

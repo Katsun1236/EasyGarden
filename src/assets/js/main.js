@@ -1,10 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- LENIS SMOOTH SCROLL (INERTIE FLUIDE LUXE) ---
+    let lenis = null;
+    if (typeof Lenis !== 'undefined') {
+        lenis = new Lenis({
+            duration: 1.1,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            smoothWheel: true,
+            touchMultiplier: 1.5,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+    }
+
     const navbar = document.getElementById('navbar');
     const navBtn = document.getElementById('nav-btn');
     if (navbar) {
         const gradientClasses = ['bg-gradient-to-b', 'from-stone-950/85', 'via-stone-950/40', 'to-transparent'];
-        window.addEventListener('scroll', () => {
+        const updateNav = () => {
             if (window.scrollY > 50) {
                 navbar.classList.add('nav-scrolled', 'text-stone-900');
                 navbar.classList.remove('text-white', ...gradientClasses);
@@ -20,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     navBtn.classList.remove('bg-botanic-dark', 'text-white');
                 }
             }
-        });
+        };
+        window.addEventListener('scroll', updateNav, { passive: true });
+        if (lenis) lenis.on('scroll', updateNav);
     }
 
     const btnOpen = document.getElementById('mobile-menu-btn');
@@ -32,12 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.classList.remove('translate-x-full');
         mobileMenu.classList.add('translate-x-0');
         document.body.style.overflow = 'hidden';
+        if (lenis) lenis.stop();
         btnOpen.setAttribute('aria-expanded', 'true');
     }
     function closeMenu() {
         mobileMenu.classList.add('translate-x-full');
         mobileMenu.classList.remove('translate-x-0');
         document.body.style.overflow = '';
+        if (lenis) lenis.start();
         btnOpen.setAttribute('aria-expanded', 'false');
     }
 
@@ -153,6 +175,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 ticking = true;
             }
         }, { passive: true });
+
+        if (lenis) {
+            lenis.on('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            });
+        }
 
         window.addEventListener('resize', () => {
             if (!ticking) {
